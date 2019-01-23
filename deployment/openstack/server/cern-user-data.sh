@@ -300,6 +300,14 @@ fi
 
 sudo systemctl restart sshd
 
+echo "  => Using Hostname: $DOCKER_HOST  You MUST connect to docker using this host!" >> ~/openstack-userdata-debug.log
+
+echo "  => Ensuring config directory exists.../home/$USER/.docker" >> ~/openstack-userdata-debug.log
+mkdir -p /home/$USER/.docker
+
+echo "  => Ensuring config directory exists.../etc/docker/ssl" >> ~/openstack-userdata-debug.log
+mkdir -p /etc/docker/ssl
+
 echo "  ***** Configuration file for the Docker server /etc/docker/ssl/openssl.cnf ***** " >> ~/openstack-userdata-debug.log
 cat << EOF > /home/$USER/openssl.cnf
 [req]
