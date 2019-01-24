@@ -17,14 +17,14 @@ echo  " ***** Modify the /etc/sysconfig/docker *****"  >> ~/openstack-userdata-d
 yum -y update
 yum install -y yum-utils
 yum-config-manager --enable cernonly
-yum -y install docker-io minetest minetestmapper zenity openssh-server openssl vim unzip wget git java-1.8.0-oracle-devel.x86_64 groovy.noarch make binutils rpm-build gcc gcc-c++ dh-autoreconf
+yum -y install docker-io minetest minetestmapper zenity openssh-server openssl xauth vim unzip wget git java-1.8.0-oracle-devel.x86_64 groovy.noarch make binutils rpm-build gcc gcc-c++ dh-autoreconf
 
 service docker start
 
 cat << EOF > /etc/ssh/banner.txt
 #     ______              ____ __     ______ __             _       __       __  
 #    / ____/_____ ____ _ / __// /_   /_  __// /_   ___     | |     / /___   / /_ 
-#   / /    / ___// __ `// /_ / __/    / /  / __ \ / _ \    | | /| / // _ \ / __ \
+#   / /    / ___// __ '// /_ / __/    / /  / __ \ / _ \    | | /| / // _ \ / __ \\
 #  / /___ / /   / /_/ // __// /_     / /  / / / //  __/    | |/ |/ //  __// /_/ /
 #  \____//_/    \__,_//_/   \__/    /_/  /_/ /_/ \___/     |__/|__/ \___//_.___/ 
 #                                                                                
