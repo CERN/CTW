@@ -1,0 +1,3 @@
+[submodule "build/mcimport"]
+	path = build/mcimport
+	url = https://github.com/CERN/CTW-mcimport
