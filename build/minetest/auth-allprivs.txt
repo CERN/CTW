@@ -1,0 +1,9 @@
+player8::fast,noclip,grant,teleport,fly:
+player7::fast,noclip,grant,teleport,fly:
+player6::fast,noclip,grant,teleport,fly:
+player5::fast,noclip,grant,teleport,fly:
+player4::fast,noclip,grant,teleport,fly:
+player3::fast,noclip,grant,teleport,fly:
+player2::fast,noclip,grant,teleport,fly:
+player1::fast,noclip,grant,teleport,fly:
+admin::fast,noclip,grant,teleport,fly:1549284667
