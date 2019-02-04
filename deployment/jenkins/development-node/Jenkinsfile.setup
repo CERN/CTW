@@ -1,0 +1,4 @@
+# A pipeline script to setup a development node
+
+# wget https://www.worldpainter.net/files/worldpainter_2.5.8.rpm
+# yum localinstall worldpainter_2.5.8.rpm
