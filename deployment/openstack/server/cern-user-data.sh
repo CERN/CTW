@@ -17,7 +17,11 @@ echo  " ***** Modify the /etc/sysconfig/docker *****"  >> ~/openstack-userdata-d
 yum -y update
 yum install -y yum-utils
 yum-config-manager --enable cernonly
-yum -y install docker-io minetest minetestmapper zenity openssh-server openssl xauth vim unzip wget git java-1.8.0-oracle-devel.x86_64 groovy.noarch make binutils rpm-build gcc gcc-c++ dh-autoreconf
+yum -y install docker-io minetest minetestmapper lua lua-devel luarocks zziplib-dev zenity openssh-server openssl xauth vim unzip wget git java-1.8.0-oracle-devel.x86_64 groovy.noarch make binutils rpm-build gcc gcc-c++ dh-autoreconf
+
+luarocks install luazip 
+luarocks install luafilesystem
+luarocks install luajson
 
 service docker start
 
