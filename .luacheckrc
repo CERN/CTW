@@ -1,7 +1,10 @@
 unused_args = false
 allow_defined_top = true
 
-globals = {}
+globals = {
+	"teams",
+	"ChatCmdBuilder",
+}
 
 read_globals = {
 	"DIR_DELIM",
@@ -15,4 +18,9 @@ read_globals = {
 	"AreaStore",
 	"minetest",
 	"vector"
+}
+
+exclude_files = {
+	"mods/mtg",
+	"mods/libs",
 }
