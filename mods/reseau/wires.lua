@@ -98,16 +98,6 @@ minetest.register_on_placenode(update_on_place_dig)
 minetest.register_on_dignode(update_on_place_dig)
 
 
-local function register_node_onoff(name, spec_common, spec_off, spec_on)
-	spec_common.drop = spec_common.drop or name .. "_off"
-
-	spec_on = reseau.mergetable(spec_common, spec_on);
-	spec_off = reseau.mergetable(spec_common, spec_off);
-
-	minetest.register_node(name .. "_on", spec_on)
-	minetest.register_node(name .. "_off", spec_off)
-end
-
 -- ############################
 -- ## Wire node registration ##
 -- ############################
@@ -154,9 +144,7 @@ nid_inc = function(nid)
 	return i <= 8
 end
 
-local function register_wires(technology)
-	local techid = string.lower(technology)
-
+local function register_wires(technology, technologyspec)
 	local nid = {0, 0, 0, 0, 0, 0, 0, 0}
 	while true do
 		-- Create group specifiction and nodeid string (see note above for details)
@@ -197,12 +185,8 @@ local function register_wires(technology)
 			groups["not_in_creative_inventory"] = 1
 		end
 
-		minetest.register_node(":reseau:"..techid.."_wire_"..nodeid, {
-			description = technology.." Cable",
+		local spec = reseau.mergetable(technologyspec, {
 			drawtype = "nodebox",
-			tiles = { "reseau_"..techid.."_wire.png" },
-			inventory_image = "reseau_"..techid.."_wire_inv.png",
-			wield_image = "reseau_"..techid.."_wire_inv.png",
 			paramtype = "light",
 			paramtype2 = "facedir",
 			is_ground_content = false,
@@ -210,21 +194,34 @@ local function register_wires(technology)
 			selection_box = selectionbox,
 			node_box = nodebox,
 			walkable = false,
-			drop = "reseau:"..techid.."_wire_00000000",
+			drop = "reseau:"..technology.."_wire_00000000",
 			is_reseau_wire = true,
 			on_rotate = false,
-				reseau = {
-					conductor = {
-						technology = techid,
-						rules = rules
-					}
-				},
-				groups = groups
-			})
+			reseau = {
+				conductor = {
+					technology = technology,
+					rules = rules
+				}
+			},
+			groups = groups
+		})
+
+		minetest.register_node(":reseau:"..technology.."_wire_"..nodeid, spec)
 
 		if (nid_inc(nid) == false) then return end
 	end
 end
 
-register_wires("Copper")
-register_wires("Fiber")
+register_wires("copper", {
+	description = "Copper Cable",
+	tiles = { "reseau_copper_wire.png" },
+	inventory_image = "reseau_copper_wire_inv.png",
+	wield_image = "reseau_copper_wire_inv.png"
+})
+
+register_wires("fiber", {
+	description = "Fiber Cable",
+	tiles = { "reseau_fiber_wire.png" },
+	inventory_image = "reseau_fiber_wire_inv.png",
+	wield_image = "reseau_fiber_wire_inv.png"
+})
