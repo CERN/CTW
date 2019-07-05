@@ -205,19 +205,19 @@ reseau.get_all_links = function(startpos)
 	return links
 end
 
-reseau.bitparticles = function(pos)
+reseau.bitparticles = function(pos, depth)
 	local minpos = vector.add(pos, vector.new(-0.5, -0.3, -0.5))
 	local maxpos = vector.add(pos, vector.new( 0.5,  0.2,  0.5))
 
 	local psspec = {
-		amount = 2,
-		time = 3,
+		amount = 3,
+		time = 0.3,
 		minpos = minpos,
 		maxpos = maxpos,
 		minvel = vector.new(-0.1, 0.2, -0.1),
 		maxvel = vector.new( 0.1, 0.5,  0.1),
 		minexptime = 0.2,
-		maxexptime = 1,
+		maxexptime = 0.8,
 		minsize = 0.5,
 		maxsize = 1,
 		collisiondetection = true,
@@ -231,13 +231,17 @@ reseau.bitparticles = function(pos)
 	if math.random(1, 2) == 2 then
 		psspec.texture = "reseau_one.png"
 	end
-	minetest.add_particlespawner(psspec)
+
+	minetest.after((depth - 1) * 0.2, function()
+		minetest.add_particlespawner(psspec)
+	end)
 end
 
--- TODO: check technology compatbility!!!
+-- Warning: Connecting RX and TX directly will not check technology compatibility
 reseau.transmit = function(txpos, message)
 	local frontier = txpos
 	local previous = txpos
+	local depth = 0
 
 	while true do
 		-- find next node (link)
@@ -249,12 +253,13 @@ reseau.transmit = function(txpos, message)
 		-- switch to next node
 		previous = frontier
 		frontier = nil
+		depth = depth + 1
 
 		-- process next node: conductor or receiver?
 		local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
 		if link_node_spec.reseau.conductor then
 			frontier = link
-			reseau.bitparticles(frontier)
+			reseau.bitparticles(frontier, depth)
 		elseif link_node_spec.reseau.receiver then
 			link_node_spec.reseau.receiver.receive(link, message)
 			break
