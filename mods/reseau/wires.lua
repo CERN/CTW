@@ -4,20 +4,26 @@
 -- Where 0 means the wire has no visual connection to that direction and
 -- 1 means that the wire visually connects to that other node.
 
+-- TODO: techid should become a compatibility table
+
 -- #######################
 -- ## Update wire looks ##
 -- #######################
 
--- self_pos = pos of any mesecon node, from_pos = pos of conductor to getconnect for
-local wire_getconnect = function (from_pos, self_pos)
-	local node = minetest.get_node(self_pos)
-	if minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].reseau then
-		-- rules of node to possibly connect to
+-- does node at self_pos want to connect to node at from_pos?
+local wire_getconnect = function(from_pos, self_pos, wire_name)
+	local self_node = minetest.get_node(self_pos)
+	local self_nodespec = minetest.registered_nodes[self_node.name]
+	if not reseau.technologies_compatible(wire_name, self_node.name) then
+		return false
+	end
+
+	if self_nodespec and self_nodespec.reseau then
 		local rules = {}
-		if minetest.registered_nodes[node.name].is_reseau_wire then
+		if self_nodespec.is_reseau_wire then
 			rules = reseau.rules.default
 		else
-			rules = reseau.get_any_rules(node.name)
+			rules = reseau.get_any_rules(self_node.name)
 		end
 
 		for _, r in ipairs(rules) do
@@ -30,11 +36,14 @@ local wire_getconnect = function (from_pos, self_pos)
 end
 
 -- Update this node
-local wire_updateconnect = function (pos)
+local wire_updateconnect = function(pos)
+	local wire_name = minetest.get_node(pos).name
+	local technology = minetest.registered_nodes[wire_name].reseau.conductor.technology
+
 	local connections = {}
 
 	for _, r in ipairs(reseau.rules.default) do
-		if wire_getconnect(pos, vector.add(pos, r)) then
+		if wire_getconnect(pos, vector.add(pos, r), wire_name) then
 			table.insert(connections, r)
 		end
 	end
@@ -65,7 +74,7 @@ local wire_updateconnect = function (pos)
 	local nodeid = (nid[0] or "0")..(nid[1] or "0")..(nid[2] or "0")..(nid[3] or "0")
 			..(nid[4] or "0")..(nid[5] or "0")..(nid[6] or "0")..(nid[7] or "0")
 
-	minetest.set_node(pos, {name = "reseau:copper_wire_"..nodeid})
+	minetest.set_node(pos, {name = "reseau:"..technology.."_wire_"..nodeid})
 end
 
 
@@ -80,7 +89,6 @@ local update_on_place_dig = function(pos, node)
 	for _, r in ipairs(reseau.rules.default) do
 		local np = vector.add(pos, r)
 		if minetest.registered_nodes[minetest.get_node(np).name] and minetest.registered_nodes[minetest.get_node(np).name].is_reseau_wire then
-			print("Calling autoconnect on neighbor")
 			wire_updateconnect(np)
 		end
 	end
@@ -146,7 +154,9 @@ nid_inc = function(nid)
 	return i <= 8
 end
 
-local function register_wires()
+local function register_wires(technology)
+	local techid = string.lower(technology)
+
 	local nid = {0, 0, 0, 0, 0, 0, 0, 0}
 	while true do
 		-- Create group specifiction and nodeid string (see note above for details)
@@ -182,17 +192,17 @@ local function register_wires()
 		if (nid[6] == 1) then table.insert(rules, vector.new(-1,  1,  0)) end
 		if (nid[7] == 1) then table.insert(rules, vector.new( 0,  1, -1)) end
 
-		local groups = {dig_immediate = 3, mesecon_conductor_craftable = 1}
+		local groups = {dig_immediate = 3}
 		if nodeid ~= "00000000" then
 			groups["not_in_creative_inventory"] = 1
 		end
 
-		minetest.register_node(":reseau:copper_wire_"..nodeid, {
-			description = "Copper Cable",
+		minetest.register_node(":reseau:"..techid.."_wire_"..nodeid, {
+			description = technology.." Cable",
 			drawtype = "nodebox",
-			tiles = { "reseau_copper_wire_off.png" },
-			inventory_image = "reseau_copper_wire_inv.png",
-			wield_image = "reseau_copper_wire_inv.png",
+			tiles = { "reseau_"..techid.."_wire.png" },
+			inventory_image = "reseau_"..techid.."_wire_inv.png",
+			wield_image = "reseau_"..techid.."_wire_inv.png",
 			paramtype = "light",
 			paramtype2 = "facedir",
 			is_ground_content = false,
@@ -200,19 +210,21 @@ local function register_wires()
 			selection_box = selectionbox,
 			node_box = nodebox,
 			walkable = false,
-			drop = "reseau:copper_wire_00000000",
+			drop = "reseau:"..techid.."_wire_00000000",
 			is_reseau_wire = true,
 			on_rotate = false,
 				reseau = {
 					conductor = {
+						technology = techid,
 						rules = rules
-				}
-			},
-			groups = groups
-		})
+					}
+				},
+				groups = groups
+			})
 
 		if (nid_inc(nid) == false) then return end
 	end
 end
 
-register_wires()
+register_wires("Copper")
+register_wires("Fiber")

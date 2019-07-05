@@ -43,6 +43,28 @@ reseau.mergetable = function(source, dest)
 	return rval
 end
 
+reseau.table_contains = function(table, content)
+	for _, val in ipairs(table) do
+		if val == content then
+			return true
+		end
+	end
+
+	return false
+end
+
+reseau.table_intersection = function(table1, table2)
+	local intersection = {}
+
+	for _, val in ipairs(table1) do
+		if reseau.table_contains(table2, val) then
+			table.insert(intersection, val)
+		end
+	end
+
+	return intersection
+end
+
 reseau.get_any_rules = function(nodename)
 	local node = minetest.registered_nodes[nodename]
 	local rules = {}
@@ -60,6 +82,38 @@ reseau.get_any_rules = function(nodename)
 	return rules
 end
 
+reseau.get_any_technology = function(nodename)
+	local nodespec = minetest.registered_nodes[nodename]
+	local technology = nil
+
+	if nodespec.reseau then
+		if nodespec.reseau.conductor then
+			technology = nodespec.reseau.conductor.technology
+		elseif nodespec.reseau.receiver then
+			technology = nodespec.reseau.receiver.technology
+		elseif nodespec.reseau.transmitter then
+			technology = nodespec.reseau.transmitter.technology
+		end
+	end
+
+	return technology
+end
+
+reseau.technologies_compatible = function(nodename1, nodename2)
+	local technology1 = reseau.get_any_technology(nodename1)
+	local technology2 = reseau.get_any_technology(nodename2)
+
+	if type(technology1) == "string" and type(technology2) == "string" then
+		return technology1 == technology2
+	elseif type(technology1) == "table" and type(technology2) == "string" then
+		return reseau.table_contains(technology1, technology2)
+	elseif type(technology1) == "string" and type(technology2) == "table" then
+		return reseau.table_contains(technology2, technology1)
+	elseif type(technology1) == "table" and type(technology2) == "table" then
+		return #reseau.table_intersection(technology1, technology2) > 0
+	end
+end
+
 dofile(minetest.get_modpath("reseau").."/wires.lua")
 
 minetest.register_node(":reseau:testtransmitter", {
@@ -68,6 +122,9 @@ minetest.register_node(":reseau:testtransmitter", {
 	groups = {cracky = 3},
 	reseau = {
 		transmitter = {
+			technology = {
+				"copper", "fiber"
+			},
 			rules = reseau.rules.default
 		}
 	},
@@ -81,6 +138,9 @@ minetest.register_node(":reseau:testreceiver", {
 	groups = {cracky = 3},
 	reseau = {
 		receiver = {
+			technology = {
+				"copper", "fiber"
+			},
 			rules = reseau.rules.default,
 			receive = function(pos, content)
 				print("RECEIVED: "..dump(content))
@@ -174,29 +234,30 @@ reseau.bitparticles = function(pos)
 	minetest.add_particlespawner(psspec)
 end
 
+-- TODO: check technology compatbility!!!
 reseau.transmit = function(txpos, message)
 	local frontier = txpos
 	local previous = txpos
 
-	while frontier ~= nil do
-		reseau.bitparticles(frontier)
-
+	while true do
 		-- find next node (link)
 		local links = reseau.get_all_links(frontier)
+		if #links == 0 then break end
 		local link = not vector.equals(links[1], previous) and links[1] or links[2]
+		if link == nil then break end
 
 		-- switch to next node
 		previous = frontier
 		frontier = nil
 
 		-- process next node: conductor or receiver?
-		if link ~= nil then
-			local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
-			if link_node_spec.reseau.conductor then
-				frontier = link
-			elseif link_node_spec.reseau.receiver then
-				link_node_spec.reseau.receiver.receive(link, message)
-			end
+		local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
+		if link_node_spec.reseau.conductor then
+			frontier = link
+			reseau.bitparticles(frontier)
+		elseif link_node_spec.reseau.receiver then
+			link_node_spec.reseau.receiver.receive(link, message)
+			break
 		end
 	end
 end
