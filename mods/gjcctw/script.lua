@@ -1,1 +1,0 @@
-return "Hello MineTest World!"
