@@ -5,6 +5,7 @@ globals = {
 	"teams",
 	"ChatCmdBuilder",
 	"hudkit",
+	"player_api",
 }
 
 read_globals = {

@@ -1,6 +1,6 @@
 local hud = hudkit()
 
-local function set_hud(player, team)
+local function set_tint(player, team)
 	if not hud:exists(player, "teams:hud_team") then
 		hud:add(player, "teams:hud_team", {
 			hud_elem_type = "text",
@@ -15,11 +15,13 @@ local function set_hud(player, team)
 		hud:change(player, "teams:hud_team", "text", "Team " .. team.name)
 		hud:change(player, "teams:hud_team", "number", team.color_hex)
 	end
+
+	player_api.set_textures(player, { "team_skin_" .. team.name .. ".png" })
 end
 
 minetest.register_on_joinplayer(function(player)
 	local team = teams.get_by_player(player)
-	set_hud(player, team)
+	set_tint(player, team)
 end)
 
-teams.register_on_change_team(set_hud)
+teams.register_on_change_team(set_tint)

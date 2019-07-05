@@ -112,6 +112,12 @@ function teams.load()
 			color = "blue",
 			color_hex = 0x0000FF,
 		})
+
+		teams.create({
+			name = "yellow",
+			color = "yellow",
+			color_hex = 0xFF9900,
+		})
 	end
 end
 
