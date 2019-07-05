@@ -1,3 +1,9 @@
 [submodule "build/mcimport"]
 	path = build/mcimport
 	url = https://github.com/CERN/CTW-mcimport
+[submodule "mods/doc"]
+	path = mods/doc
+	url = https://repo.or.cz/minetest_doc.git
+[submodule "mods/worldedit"]
+	path = mods/worldedit
+	url = https://github.com/Uberi/Minetest-WorldEdit
