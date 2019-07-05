@@ -1,4 +1,5 @@
 local _team_by_name = {}
+local _registered_on_change_team = {}
 
 function teams.get(tname)
 	return _team_by_name[tname]
@@ -44,8 +45,14 @@ function teams.set_team(player, tname)
 
 	assert(type(tname) == "string")
 
-	if _team_by_name[tname] then
+	local team = _team_by_name[tname]
+	if team then
 		player:get_meta():set_string("team", tname)
+
+		for i=1, #_registered_on_change_team do
+			_registered_on_change_team[i](player, team)
+		end
+
 		return true
 	else
 		return false
@@ -72,6 +79,10 @@ function teams.chat_send_team(tname, message)
 			minetest.chat_send_player(players[i]:get_player_name(), message)
 		end
 	end
+end
+
+function teams.register_on_change_team(func)
+	_registered_on_change_team[#_registered_on_change_team + 1] = func
 end
 
 local storage = minetest.get_mod_storage()

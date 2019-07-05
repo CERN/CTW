@@ -4,6 +4,7 @@ allow_defined_top = true
 globals = {
 	"teams",
 	"ChatCmdBuilder",
+	"hudkit",
 }
 
 read_globals = {
