@@ -4,6 +4,26 @@ farming = {}
 farming.path = minetest.get_modpath("farming")
 
 
+-- Wheat
+
+minetest.register_node("farming:wheat", {
+	description = "Wheat",
+	drawtype = "plantlike",
+	tiles = {"farming_wheat_8.png"},
+	waving = 1,
+	paramtype = "light",
+	paramtype2 = "meshoptions",
+	sunlight_propagates = true,
+	buildable_to = true,
+	walkable = false,
+	groups = {flammable = 4, snappy = 3, attached_node = 1},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5},
+	},
+})
+
+
 -- Cotton
 
 minetest.register_node("farming:cotton", {
