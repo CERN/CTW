@@ -25,6 +25,7 @@
 		references_required = {
 			[ItemStack],...
 			-- List of references (=books) required, as ItemStacks
+			-- Be sure not to include one item name multiple times, this will lead to incorrect behavior!
 		}
 	}
 	
