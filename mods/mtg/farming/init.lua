@@ -4,64 +4,23 @@ farming = {}
 farming.path = minetest.get_modpath("farming")
 
 
--- Load files
-
-dofile(farming.path .. "/api.lua")
-dofile(farming.path .. "/nodes.lua")
-dofile(farming.path .. "/hoes.lua")
-
-
--- WHEAT
-
-farming.register_plant("farming:wheat", {
-	description = "Wheat Seed",
-	paramtype2 = "meshoptions",
-	inventory_image = "farming_wheat_seed.png",
-	steps = 8,
-	minlight = 13,
-	maxlight = default.LIGHT_MAX,
-	fertility = {"grassland"},
-	groups = {food_wheat = 1, flammable = 4},
-	place_param2 = 3,
-})
-
-minetest.register_craftitem("farming:flour", {
-	description = "Flour",
-	inventory_image = "farming_flour.png",
-	groups = {food_flour = 1, flammable = 1},
-})
-
-minetest.register_craftitem("farming:bread", {
-	description = "Bread",
-	inventory_image = "farming_bread.png",
-	on_use = minetest.item_eat(5),
-	groups = {food_bread = 1, flammable = 2},
-})
-
-minetest.register_craft({
-	type = "shapeless",
-	output = "farming:flour",
-	recipe = {"farming:wheat", "farming:wheat", "farming:wheat", "farming:wheat"}
-})
-
-minetest.register_craft({
-	type = "cooking",
-	cooktime = 15,
-	output = "farming:bread",
-	recipe = "farming:flour"
-})
-
-
 -- Cotton
 
-farming.register_plant("farming:cotton", {
-	description = "Cotton Seed",
-	inventory_image = "farming_cotton_seed.png",
-	steps = 8,
-	minlight = 13,
-	maxlight = default.LIGHT_MAX,
-	fertility = {"grassland", "desert"},
-	groups = {flammable = 4},
+minetest.register_node("farming:cotton", {
+	description = "Cotton",
+	drawtype = "plantlike",
+	tiles = {"farming_cotton_8.png"},
+	waving = 1,
+	paramtype = "light",
+	paramtype2 = "meshoptions",
+	sunlight_propagates = true,
+	buildable_to = true,
+	walkable = false,
+	groups = {flammable = 4, snappy = 3, attached_node = 1},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5},
+	},
 })
 
 minetest.register_craftitem("farming:string", {
@@ -87,37 +46,12 @@ minetest.register_craft({
 })
 
 
--- Straw
-
-minetest.register_craft({
-	output = "farming:straw 3",
-	recipe = {
-		{"farming:wheat", "farming:wheat", "farming:wheat"},
-		{"farming:wheat", "farming:wheat", "farming:wheat"},
-		{"farming:wheat", "farming:wheat", "farming:wheat"},
-	}
-})
-
-minetest.register_craft({
-	output = "farming:wheat 3",
-	recipe = {
-		{"farming:straw"},
-	}
-})
-
-
 -- Fuels
 
 minetest.register_craft({
 	type = "fuel",
 	recipe = "farming:straw",
 	burntime = 3,
-})
-
-minetest.register_craft({
-	type = "fuel",
-	recipe = "farming:wheat",
-	burntime = 1,
 })
 
 minetest.register_craft({
@@ -132,8 +66,56 @@ minetest.register_craft({
 	burntime = 1,
 })
 
-minetest.register_craft({
-	type = "fuel",
-	recipe = "farming:hoe_wood",
-	burntime = 5,
+
+-- Nodes
+
+minetest.register_node("farming:soil", {
+	description = "Soil",
+	tiles = {"default_dirt.png^farming_soil.png", "default_dirt.png"},
+	drop = "default:dirt",
+	groups = {crumbly=3, soil=2, grassland = 1, field = 1},
+	sounds = default.node_sound_dirt_defaults(),
 })
+
+minetest.register_node("farming:soil_wet", {
+	description = "Wet Soil",
+	tiles = {"default_dirt.png^farming_soil_wet.png", "default_dirt.png^farming_soil_wet_side.png"},
+	drop = "default:dirt",
+	groups = {crumbly=3, soil=3, wet = 1, grassland = 1, field = 1},
+	sounds = default.node_sound_dirt_defaults(),
+})
+
+minetest.register_node("farming:desert_sand_soil", {
+	description = "Desert Sand Soil",
+	drop = "default:desert_sand",
+	tiles = {"farming_desert_sand_soil.png", "default_desert_sand.png"},
+	groups = {crumbly=3, falling_node=1, sand=1, soil = 2, desert = 1, field = 1},
+	sounds = default.node_sound_sand_defaults(),
+})
+
+minetest.register_node("farming:desert_sand_soil_wet", {
+	description = "Wet Desert Sand Soil",
+	drop = "default:desert_sand",
+	tiles = {"farming_desert_sand_soil_wet.png", "farming_desert_sand_soil_wet_side.png"},
+	groups = {crumbly=3, falling_node=1, sand=1, soil=3, wet = 1, desert = 1, field = 1},
+	sounds = default.node_sound_sand_defaults(),
+})
+
+minetest.register_node("farming:straw", {
+	description = "Straw",
+	tiles = {"farming_straw.png"},
+	is_ground_content = false,
+	groups = {snappy=3, flammable=4, fall_damage_add_percent=-30},
+	sounds = default.node_sound_leaves_defaults(),
+})
+
+stairs.register_stair_and_slab(
+	"straw",
+	"farming:straw",
+	{snappy = 3, flammable = 4},
+	{"farming_straw.png"},
+	"Straw Stair",
+	"Straw Slab",
+	default.node_sound_leaves_defaults(),
+	true
+)
