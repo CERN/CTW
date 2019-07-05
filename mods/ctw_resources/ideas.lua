@@ -53,25 +53,91 @@ local function idea_form_builder(id)
 	if not idea then
 		error("idea_form_builder: ID "..idea_id.." is unknown!")
 	end
-	local textt = {idea.description, "", "Gained technologies:"}
-	for _, tech in ipairs(idea.technologies_gained) do
-		table.insert(textt, " - "..tech)
+	
+	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required), #idea.technologies_gained)
+	
+	local tech_line_h = 1
+	local desc_height = doc.FORMSPEC.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
+	local tech_start_y = doc.FORMSPEC.ENTRY_START_Y + desc_height
+	local third_width = doc.FORMSPEC.ENTRY_WIDTH / 3
+	
+	local form = "label["
+					..doc.FORMSPEC.ENTRY_START_X..","..doc.FORMSPEC.ENTRY_START_Y
+					..";"..idea.name.."\n"..string.rep("=", #idea.name).."]";
+	form = form .. doc.widgets.text(idea.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1, doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
+	
+	local function form_render_tech_entry(rn, what, label, xstart, img)
+		form = form .. "image_button["
+						..(doc.FORMSPEC.ENTRY_START_X+xstart)..","..(tech_start_y + rn*tech_line_h - 0.2)..";1,1;"
+						..img..";"
+						.."goto_"..what.."_"..rn..";"
+						.."]"
+		form = form .. "label["
+					..(doc.FORMSPEC.ENTRY_START_X+xstart+1)..","..(tech_start_y + rn*tech_line_h)
+					..";"..label.."]";
 	end
-	table.insert(textt, "\nRequired Technologies:")
-	for _, tech in ipairs(idea.technologies_required) do
-		table.insert(textt, " - "..tech)
+	
+	form = form .. "label["
+					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
+					..";Technologies gained:]";
+	for rn, techid in ipairs(idea.technologies_gained) do
+		local tech = {name= techid} --TODO
+		form_render_tech_entry(rn, "tg", tech.name, 0, "ctw_technologies_technology.png")
 	end
-	table.insert(textt, "\nRequired References:")
-	for _, ref in ipairs(idea.references_required) do
+	form = form .. "label["
+					..(doc.FORMSPEC.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
+					..";Technologies required:]";
+	for rn, techid in ipairs(idea.technologies_required) do
+		local tech = {name= techid} --TODO
+		form_render_tech_entry(rn, "tr", tech.name, third_width, "ctw_technologies_technology.png")
+	end
+	form = form .. "label["
+					..(doc.FORMSPEC.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
+					..";References required:]";
+	for rn, ref in ipairs(idea.references_required) do
 		local istack = ItemStack(ref)
 		local idef = minetest.registered_items[istack:get_name()]
 		local iname = idef and idef.description or "Unknown Item"
-		table.insert(textt, " - "..istack:get_count().."x "..iname)
+		local itex = idef and idef.inventory_image or "ctw_texture_missing.png"
+		form_render_tech_entry(rn, "rr", iname, 2*third_width, itex)
 	end
 	
-	local form = doc.widgets.text(table.concat(textt, "\n"), doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y, doc.FORMSPEC.ENTRY_WIDTH - 0.4, doc.FORMSPEC.ENTRY_HEIGHT)
 	return form
 end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	local pname = player:get_player_name()
+	if formname == "doc:entry" then
+		local cid, eid = doc.get_selection(pname)
+		if cid == "ctw_ideas" then
+			local idea = ideas[eid]
+			if not idea then
+				return
+			end
+			for rn, techid in ipairs(idea.technologies_gained) do
+				if fields["goto_tg_"..rn] then
+					doc.show_entry(pname, "ctw_technologies", techid)
+				end
+			end
+			for rn, techid in ipairs(idea.technologies_required) do
+				if fields["goto_tr_"..rn] then
+					doc.show_entry(pname, "ctw_technologies", techid)
+				end
+			end
+			for rn, ref in ipairs(idea.references_required) do
+				if fields["goto_rr_"..rn] then
+					local istack = ItemStack(ref)
+					local idef = minetest.registered_items[istack:get_name()]
+					local iid = idef and idef._ctw_reference_id
+					if idd then
+						doc.show_entry(pname, "ctw_references", iid)
+					end
+				end
+			end
+		end
+	end
+
+end)
 
 doc.add_category("ctw_ideas", {
 	name = "Ideas",
@@ -160,11 +226,12 @@ end
 
 -- TODO only for testing
 
-minetest.register_chatcommand("ctw_test_reveal", {
+minetest.register_chatcommand("ctwt", {
          param = "",
          description = "Reveal the hidden entry of the doc_example mod",
          privs = {},
          func = function(playername, params)
                 ctw_resources.reveal_idea(params, {"singleplayer"})
+                doc.show_category("singleplayer", "ctw_ideas")
         end,
 })

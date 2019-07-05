@@ -29,10 +29,11 @@ function ctw_resources.register_reference(id, itemdef)
 		itemdef.groups = {}
 	end
 	itemdef.groups.ctw_reference = 1
+	itemdef._ctw_reference_id = id
 	
 	doc.add_entry("ctw_references", id, {
 		name = itemdef.description,
-		data = itemdef._ctw_longdesc,
+		data = "\n"..itemdef.description.."\n"..string.rep("=", #itemdef.description).."\n\n"..itemdef._ctw_longdesc,
 	})
 	
 	minetest.register_craftitem("ctw_resources:"..id, itemdef)
