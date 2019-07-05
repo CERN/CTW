@@ -18,12 +18,22 @@ def = {
 
 ]]--
 
+doc.add_category("ctw_references", {
+	name = "References",
+	description = "References you can collect",
+	build_formspec = doc.entry_builders.text,
+})
 
-ctw_resources.register_reference(id, itemdef)
+function ctw_resources.register_reference(id, itemdef)
 	if not itemdef.groups then
 		itemdef.groups = {}
 	end
 	itemdef.groups.ctw_reference = 1
+	
+	doc.add_entry("ctw_references", id, {
+		name = itemdef.description,
+		data = itemdef._ctw_longdesc,
+	})
 	
 	minetest.register_craftitem("ctw_resources:"..id, itemdef)
 end

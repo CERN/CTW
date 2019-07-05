@@ -48,10 +48,35 @@ local function logs(str)
 	minetest.log("action", "[ctw_resources] "..str)
 end
 
+local function idea_form_builder(id)
+	local idea = ideas[id]
+	if not idea then
+		error("idea_form_builder: ID "..idea_id.." is unknown!")
+	end
+	local textt = {idea.description, "", "Gained technologies:"}
+	for _, tech in ipairs(idea.technologies_gained) do
+		table.insert(textt, " - "..tech)
+	end
+	table.insert(textt, "\nRequired Technologies:")
+	for _, tech in ipairs(idea.technologies_required) do
+		table.insert(textt, " - "..tech)
+	end
+	table.insert(textt, "\nRequired References:")
+	for _, ref in ipairs(idea.references_required) do
+		local istack = ItemStack(ref)
+		local idef = minetest.registered_items[istack:get_name()]
+		local iname = idef and idef.description or "Unknown Item"
+		table.insert(textt, " - "..istack:get_count().."x "..iname)
+	end
+	
+	local form = doc.widgets.text(table.concat(textt, "\n"), doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y, doc.FORMSPEC.ENTRY_WIDTH - 0.4, doc.FORMSPEC.ENTRY_HEIGHT)
+	return form
+end
+
 doc.add_category("ctw_ideas", {
 	name = "Ideas",
 	description = "Ideas that your team gained",
-	-- TODO specify custom formspec builder
+	build_formspec = idea_form_builder
 })
 
 -- Registers a new idea with the given idea_def.
@@ -68,7 +93,7 @@ function ctw_resources.register_idea(id, idea_def)
 	
 	doc.add_entry("ctw_ideas", id, {
 		name = idea_def.name,
-		data = idea_def.description,
+		data = id,
 		hidden = true,
 	})
 	
