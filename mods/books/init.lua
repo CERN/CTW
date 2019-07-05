@@ -5,8 +5,13 @@
 local enable_bookshelf_randomization = false
 
 local book_types = {
-	type1 = { "Book name 1" },
-	type2 = { "Book name 2" },
+	white = { "White book" },
+	red = { "Red book" },
+	green = { "Green book" },
+	blue = { "Blue book" },
+	yellow = { "Yellow book" },
+	orange = { "Orange book" },
+	purple = { "Purple book" },
 }
 
 local book_respawn_time_min = 10
