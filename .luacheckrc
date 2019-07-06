@@ -6,6 +6,8 @@ globals = {
 	"ChatCmdBuilder",
 	"hudkit",
 	"player_api",
+	"doc",
+	"worldedit",
 }
 
 read_globals = {
