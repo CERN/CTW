@@ -4,8 +4,8 @@ reseau.transmit_first = function(txpos, message)
 end
 
 -- Warning: Connecting RX and TX directly will not check technology compatibility
--- Returns true if message was successfuly delivered
-reseau.transmit = function(previous, frontier, message, startdepth)
+-- Returns packet throughput that was actually achieved until next node (e.g. receiver / router)
+reseau.transmit = function(previous, frontier, packet, startdepth)
 	local depth = startdepth or 0
 
 	while true do
@@ -21,17 +21,22 @@ reseau.transmit = function(previous, frontier, message, startdepth)
 		frontier = nil
 		depth = depth + 1
 
+		-- process next node: technology's throughput?
+		local technology = reseau.get_any_technology(minetest.get_node(link).name)
+		local throughput_limit = reseau.technologies_get_throughput(technology)
+		packet.throughput = throughput_limit < packet.throughput and throughput_limit or packet.throughput
+
 		-- process next node: conductor or receiver?
 		local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
 		if link_node_spec.reseau.conductor then
 			frontier = link
 			reseau.bitparticles_conductor(link, depth)
 		elseif link_node_spec.reseau.receiver then
-			link_node_spec.reseau.receiver.action(link, message, depth)
+			link_node_spec.reseau.receiver.action(link, packet, depth)
 			reseau.bitparticles_receiver(link, depth)
-			return true
+			return packet.throughput
 		end
 	end
 
-	return false
+	return 0
 end

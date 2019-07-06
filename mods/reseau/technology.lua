@@ -29,3 +29,30 @@ reseau.technologies_compatible = function(nodename1, nodename2)
 		return #reseau.table_intersection(technology1, technology2) > 0
 	end
 end
+
+-- technology throughput may be static be also depend on year / era / technologies
+-- if a node is compatible with multiple technologies, the best throughput is chosen
+-- returns throughput in MB/s
+-- TODO: implement smart throughput calculation
+reseau.technologies_get_throughput = function(technologies)
+	if type(technologies) == "string" then
+		technologies = {technologies}
+	end
+
+	local best_throughput = 0
+	local inc_throughput = function(throughput)
+		if best_throughput < throughput then
+			best_throughput = throughput
+		end 
+	end
+
+	for _, tech in ipairs(technologies) do
+		if tech == "copper" then
+			inc_throughput(20)
+		elseif tech == "fiber" then
+			inc_throughput(1000)
+		end
+	end
+
+	return best_throughput
+end
