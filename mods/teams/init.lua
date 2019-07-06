@@ -13,6 +13,10 @@ end)
 local hud = hudkit()
 
 local function set_tint(player, team)
+	if not team then
+		return
+	end
+
 	if not hud:exists(player, "teams:hud_team") then
 		hud:add(player, "teams:hud_team", {
 			hud_elem_type = "text",
@@ -32,6 +36,10 @@ local function set_tint(player, team)
 end
 
 local function set_dp(player, team)
+	if not team then
+		return
+	end
+
 	if not hud:exists(player, "teams:hud_dp") then
 		hud:add(player, "teams:hud_dp", {
 			hud_elem_type = "text",
