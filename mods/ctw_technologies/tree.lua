@@ -78,14 +78,14 @@ function ctw_technologies.build_tech_tree()
 				break
 			end
 			lvl = math.max(lvl, atech.tree_level + 1)
-			
+
 			-- locate dependency line
 			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level}
 		end
 		if not try_later then
 			logs("Tech Tree Sort: "..techid.." on level "..lvl)
 			tech.tree_level = lvl
-			
+
 			-- add render info
 			render_info.max_levels = math.max(lvl, render_info.max_levels)
 			if not render_info.levels[lvl] then
@@ -94,7 +94,7 @@ function ctw_technologies.build_tech_tree()
 			local my_line = tech.tree_line or (#render_info.levels[lvl] + 1)
 			render_info.levels[lvl][my_line] = techid
 			tech.tree_line = my_line
-			
+
 			-- add connections
 			local conns_lvl = tech.tree_conn_loc or (lvl-1)
 			if not render_info.conns[conns_lvl] then
@@ -103,7 +103,7 @@ function ctw_technologies.build_tech_tree()
 			for _, e in ipairs(dep_is_at) do
 				table.insert(render_info.conns[conns_lvl], {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl})
 			end
-			
+
 			-- add enables to the queue
 			for _, atechid in ipairs(tech.enables) do
 				if not contains(c_queue, atechid) then
@@ -167,10 +167,10 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fh)>fdata.maxy then
 			return ""
 		end
-		
+
 		local tech = ctw_technologies.get_technology(techid)
 		local img = tech.image or "ctw_technologies_technology.png"
-		
+
 		local form = "image_button["
 						..(x)..","..(y)..";"..fwim..","..fh..";"
 						..img..";"
@@ -185,7 +185,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 
 
 -- Renders the technology tree onto a given formspec area
--- 
+--
 function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scrollpos, discovered_techs, hilit)
 
 	local lvl_init_off = 0.5
@@ -196,21 +196,21 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 	local line_space    = 2
 	local conn_ydown    = 0.4
 	local scroll_w = (render_info.max_levels+1)*lvl_space
-	
+
 	scrollpos = rng(scrollpos, 0, 1000)
-	
+
 	local fdata = {
 		minx = minpx,
 		miny = minpy,
 		maxx = minpx+wwidth,
 		maxy = minpy+wheight,
-		
+
 		offx = math.max( (scroll_w - wwidth) * (scrollpos / 1000) , 0),
 		offy = 0,
 	}
-	
+
 	local formt = {}
-	
+
 	-- render technology elements
 	for lvl, lines in pairs(render_info.levels) do
 		for line, techid in pairs(lines) do
@@ -218,7 +218,7 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 			table.insert(formt, tech_entry(lvl*lvl_space + lvl_init_off, line*line_space + line_init_off, techid, discovered_techs[techid], hithis, fdata))
 		end
 	end
-	
+
 	-- render conns
 	for lvl, conns in pairs(render_info.conns) do
 		for xdisp,conn in pairs(conns) do
