@@ -17,11 +17,6 @@
 			-- List of technologies (=awards) the team will gain when
 				getting permission for this idea.
 		}
-		technologies_required = {
-			[technology IDs],...
-			-- List of technologies the team needs to have discovered
-				before this idea will work
-		}
 		references_required = {
 			[ItemStack],...
 			-- List of references (=books) required, as ItemStacks
@@ -30,6 +25,12 @@
 		dp_required = 1000
 		-- Number of Discovery Points that are required to get this idea.
 		-- This is just an orientational value when NPCs should give out the idea
+		
+		
+		-- This field will be filled out automatically at registration based on technologies
+		technologies_required = {
+			[technology IDs],...
+		}
 	}
 
 	Documentation is automatically generated out of these data
@@ -166,8 +167,19 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	init_default(idea_def, "name", id)
 	init_default(idea_def, "description", "No description")
 	init_default(idea_def, "technologies_gained", {})
-	init_default(idea_def, "technologies_required", {})
 	init_default(idea_def, "references_required", {})
+	
+	-- check required techs
+	local techreq = {}
+	for _, techid in ipairs(idea_def.technologies_gained) do
+		local tech = ctw_technologies.get_technology(techid)
+		for _, atechid in ipairs(tech.requires) do
+			if not contains(techreq, atechid) then
+				table.insert(techreq, atechid)
+			end
+		end
+	end
+	idea_def.technologies_required = techreq
 
 	doc.add_entry("ctw_ideas", id, {
 		name = idea_def.name,
@@ -194,6 +206,9 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 end
 
 function ctw_resources.get_idea(idea_id)
+	if not ideas[idea_id] then
+		error("Idea ID "..id.." is unknown!")
+	end
 	return ideas[idea_id]
 end
 
@@ -259,7 +274,7 @@ end
 
 -- TODO only for testing
 
-minetest.register_chatcommand("ctwt", {
+minetest.register_chatcommand("ctwi", {
          param = "",
          description = "Reveal the hidden entry of the doc_example mod",
          privs = {},
