@@ -31,8 +31,8 @@
   * May return nil.
 * teams.set_team(player, team_name)
   * Returns bool to indicate success.
-* teams.get_members(team_name) -> List of Players
-  * Note: only lists online members.
+* teams.get_members(team_name) -> List of player names
+* teams.get_online_members(team_name) -> List of online players
 * teams.chat_send_team(team_name, message)
 * teams.register_on_team_changed(func(player, team_def))
   * func() return value is ignored.
