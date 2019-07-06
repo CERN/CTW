@@ -4,8 +4,6 @@
 -- Where 0 means the wire has no visual connection to that direction and
 -- 1 means that the wire visually connects to that other node.
 
--- TODO: techid should become a compatibility table
-
 -- #######################
 -- ## Update wire looks ##
 -- #######################
@@ -23,7 +21,7 @@ local wire_getconnect = function(from_pos, self_pos, wire_name)
 		if self_nodespec.is_reseau_wire then
 			rules = reseau.rules.default
 		else
-			rules = reseau.get_any_rules(self_node.name)
+			rules = reseau.get_any_rules(self_pos)
 		end
 
 		for _, r in ipairs(rules) do
@@ -188,13 +186,13 @@ local function register_wires(technology, technologyspec)
 		local spec = reseau.mergetable(technologyspec, {
 			drawtype = "nodebox",
 			paramtype = "light",
-			paramtype2 = "facedir",
 			is_ground_content = false,
 			sunlight_propagates = true,
 			selection_box = selectionbox,
 			node_box = nodebox,
 			walkable = false,
 			drop = "reseau:"..technology.."_wire_00000000",
+			buildable_to = true,
 			is_reseau_wire = true,
 			on_rotate = false,
 			reseau = {

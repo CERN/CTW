@@ -20,6 +20,8 @@ minetest.register_on_placenode(function(pos, node)
 end)
 
 minetest.register_globalstep(function(dtime)
+	local marked_for_removal = {}
+
 	for poshash in pairs(reseau.db.autotransmitters) do
 		reseau.db.autotransmitters[poshash] = reseau.db.autotransmitters[poshash] - dtime
 		if reseau.db.autotransmitters[poshash] < 0 then
@@ -27,9 +29,15 @@ minetest.register_globalstep(function(dtime)
 			local node = minetest.get_node(pos)
 
 			-- If relaunch succeeds (transmitter is still there), then actually transmit!
-			if (reseau.try_launch_autotransmitter(pos, node)) then
+			if reseau.try_launch_autotransmitter(pos, node) then
 				minetest.registered_nodes[node.name].reseau.transmitter.autotransmit.action(pos)
+			else
+				table.insert(marked_for_removal, poshash) 
 			end
 		end
+	end
+
+	for _, poshash in ipairs(marked_for_removal) do
+		reseau.db.autotransmitters[poshash] = nil
 	end
 end)

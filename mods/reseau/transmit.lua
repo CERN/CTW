@@ -1,8 +1,11 @@
+-- transmit to the first connection that is found
+reseau.transmit_first = function(txpos, message)
+	reseau.transmit(txpos, txpos, message)
+end
+
 -- Warning: Connecting RX and TX directly will not check technology compatibility
-reseau.transmit = function(txpos, message)
-	local frontier = txpos
-	local previous = txpos
-	local depth = 0
+reseau.transmit = function(previous, frontier, message, startdepth)
+	local depth = startdepth or 0
 
 	while true do
 		-- find next node (link)
@@ -22,7 +25,7 @@ reseau.transmit = function(txpos, message)
 			frontier = link
 			reseau.bitparticles_conductor(link, depth)
 		elseif link_node_spec.reseau.receiver then
-			link_node_spec.reseau.receiver.receive(link, message)
+			link_node_spec.reseau.receiver.action(link, message, depth)
 			reseau.bitparticles_receiver(link, depth)
 			break
 		end
