@@ -148,18 +148,27 @@ function npc.show_dialogue(player, npc_name, def)
 	answer = answer:gsub("$TEAM", "TODO")
 
 	local fs = {
-		"size[7,6]",
-		("textarea[0,0;6,3;;NPC says:;%s]"):format(minetest.formspec_escape(answer))
+		"size[10,%f]",
+		"real_coordinates[true]",
+		("textarea[0.5,1;9,3;;%s;%s]"):format(
+			minetest.formspec_escape(npc.registered_npcs[npc_name].infotext),
+			minetest.formspec_escape(answer)
+		)
 	}
 
-	local button_spacing = 3.5
-	local button_y_offset = 4
+	local button_spacing = 5
+	local button_y_pos = 4
 	local function add_button(i, option)
-		fs[#fs + 1] = ("button%s[%f,%f;3,1;option_%i;%s]"):format(
+		if i % 2 == 0 then
+			button_y_pos = button_y_pos + 1.5
+		end
+		local x = (i % 2) * button_spacing + 0.5
+
+		fs[#fs + 1] = ("button%s[%f,%f;4,1;option_%i;%s]"):format(
 			-- Close if it's not going to open another dialogue
 			type(option.target) ~= "string" and "_exit" or "",
 			-- Show two option per line
-			(i % 2) * button_spacing, math.floor((i - 1) / 2) + button_y_offset,
+			x, button_y_pos,
 			i, minetest.formspec_escape(option.text)
 		)
 	end
@@ -172,6 +181,8 @@ function npc.show_dialogue(player, npc_name, def)
 		-- Nothing important happened
 		add_button(1, { text = "Okay" })
 	end
+
+	fs[1] = fs[1]:format(button_y_pos + 1.5)
 
 	player_formspecs[player_name] = { name = npc_name, def = def }
 	minetest.show_formspec(player_name, "npc:interaction", table.concat(fs))
@@ -233,6 +244,7 @@ minetest.register_lbm({
 	label = "Spawn NPCs",
 	name = "npc:spawn_npcs",
 	nodenames = {"groups:npc_spawner"},
+	run_at_every_load = true,
 	action = function(pos, node)
 		local npc_name = node:match("npc:npc_(.*)")
 		if not npc_name then

@@ -2,7 +2,7 @@ npc.register_npc("steve", {})
 
 npc.register_event("steve", {
 	id = "test1",
-	dialogue = "$PLAYER, I got something for you! <;:->-]",
+	dialogue = "$PLAYER, I got s\n\nom\n\nething for you! <;:->-]",
 	options = {
 		{
 			text = "get",
@@ -15,7 +15,7 @@ npc.register_event("steve", {
 
 npc.register_event("steve", {
 	id = "test2",
-	dialogue = "Hello $PLAYER in team $TEAM.",
+	dialogue = "Hello $PLAYER i\n te\nam\n $TEAM.",
 	options = {
 		{ text = "Say HI", target = function() minetest.chat_send_all("NPCI: hi!") end },
 		{ text = "GoTo1", target = "test1" },
@@ -29,6 +29,6 @@ npc.register_event("steve", {
 })
 
 
-npc.register_event("steve", {
-		dialogue = "Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.",
-})
+--[[npc.register_event("steve", {
+	dialogue = "Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.",
+})]]

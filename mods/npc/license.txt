@@ -1,0 +1,5 @@
+ Skin Licenses
+---------------
+
+* `npc_skin_geopbyte.png`: Geopbyte (CC BY-SA 3.0)
+* `npc_skin_lovehart.png`: lovehart (CC BY-SA 3.0)
