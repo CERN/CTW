@@ -2,6 +2,12 @@ world = {}
 
 dofile(minetest.get_modpath("world") .. "/emerge.lua")
 dofile(minetest.get_modpath("world") .. "/api.lua")
+dofile(minetest.get_modpath("world") .. "/sounds.lua")
+
+if minetest.get_modpath("teams") == nil then
+	minetest.chat_send_all("** WORLD BUILDER MODE **")
+	return
+end
 
 if minetest.get_mapgen_setting("mg_name") ~= "singlenode" then
 	minetest.log("error", "Prebuilt map is disabled when not running singlenode!")
