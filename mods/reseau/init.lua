@@ -28,54 +28,58 @@ local transmitter_get_formspec = function(meta)
 		"list[current_player;main;0,4;8,1;]"
 end
 
--- TODO: team ownership (save in tape meta)!
-minetest.register_node(":reseau:testtransmitter", {
-	description = "Transmitter (Testing)",
-	tiles = {"default_tree.png"},
-	groups = {cracky = 3},
-	reseau = {
-		transmitter = {
-			technology = {
-				"copper", "fiber"
-			},
-			rules = reseau.rules.default,
-			autotransmit = {
-				interval = TX_INTERVAL,
-				action = function(pos)
-					-- try to transmit data via network, otherwise store on tape
-					if (not reseau.transmit_first(pos, "hello world!")) then
-						local meta = minetest.get_meta(pos)
-						local cache = meta:get_int("cache") or 0
+for _, team in ipairs(teams.get_all()) do
+	-- TODO: team ownership (save in tape meta)!
+	minetest.register_node(":reseau:testtransmitter_" .. team.name, {
+		description = "Transmitter (Testing)",
+		tiles = { reseau.with_overlay("default_tree.png", team.color, "reseau_wire_overlay_side.png") },
+		groups = { ["protection_" .. team.name] = 1 },
+		team_name = team.name,
+		reseau = {
+			transmitter = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = reseau.rules.default,
+				autotransmit = {
+					interval = TX_INTERVAL,
+					action = function(pos)
+						-- try to transmit data via network, otherwise store on tape
+						if (not reseau.transmit_first(pos, "hello world!")) then
+							local meta = minetest.get_meta(pos)
+							local cache = meta:get_int("cache") or 0
 
-						cache = cache + reseau.era.genspeed * TX_INTERVAL
-						if cache > reseau.era.tape_capacity then
-							cache = cache - reseau.era.tape_capacity
+							cache = cache + reseau.era.genspeed * TX_INTERVAL
+							if cache > reseau.era.tape_capacity then
+								cache = cache - reseau.era.tape_capacity
 
-							local inv = meta:get_inventory()
-							local tape_stack = ItemStack("reseau:tape 1")
-							local tape_meta = tape_stack:get_meta()
-							tape_meta:set_int("capacity", reseau.era.tape_capacity)
-							tape_meta:set_string("team", "red")
-							tape_meta:set_string("description", reseau.era.tape_capacity.." MB tape (team red)")
+								local inv = meta:get_inventory()
+								local tape_stack = ItemStack("reseau:tape 1")
+								local tape_meta = tape_stack:get_meta()
+								tape_meta:set_int("capacity", reseau.era.tape_capacity)
+								tape_meta:set_string("team", team.name)
+								local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
+								tape_meta:set_string("description", desc)
 
-							inv:add_item("tapes", tape_stack)
+								inv:add_item("tapes", tape_stack)
+							end
+							meta:set_int("cache", cache)
+
+							meta:set_string("formspec", transmitter_get_formspec(meta))
 						end
-						meta:set_int("cache", cache)
-
-						meta:set_string("formspec", transmitter_get_formspec(meta))
 					end
-				end
+				}
 			}
-		}
-	},
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		inv:set_size("tapes", 4)
+		},
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			inv:set_size("tapes", 4)
 
-		meta:set_string("formspec", transmitter_get_formspec(meta))
-	end
-})
+			meta:set_string("formspec", transmitter_get_formspec(meta))
+		end
+	})
+end
 
 local receiver_get_formspec = function(meta)
 	return "size[8,5;]"..

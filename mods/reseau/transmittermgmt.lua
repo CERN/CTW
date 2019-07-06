@@ -6,7 +6,7 @@ end
 reseau.try_launch_autotransmitter = function(pos, node)
 	local nodespec = minetest.registered_nodes[node.name]
 
-	if nodespec.reseau
+	if nodespec and nodespec.reseau
 	and nodespec.reseau.transmitter
 	and nodespec.reseau.transmitter.autotransmit then
 		reseau.db.autotransmitters[minetest.hash_node_position(pos)] = nodespec.reseau.transmitter.autotransmit.interval
