@@ -3,11 +3,6 @@ allow_defined_top = true
 
 globals = {
 	"teams",
-	"ChatCmdBuilder",
-	"hudkit",
-	"player_api",
-	"doc",
-	"worldedit",
 }
 
 read_globals = {
@@ -21,7 +16,14 @@ read_globals = {
 	"unpack",
 	"AreaStore",
 	"minetest",
-	"vector"
+	"vector",
+	"ChatCmdBuilder",
+	"hudkit",
+	"player_api",
+	"doc",
+	"worldedit",
+	"file_exists",
+	"Settings",
 }
 
 exclude_files = {
