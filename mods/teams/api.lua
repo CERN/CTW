@@ -1,8 +1,26 @@
 local _team_by_name = {}
-local _registered_on_change_team = {}
+local _registered_on_team_changed = {}
+local _registered_on_points_changed = {}
 
 function teams.get(tname)
 	return _team_by_name[tname]
+end
+
+function teams.get_points(tname)
+	return _team_by_name[tname].points
+end
+
+function teams.add_points(tname, v)
+	local team = teams.get(tname)
+	local points = team.points + v
+	team.points = points
+
+
+	for i=1, #_registered_on_points_changed do
+		_registered_on_points_changed[i](team, v)
+	end
+
+	return points
 end
 
 function teams.get_all(tname)
@@ -19,6 +37,7 @@ function teams.create(def)
 	assert(not _team_by_name[def.name], "Team already exists")
 
 	_team_by_name[def.name] = def
+	def.points = def.points or 0
 
 	return def
 end
@@ -49,8 +68,8 @@ function teams.set_team(player, tname)
 	if team then
 		player:get_meta():set_string("team", tname)
 
-		for i=1, #_registered_on_change_team do
-			_registered_on_change_team[i](player, team)
+		for i=1, #_registered_on_team_changed do
+			_registered_on_team_changed[i](player, team)
 		end
 
 		return true
@@ -81,8 +100,12 @@ function teams.chat_send_team(tname, message)
 	end
 end
 
-function teams.register_on_change_team(func)
-	_registered_on_change_team[#_registered_on_change_team + 1] = func
+function teams.register_on_team_changed(func)
+	_registered_on_team_changed[#_registered_on_team_changed + 1] = func
+end
+
+function teams.register_on_points_changed(func)
+	_registered_on_points_changed[#_registered_on_points_changed + 1] = func
 end
 
 local storage = minetest.get_mod_storage()
