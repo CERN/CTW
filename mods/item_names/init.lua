@@ -76,7 +76,7 @@ minetest.register_globalstep(function(dtime)
 				desc = def and def.description or ""
 			end
 			
-			if def._usage_hint then
+			if def and def._usage_hint then
 				desc = desc .. " (" .. def._usage_hint .. ")"
 			end
 			
