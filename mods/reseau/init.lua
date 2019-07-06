@@ -6,6 +6,8 @@ dofile(minetest.get_modpath("reseau").."/rules.lua")
 dofile(minetest.get_modpath("reseau").."/wires.lua")
 dofile(minetest.get_modpath("reseau").."/particles.lua")
 dofile(minetest.get_modpath("reseau").."/transmit.lua")
+dofile(minetest.get_modpath("reseau").."/modstorage.lua")
+dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 
 minetest.register_node(":reseau:testtransmitter", {
 	description = "Transmitter (Testing)",
@@ -16,7 +18,13 @@ minetest.register_node(":reseau:testtransmitter", {
 			technology = {
 				"copper", "fiber"
 			},
-			rules = reseau.rules.default
+			rules = reseau.rules.default,
+			autotransmit = {
+				interval = 3,
+				action = function(pos)
+					reseau.transmit(pos, "hello world!")
+				end
+			}
 		}
 	},
 })
@@ -56,12 +64,3 @@ minetest.register_node(":reseau:testreceiver", {
 	},
 })
 
-minetest.register_abm({
-	label = "transmitter tx",
-	nodenames = {"reseau:testtransmitter"},
-	interval = 3,
-	chance = 1,
-	action = function(pos)
-		reseau.transmit(pos, "hello world!")
-	end,
-})
