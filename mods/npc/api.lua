@@ -19,7 +19,7 @@ NPC_Event = {
 		}
 		-- ^ Table containing possible answer options (bottons)
 		-- 'text':   the displayed text
-		-- 'target': an NPC_Event ID or custom 'function(player, npc_name, NPC_Event)'
+		-- 'target': an NPC_Event ID or custom 'function(player, NPC_Event)'
 }
 
 Special 'dialogue' fields:
@@ -298,7 +298,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				npc.show_dialogue(player, npc_name, npc.get_event_by_id(option.target))
 				return
 			end
-			option.target(player, npc_name, def)
+			option.target(player, def)
 			return
 		end
 	end

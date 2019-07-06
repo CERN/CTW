@@ -2,12 +2,17 @@ teams = {}
 
 dofile(minetest.get_modpath("teams") .. "/api.lua")
 dofile(minetest.get_modpath("teams") .. "/chatcmd.lua")
+dofile(minetest.get_modpath("teams") .. "/hand.lua")
 
 teams.load()
 
-minetest.register_on_shutdown(function()
+local function safe_recursive()
 	teams.save()
-end)
+	minetest.after(20, safe_recursive)
+end
+minetest.after(20, safe_recursive)
+
+minetest.register_on_shutdown(teams.save)
 
 
 local hud = hudkit()

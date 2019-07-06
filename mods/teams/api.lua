@@ -34,6 +34,7 @@ end
 function teams.create(def)
 	assert(type(def) == "table")
 	assert(type(def.name) == "string", "Team needs a name!")
+	assert(def.name == string.lower(def.name), "Team name must be lowercase!")
 	assert(not _team_by_name[def.name], "Team already exists")
 
 	_team_by_name[def.name] = def
