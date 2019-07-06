@@ -23,12 +23,16 @@ function teams.add_points(tname, v)
 	return points
 end
 
-function teams.get_all(tname)
+function teams.get_all()
 	local list = {}
 	for _, team in pairs(_team_by_name) do
 		list[#list + 1] = team
 	end
 	return list
+end
+
+function teams.get_dict()
+	return _team_by_name
 end
 
 function teams.create(def)

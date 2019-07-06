@@ -41,6 +41,11 @@ local function set_tint(player, team)
 	player_api.set_textures(player, { "team_skin_" .. team.name .. ".png" })
 end
 
+local pb = progressbar.ProgressBar:new()
+pb.width = 600
+pb.offset = { x = 0, y = 70 }
+pb.min, pb.max = 0, 6000000
+
 local function set_dp(player, team)
 	if not team then
 		hud:remove(player, "teams:hud_dp")
@@ -53,7 +58,7 @@ local function set_dp(player, team)
 			position      = {x = 1, y = 0},
 			scale         = {x = 100, y = 100},
 			text          = "DP: " .. team.points,
-			-- number        = team.color_hex,
+			number        = 0xFFFFFF,
 			offset        = {x = -20, y = 40},
 			alignment     = {x = -1, y = 0}
 		})
@@ -61,8 +66,6 @@ local function set_dp(player, team)
 		hud:change(player, "teams:hud_dp", "text", "DP " .. team.points)
 		-- hud:change(player, "teams:hud_dp", "number", team.color_hex)
 	end
-
-	player_api.set_textures(player, { "team_skin_" .. team.name .. ".png" })
 end
 
 local function set_waypoint(player, team)
@@ -92,15 +95,27 @@ local function set_waypoint(player, team)
 	end
 end
 
+local function rebuild_dps_bar()
+	local dps = {}
+	for tname, team2 in pairs(teams.get_dict()) do
+		dps[tname] = team2.points or 0
+	end
+	pb:set_values(dps)
+end
+
+rebuild_dps_bar()
+
 local function on_team_change(player, team)
 	set_tint(player, team)
 	set_dp(player, team)
 	set_waypoint(player, team)
+	rebuild_dps_bar()
 end
 
 minetest.register_on_joinplayer(function(player)
 	local team = teams.get_by_player(player)
 	on_team_change(player, team)
+	pb:update_hud_for_player(player)
 end)
 
 teams.register_on_team_changed(on_team_change)
