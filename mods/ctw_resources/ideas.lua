@@ -7,7 +7,7 @@
 	he returned to the team space. An Idea is an "instruction" how to get
 	to a certain technology.
 	An "idea" is referenced by a unique identifier.
-	
+
 	[idea] = {
 		name = "ASCII",
 		description = "It is necessary to create one unique standard for
@@ -31,7 +31,7 @@
 		-- Number of Discovery Points that are required to get this idea.
 		-- This is just an orientational value when NPCs should give out the idea
 	}
-	
+
 	Documentation is automatically generated out of these data
 ]]
 
@@ -56,19 +56,19 @@ local function idea_form_builder(id)
 	if not idea then
 		error("idea_form_builder: ID "..idea_id.." is unknown!")
 	end
-	
+
 	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required), #idea.technologies_gained)
-	
+
 	local tech_line_h = 1
 	local desc_height = doc.FORMSPEC.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
 	local tech_start_y = doc.FORMSPEC.ENTRY_START_Y + desc_height
 	local third_width = doc.FORMSPEC.ENTRY_WIDTH / 3
-	
+
 	local form = "label["
 					..doc.FORMSPEC.ENTRY_START_X..","..doc.FORMSPEC.ENTRY_START_Y
 					..";"..idea.name.."\n"..string.rep("=", #idea.name).."]";
 	form = form .. doc.widgets.text(idea.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1, doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
-	
+
 	local function form_render_tech_entry(rn, what, label, xstart, img)
 		form = form .. "image_button["
 						..(doc.FORMSPEC.ENTRY_START_X+xstart)..","..(tech_start_y + rn*tech_line_h - 0.2)..";1,1;"
@@ -79,7 +79,7 @@ local function idea_form_builder(id)
 					..(doc.FORMSPEC.ENTRY_START_X+xstart+1)..","..(tech_start_y + rn*tech_line_h)
 					..";"..label.."]";
 	end
-	
+
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
 					..";Technologies gained:]";
@@ -104,7 +104,7 @@ local function idea_form_builder(id)
 		local itex = idef and idef.inventory_image or "ctw_texture_missing.png"
 		form_render_tech_entry(rn, "rr", iname, 2*third_width, itex)
 	end
-	
+
 	return form
 end
 
@@ -160,19 +160,19 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	if ideas[id] then
 		error("Idea with ID "..id.." is already registered!")
 	end
-	
+
 	init_default(idea_def, "name", id)
 	init_default(idea_def, "description", "No description")
 	init_default(idea_def, "technologies_gained", {})
 	init_default(idea_def, "technologies_required", {})
 	init_default(idea_def, "references_required", {})
-	
+
 	doc.add_entry("ctw_ideas", id, {
 		name = idea_def.name,
 		data = id,
 		hidden = true,
 	})
-	
+
 	-- register idea item
 	local itemdef = itemdef_p or { inventory_image = "ctw_resources_idea_generic.png" }
 	if not itemdef.description then
@@ -186,7 +186,7 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	itemdef.on_use = idea_info
 	itemdef._usage_hint = "Left-click to show information"
 	minetest.register_craftitem("ctw_resources:idea_"..id, itemdef)
-	
+
 	ideas[id] = idea_def
 	logs("Registered Idea: "..id)
 end

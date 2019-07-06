@@ -9,7 +9,7 @@ ctw_resources.register_idea("ascii", {
 		"ascii",
 	},
 	technologies_required = {
-		
+
 	},
 	references_required = {
 		"ctw_resources:blue_book 3",
@@ -39,7 +39,7 @@ ctw_resources.register_idea("ethernet", {
 		"lan",
 	},
 	technologies_required = {
-		
+
 	},
 	references_required = {
 		"ctw_resources:red_book 5",

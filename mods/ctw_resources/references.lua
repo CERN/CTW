@@ -11,7 +11,7 @@ def = {
 	description = "Red Book",
 	_ctw_longdesc = "This is a book that is red and contains interesting information",
 	-- long description text to be shown in documentation. This is read by the doc formspec renderer.
-	
+
     inventory_image = "ctw_resources_red_book.png",
     <any other item definition fields>
 }
@@ -40,11 +40,11 @@ function ctw_resources.register_reference(id, itemdef)
 	itemdef._ctw_reference_id = id
 	itemdef.on_use = ref_info
 	itemdef._usage_hint = "Left-click to show information"
-	
+
 	doc.add_entry("ctw_references", id, {
 		name = itemdef.description,
 		data = "\n"..itemdef.description.."\n"..string.rep("=", #itemdef.description).."\n\n"..itemdef._ctw_longdesc,
 	})
-	
+
 	minetest.register_craftitem(id, itemdef)
 end
