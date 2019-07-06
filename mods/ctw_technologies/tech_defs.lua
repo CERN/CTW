@@ -20,14 +20,37 @@ ctw_technologies.register_technology("html", {
 		{image = "ctw_texture_missing.png", label = "Some other benefit"}
 	},
 })
-ctw_technologies.register_technology("twisted-pair", {
-	name = "Twisted-Pair Cable",
-	description = "A cable with twisted pairs!",
+ctw_technologies.register_technology("phonecable", {
+	name = "Phone Cable",
+	description = "The most basic type of signal cable",
 	requires = {
 	},
 	benefits = {
 		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
 	},
+	tree_line = 2,
+})
+ctw_technologies.register_technology("coaxial", {
+	name = "Coaxial Cable",
+	description = "A cable with one conductor and a shield!",
+	requires = {
+		"phonecable"
+	},
+	benefits = {
+		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
+	},
+	tree_line = 2,
+})
+ctw_technologies.register_technology("twisted-pair", {
+	name = "Twisted-Pair Cable",
+	description = "A cable with twisted pairs!",
+	requires = {
+		"coaxial"
+	},
+	benefits = {
+		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
+	},
+	tree_line = 2,
 })
 ctw_technologies.register_technology("ethernet", {
 	name = "Ethernet",
@@ -38,6 +61,7 @@ ctw_technologies.register_technology("ethernet", {
 	benefits = {
 		{image = "ctw_texture_missing.png", label = "Some benefit"}
 	},
+	tree_line = 2,
 })
 
 ctw_technologies.register_technology("www", {

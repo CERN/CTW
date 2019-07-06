@@ -67,41 +67,48 @@ function ctw_technologies.build_tech_tree()
 		-- get level as max of levels of nodes before
 		local lvl = tech.min_tree_level or 0
 		local dep_is_at = {}
+		local try_later = false
 		for depno, atechid in ipairs(tech.requires) do
 			local atech = technologies[atechid]
 			if not atech.tree_level then
-				error("Topological sorting tech tree failed at "..techid.." because dependency "..atechid.." has no tree_level set!")
+				-- try later
+				logs("Tech Tree Sort: "..techid.." ancestors not yet sorted, try later")
+				table.insert(c_queue, techid)
+				try_later = true
+				break
 			end
 			lvl = math.max(lvl, atech.tree_level + 1)
 			
 			-- locate dependency line
 			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level}
 		end
-		logs("Tech Tree Sort: "..techid.." on level "..lvl)
-		tech.tree_level = lvl
-		
-		-- add render info
-		render_info.max_levels = math.max(lvl, render_info.max_levels)
-		if not render_info.levels[lvl] then
-			render_info.levels[lvl] = {}
-		end
-		local my_line = tech.tree_line or (#render_info.levels[lvl] + 1)
-		render_info.levels[lvl][my_line] = techid
-		tech.tree_line = my_line
-		
-		-- add connections
-		local conns_lvl = tech.tree_conn_loc or (lvl-1)
-		if not render_info.conns[conns_lvl] then
-			render_info.conns[conns_lvl] = {}
-		end
-		for _, e in ipairs(dep_is_at) do
-			table.insert(render_info.conns[conns_lvl], {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl})
-		end
-		
-		-- add enables to the queue
-		for _, atechid in ipairs(tech.enables) do
-			if not contains(c_queue, atechid) then
-				table.insert(c_queue, atechid)
+		if not try_later then
+			logs("Tech Tree Sort: "..techid.." on level "..lvl)
+			tech.tree_level = lvl
+			
+			-- add render info
+			render_info.max_levels = math.max(lvl, render_info.max_levels)
+			if not render_info.levels[lvl] then
+				render_info.levels[lvl] = {}
+			end
+			local my_line = tech.tree_line or (#render_info.levels[lvl] + 1)
+			render_info.levels[lvl][my_line] = techid
+			tech.tree_line = my_line
+			
+			-- add connections
+			local conns_lvl = tech.tree_conn_loc or (lvl-1)
+			if not render_info.conns[conns_lvl] then
+				render_info.conns[conns_lvl] = {}
+			end
+			for _, e in ipairs(dep_is_at) do
+				table.insert(render_info.conns[conns_lvl], {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl})
+			end
+			
+			-- add enables to the queue
+			for _, atechid in ipairs(tech.enables) do
+				if not contains(c_queue, atechid) then
+					table.insert(c_queue, atechid)
+				end
 			end
 		end
 	end
@@ -139,8 +146,8 @@ local function hline_as_box(psx, pex, py, fdata)
 	return "box["..sx..","..y..";"..(ex-sx+0.1)..",0.1;red]"
 end
 local function vline_as_box(px, psy, pey, fdata)
-	local sy = clipx(psy, fdata)
-	local ey = clipx(pey, fdata)
+	local sy = clipy(psy, fdata)
+	local ey = clipy(pey, fdata)
 	if sy>ey then
 		sy, ey = ey, sy
 	end
@@ -155,9 +162,9 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local x = px-fdata.offx
 		local y = py-fdata.offy
 		local fwim = 1
-		local fwte = 3
+		local fwte = 2.5
 		local fh = 1
-		if x<fdata.minx or y<fdata.miny or (x+fwim+fwte)>fdata.maxx or (y+fh)>fdata.maxy then
+		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fh)>fdata.maxy then
 			return ""
 		end
 		
@@ -181,16 +188,16 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 -- 
 function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scrollpos, discovered_techs, hilit)
 
-	atdebug(render_info)
-	
 	local lvl_init_off = 0.5
-	local lvl_space = 6
-	local conn_init_off = 5
-	local conn_space    = 0.2
-	local line_init_off = 0.5
+	local lvl_space = 4
+	local conn_init_off = 3.9
+	local conn_space    = 0.1
+	local line_init_off = -0.5
 	local line_space    = 2
 	local conn_ydown    = 0.4
-	local scroll_w = render_info.max_levels*lvl_space
+	local scroll_w = (render_info.max_levels+1)*lvl_space
+	
+	scrollpos = rng(scrollpos, 0, 1000)
 	
 	local fdata = {
 		minx = minpx,
@@ -216,20 +223,55 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 	for lvl, conns in pairs(render_info.conns) do
 		for xdisp,conn in pairs(conns) do
 			local vlinep = lvl*lvl_space + conn_init_off + xdisp*conn_space
-			table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 3.5, vlinep, conn.sline*line_space + line_init_off + conn_ydown, fdata))
+			table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep, conn.sline*line_space + line_init_off + conn_ydown, fdata))
 			table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown, conn.eline*line_space + line_init_off + conn_ydown, fdata))
 			table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off, conn.eline*line_space + line_init_off + conn_ydown, fdata))
 		end
 	end
-	
+	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
+	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")
+	table.insert(formt, "scrollbar["..minpx..","..(minpy+wheight-0.5)..";"..wwidth..",0.5;horizontal;scrollbar;"..scrollpos.."]")
 	return table.concat(formt, "\n")
 end
 
 function ctw_technologies.show_tech_tree(pname, scrollpos)
-	local form = "size[17,10]"..ctw_technologies.render_tech_tree(0, 0, 17, 10, 0, {}, nil)
-	logs(form)
-	minetest.show_formspec(pname, "ctw_tech_tree", form)
+	local form = "size[17,10]"
+			.."label[0.5,0.5;Technology Tree]"
+			..ctw_technologies.render_tech_tree(0, 0, 17, 10, scrollpos, {}, nil)
+	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
 end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	local pname = player:get_player_name()
+	if formname == "ctw_technologies:tech_tree" then
+		for techid, tech in pairs(technologies) do
+			-- look if field was clicked
+			if fields["goto_tech_"..techid] or fields["goto_techt_"..techid] then
+				doc.show_entry(pname, "ctw_technologies", techid)
+				return
+			end
+			if fields.mleft then
+				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+				if ev.type=="VAL" then
+					ctw_technologies.show_tech_tree(pname, ev.value - 1000*(3/(render_info.max_levels)), {}, nil)
+				end
+			end
+			if fields.mright then
+				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+				if ev.type=="VAL" then
+					ctw_technologies.show_tech_tree(pname, ev.value + 1000*(3/(render_info.max_levels)), {}, nil)
+				end
+			end
+			if not fields.quit and fields.scrollbar then
+				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+				if ev.type=="CHG" then
+					ctw_technologies.show_tech_tree(pname, ev.value, {}, nil)
+				end
+			end
+		end
+	end
+
+end)
 
 minetest.register_chatcommand("ctwtr", {
          param = "",

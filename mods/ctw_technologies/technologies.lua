@@ -118,6 +118,11 @@ local function tech_form_builder(id)
 		form_render_tech_entry(rn, "bf", iname, 2*third_width, itex)
 	end
 	
+	form = form .. "button["
+				..(doc.FORMSPEC.ENTRY_END_X-4)..","..(doc.FORMSPEC.ENTRY_START_Y)..";4,1;"
+				.."tech_tree;"
+				.."View technology tree]"
+	
 	return form
 end
 
@@ -144,6 +149,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				if fields["goto_bf_"..rn] then
 					logs("-!-technology benefits not implemented!")
 				end
+			end
+			if fields.tech_tree then
+				ctw_technologies.show_tech_tree(pname, 0)
 			end
 		end
 	end
