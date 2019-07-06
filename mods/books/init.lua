@@ -5,13 +5,13 @@
 local enable_bookshelf_randomization = false
 
 local book_types = {
-	white = { "White book" },
-	red = { "Red book" },
-	green = { "Green book" },
-	blue = { "Blue book" },
-	yellow = { "Yellow book" },
-	orange = { "Orange book" },
-	purple = { "Purple book" },
+	white  = { "White book"  , false },
+	red    = { "Red book"    , true  },
+	green  = { "Green book"  , true  },
+	blue   = { "Blue book"   , true  },
+	yellow = { "Yellow book" , true  },
+	orange = { "Orange book" , true  },
+	purple = { "Purple book" , true  },
 }
 
 local book_respawn_time_min = 10
@@ -40,6 +40,7 @@ end
 
 for key, d in pairs(book_types) do
 	local description = d[1]
+	local can_be_taken = d[2]
 	minetest.register_craftitem("books:book_" .. key, {
 		description = description,
 		inventory_image = "books_book_" .. key .. ".png",
@@ -52,7 +53,7 @@ for key, d in pairs(book_types) do
 		paramtype2 = "facedir",
 		groups = { bookshelf = 1 },
 		on_punch = function(pos, node, puncher, pointed_thing)
-			if puncher ~= nil then
+			if puncher ~= nil and can_be_taken then
 				puncher:get_inventory():add_item("main", "books:book_" .. key)
 				node.name = "books:bookshelf_empty_" .. key
 				minetest.swap_node(pos, node)
@@ -61,18 +62,20 @@ for key, d in pairs(book_types) do
 		end
 	})
 
-	minetest.register_node("books:bookshelf_empty_" .. key, {
-		tiles = { "books_bookshelf_top.png", "books_bookshelf_bottom.png",
-		          "books_bookshelf_side.png", "books_bookshelf_side.png",
-		          "books_bookshelf_empty.png", "books_bookshelf_empty.png" },
-		paramtype2 = "facedir",
-		groups = { bookshelf = 1 },
-		on_timer = function(pos, elapsed)
-			local node = minetest.get_node(pos)
-			node.name = "books:bookshelf_" .. key
-			minetest.swap_node(pos, node)
-		end,
-	})
+	if can_be_taken then
+		minetest.register_node("books:bookshelf_empty_" .. key, {
+			tiles = { "books_bookshelf_top.png", "books_bookshelf_bottom.png",
+			          "books_bookshelf_side.png", "books_bookshelf_side.png",
+			          "books_bookshelf_empty_" .. key .. ".png", "books_bookshelf_empty_" .. key .. ".png" },
+			paramtype2 = "facedir",
+			groups = { bookshelf = 1 },
+			on_timer = function(pos, elapsed)
+				local node = minetest.get_node(pos)
+				node.name = "books:bookshelf_" .. key
+				minetest.swap_node(pos, node)
+			end,
+		})
+	end
 end
 
 local function read_file(filename)
