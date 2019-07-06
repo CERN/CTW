@@ -24,18 +24,6 @@ function homedecor.register(name, original_def)
 
 	homedecor.handle_inventory(name, def, original_def)
 
-	local infotext = def.infotext
-	--def.infotext = nil -- currently used to set locked refrigerator infotexts
-
-	if infotext then
-		local on_construct = def.on_construct
-		def.on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_string("infotext", infotext)
-			if on_construct then on_construct(pos) end
-		end
-	end
-
 	local expand  = def.expand
 	def.expand = nil
 	local after_unexpand = def.after_unexpand

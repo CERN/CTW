@@ -68,9 +68,7 @@ dofile(modpath.."/furnaces.lua")
 dofile(modpath.."/inventory.lua")
 dofile(modpath.."/registration.lua")
 dofile(modpath.."/water_particles.lua")
-dofile(modpath.."/mt_game_beds_functions.lua")
-dofile(modpath.."/sit.lua")
 
 if minetest.settings:get_bool("log_mod") then
-	minetest.log("action", "[HomeDecor API] " .. S("Loaded!"))
+	minetest.log("action", "[HomeDecor API] Loaded!")
 end
