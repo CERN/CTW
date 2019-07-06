@@ -15,6 +15,12 @@ local wire_getconnect = function(from_pos, self_pos, wire_name)
 	if not reseau.technologies_compatible(wire_name, self_node.name) then
 		return false
 	end
+	local wire_nodespec = minetest.registered_nodes[wire_name]
+	if self_nodespec and wire_nodespec
+			and self_nodespec.team_name and wire_nodespec.team_name
+			and self_nodespec.team_name ~= wire_nodespec.team_name then
+		return false
+	end
 
 	if self_nodespec and self_nodespec.reseau then
 		local rules
@@ -193,7 +199,6 @@ local function register_wires(name, technologyspec)
 			node_box = nodebox,
 			walkable = false,
 			drop = "reseau:"..name.."_wire_00000000",
-			buildable_to = true,
 			is_reseau_wire = true,
 			on_rotate = false,
 			reseau = {
@@ -212,24 +217,39 @@ local function register_wires(name, technologyspec)
 	end
 end
 
+local function with_overlay(base, color, overlay_name)
+	return base .. "^(" .. overlay_name .. "^[multiply:" .. color .. ")"
+end
+
+local function make_wire_tiles(base, color)
+	local top = with_overlay(base, color, "reseau_wire_overlay_top.png")
+	local side = with_overlay(base, color, "reseau_wire_overlay_side.png")
+	return { top, top, side, side, side, side }
+end
+
+local function make_wire_inv(base, color)
+	return with_overlay(base, color, "reseau_wire_overlay_inv.png")
+end
+
 for _, team in ipairs(teams.get_all()) do
 	register_wires("copper_" .. team.name, {
 		description = "Copper Cable",
 		technology = "copper",
-		-- TODO: per-team image
-		tiles = { "reseau_copper_wire.png" },
-		inventory_image = "reseau_copper_wire_inv.png",
-		wield_image = "reseau_copper_wire_inv.png",
+		team_name = team.name,
+		tiles = make_wire_tiles("reseau_copper_wire.png", team.color),
+		inventory_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
+		wield_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
 		groups = { [team.name] = 1 }
 	})
 
 	register_wires("fiber_" .. team.name, {
 		description = "Fiber Cable",
 		technology = "fiber",
+		team_name = team.name,
 		-- TODO: per-team image
-		tiles = { "reseau_fiber_wire.png" },
-		inventory_image = "reseau_fiber_wire_inv.png",
-		wield_image = "reseau_fiber_wire_inv.png",
+		tiles = make_wire_tiles("reseau_fiber_wire.png", team.color),
+		inventory_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
+		wield_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
 		groups = { [team.name] = 1 }
 	})
 end
