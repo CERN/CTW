@@ -57,3 +57,7 @@ function reseau.load_position(pos)
 	local vm = minetest.get_voxel_manip()
 	vm:read_from_map(pos, pos)
 end
+
+function reseau.with_overlay(base, color, overlay_name)
+	return base .. "^(" .. overlay_name .. "^[multiply:" .. color .. ")"
+end
