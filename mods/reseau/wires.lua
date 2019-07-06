@@ -36,7 +36,7 @@ end
 -- Update this node
 local wire_updateconnect = function(pos)
 	local wire_name = minetest.get_node(pos).name
-	local technology = minetest.registered_nodes[wire_name].reseau.conductor.technology
+	local basename = minetest.registered_nodes[wire_name].reseau.conductor.basename
 
 	local connections = {}
 
@@ -72,7 +72,7 @@ local wire_updateconnect = function(pos)
 	local nodeid = (nid[0] or "0")..(nid[1] or "0")..(nid[2] or "0")..(nid[3] or "0")
 			..(nid[4] or "0")..(nid[5] or "0")..(nid[6] or "0")..(nid[7] or "0")
 
-	minetest.set_node(pos, {name = "reseau:"..technology.."_wire_"..nodeid})
+	minetest.set_node(pos, {name = "reseau:"..basename.."_wire_"..nodeid})
 end
 
 
@@ -143,7 +143,7 @@ nid_inc = function(nid)
 	return i <= 8
 end
 
-local function register_wires(technology, technologyspec)
+local function register_wires(name, technologyspec)
 	local nid = {0, 0, 0, 0, 0, 0, 0, 0}
 	while true do
 		-- Create group specifiction and nodeid string (see note above for details)
@@ -179,7 +179,7 @@ local function register_wires(technology, technologyspec)
 		if (nid[6] == 1) then table.insert(rules, vector.new(-1,  1,  0)) end
 		if (nid[7] == 1) then table.insert(rules, vector.new( 0,  1, -1)) end
 
-		local groups = {dig_immediate = 3}
+		local groups = reseau.tablecopy(technologyspec.groups) or {dig_immediate = 3}
 		if nodeid ~= "00000000" then
 			groups["not_in_creative_inventory"] = 1
 		end
@@ -192,35 +192,44 @@ local function register_wires(technology, technologyspec)
 			selection_box = selectionbox,
 			node_box = nodebox,
 			walkable = false,
-			drop = "reseau:"..technology.."_wire_00000000",
+			drop = "reseau:"..name.."_wire_00000000",
 			buildable_to = true,
 			is_reseau_wire = true,
 			on_rotate = false,
 			reseau = {
 				conductor = {
-					technology = technology,
+					basename = name,
+					technology = technologyspec.technology,
 					rules = rules
 				}
-			},
-			groups = groups
+			}
 		})
+		spec.groups = groups
 
-		minetest.register_node(":reseau:"..technology.."_wire_"..nodeid, spec)
+		minetest.register_node(":reseau:"..name.."_wire_"..nodeid, spec)
 
 		if (nid_inc(nid) == false) then return end
 	end
 end
 
-register_wires("copper", {
-	description = "Copper Cable",
-	tiles = { "reseau_copper_wire.png" },
-	inventory_image = "reseau_copper_wire_inv.png",
-	wield_image = "reseau_copper_wire_inv.png"
-})
+for _, team in ipairs(teams.get_all()) do
+	register_wires("copper_" .. team.name, {
+		description = "Copper Cable",
+		technology = "copper",
+		-- TODO: per-team image
+		tiles = { "reseau_copper_wire.png" },
+		inventory_image = "reseau_copper_wire_inv.png",
+		wield_image = "reseau_copper_wire_inv.png",
+		groups = { [team.name] = 1 }
+	})
 
-register_wires("fiber", {
-	description = "Fiber Cable",
-	tiles = { "reseau_fiber_wire.png" },
-	inventory_image = "reseau_fiber_wire_inv.png",
-	wield_image = "reseau_fiber_wire_inv.png"
-})
+	register_wires("fiber_" .. team.name, {
+		description = "Fiber Cable",
+		technology = "fiber",
+		-- TODO: per-team image
+		tiles = { "reseau_fiber_wire.png" },
+		inventory_image = "reseau_fiber_wire_inv.png",
+		wield_image = "reseau_fiber_wire_inv.png",
+		groups = { [team.name] = 1 }
+	})
+end

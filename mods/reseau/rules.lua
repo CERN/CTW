@@ -63,7 +63,8 @@ reseau.get_all_links = function(startpos)
 		reseau.load_position(target_pos)
 		local target_nodename = minetest.get_node(target_pos).name
 		local target_nodespec = minetest.registered_nodes[target_nodename]
-		if target_nodespec.reseau and (target_nodespec.reseau.conductor or target_nodespec.reseau.receiver) then
+		if target_nodespec and target_nodespec.reseau and
+				(target_nodespec.reseau.conductor or target_nodespec.reseau.receiver) then
 			local target_rules = reseau.get_any_rules(target_pos)
 			if reseau.rules_link_oneway(target_pos, target_rules, startpos) then
 				table.insert(links, target_pos)

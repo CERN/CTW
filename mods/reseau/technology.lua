@@ -2,7 +2,7 @@ reseau.get_any_technology = function(nodename)
 	local nodespec = minetest.registered_nodes[nodename]
 	local technology = nil
 
-	if nodespec.reseau then
+	if nodespec and nodespec.reseau then
 		if nodespec.reseau.conductor then
 			technology = nodespec.reseau.conductor.technology
 		elseif nodespec.reseau.receiver then
