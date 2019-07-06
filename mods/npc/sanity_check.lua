@@ -18,4 +18,5 @@ minetest.register_on_mods_loaded(function()
 
 	-- Check invalid technology dependencies
 	-- TODO
+	assert(teams)
 end)

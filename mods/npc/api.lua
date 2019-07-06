@@ -36,6 +36,10 @@ npc.register_npc(npc_name, def)
 npc.register_event(npc_name, NPC_Event)
 	-- ^ 'dialogue' must be specified
 
+npc.register_event_from_idea(npc_name, dialogue, idea_name)
+	-- 'dialogue': string/nil: Text to say
+	-- 'idea_name': From ctw_techologies (untested)
+
 npc.get_event_by_id(id)
 	-- ^ Searchs an unique NPC_Event by ID
 ]]
@@ -53,15 +57,33 @@ function npc.register_event(name, def)
 	table.insert(npc.registered_events[name], def)
 end
 
+function npc.register_event_from_idea(name, dialogue, idea_name)
+	local idea_def = ctw_resources.get_idea(idea_name)
+	local def = {}
+	def.dialogue = dialogue or idea_def.description
+	def.conditions = { { idea_id = idea_name } }
+	def.options = { { text = "Thank you!" } }
+	npc.register_event(name, def)
+end
+
 local player_formspecs = {}
 
 local function check_condition(player, c)
 	local weight = 0
-	if c.technology then
-		if not teams.has_techology(c.technology) then
+	if c.dp_min then
+		local teamdef = teams.get_by_player(player)
+		if teams.get_points(teamdef.name) < c.dp_min then
 			return
 		end
 		weight = weight + 1
+	end
+	if c.idea_id then
+		-- From ctw_resources
+		if not ctw_resources.is_idea_approved(c.idea_id,
+				{ "tech1", "tech2" }, player:get_inventory(), "main") then
+			return
+		end
+		weight = weight + ctw_resources.get_idea(c.idea_id).technologies_required
 	end
 	if c.item then
 		if not player:get_inventory():contains_item(c.item) then

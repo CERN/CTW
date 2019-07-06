@@ -23,8 +23,3 @@ minetest.register_entity("npc:npc_generic", {
 		end)
 	end
 })
-
-npc.register_npc("steve", {
-	infotext = "Tutor",
-	textures = { "npc_skin_lovehart.png" }
-})

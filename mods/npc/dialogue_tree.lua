@@ -1,8 +1,12 @@
-npc.register_npc("steve", {})
+
+npc.register_npc("steve", {
+	infotext = "Tutor",
+	textures = { "npc_skin_doctor_sam.png" }
+})
 
 npc.register_event("steve", {
 	id = "test1",
-	dialogue = "$PLAYER, I got s\n\nom\n\nething for you! <;:->-]",
+	dialogue = "$PLAYER, line1\n\n\nlineX;:/\\]",
 	options = {
 		{
 			text = "get",
@@ -15,20 +19,24 @@ npc.register_event("steve", {
 
 npc.register_event("steve", {
 	id = "test2",
-	dialogue = "Hello $PLAYER i\n te\nam\n $TEAM.",
+	dialogue = "Oh, that's some great literature you've got there!" ..
+		"\nI'll call this one 'HTML'.",
+	conditions = {
+		{ idea_id = "html" }
+	},
 	options = {
-		{ text = "Say HI", target = function() minetest.chat_send_all("NPCI: hi!") end },
-		{ text = "GoTo1", target = "test1" },
 		{
-			text = "teleport",
+			text = "Thank you!",
 			target = function(player, event)
-				player:set_pos(vector.new(10, 10, 10))
+				local teamdef = teams.get_by_player(player)
+				local members = teams.get_members(teamdef.name)
+				ctw_resources.reveal_idea("html", members)
 			end
 		}
 	}
 })
 
 
---[[npc.register_event("steve", {
+npc.register_event("steve", {
 	dialogue = "Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.",
-})]]
+})
