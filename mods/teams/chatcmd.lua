@@ -15,6 +15,15 @@ ChatCmdBuilder.new("team", function(cmd)
 		end
 	end)
 
+	cmd:sub("dp :x:int", function(name, x)
+		local tname = teams.get_by_player(name).name
+		teams.add_points(tname, x)
+	end)
+
+	cmd:sub("dp :team :x:int", function(name, tname, x)
+		teams.add_points(tname, x)
+	end)
+
 	cmd:sub("", function(name)
 		local player = minetest.get_player_by_name(name)
 		local team = teams.get_by_player(player)
