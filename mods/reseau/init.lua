@@ -16,7 +16,8 @@ dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 
 
 local TX_INTERVAL = 3
-local transmitter_get_formspec = function(meta)
+local transmitter_get_formspec = function(meta, throughput)
+	throughput = throughput or 0
 	local cache = meta:get_int("cache")
 
 	return "size[8,5;]"..
@@ -25,6 +26,7 @@ local transmitter_get_formspec = function(meta)
 		"label[0,1.9;Data can be transported manually by carrying tapes or by a network link.]"..
 		"label[0,2.3;Data generation speed: "..reseau.era.genspeed.." MB/s]"..
 		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.tape_capacity.." MB]"..
+		"label[0,3.1;Network throughput: "..throughput.." MB/s]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
@@ -44,29 +46,38 @@ for _, team in ipairs(teams.get_all()) do
 				autotransmit = {
 					interval = TX_INTERVAL,
 					action = function(pos)
-						-- try to transmit data via network, otherwise store on tape
-						if (not reseau.transmit_first(pos, "hello world!")) then
-							local meta = minetest.get_meta(pos)
-							local cache = meta:get_int("cache") or 0
+						-- generate data to transmit
+						local meta = minetest.get_meta(pos)
+						local cache = meta:get_int("cache") or 0
+						cache = cache + reseau.era.genspeed * TX_INTERVAL
 
-							cache = cache + reseau.era.genspeed * TX_INTERVAL
-							if cache > reseau.era.tape_capacity then
-								cache = cache - reseau.era.tape_capacity
+						-- try to transmit as much data as possible via network
+						local throughput = reseau.transmit_first(pos, {
+							throughput = cache / TX_INTERVAL,
+							team = team.name,
+							hop_count = 0
+						})
 
-								local inv = meta:get_inventory()
-								local tape_stack = ItemStack("reseau:tape 1")
-								local tape_meta = tape_stack:get_meta()
-								tape_meta:set_int("capacity", reseau.era.tape_capacity)
-								tape_meta:set_string("team", team.name)
-								local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
-								tape_meta:set_string("description", desc)
+						-- if there is enough cached data to put on a tape, just
+						-- write a tape
+						cache = cache - throughput * TX_INTERVAL
+						if cache > reseau.era.tape_capacity then
+							cache = cache - reseau.era.tape_capacity
 
-								inv:add_item("tapes", tape_stack)
-							end
-							meta:set_int("cache", cache)
+							local inv = meta:get_inventory()
+							local tape_stack = ItemStack("reseau:tape 1")
+							local tape_meta = tape_stack:get_meta()
+							tape_meta:set_int("capacity", reseau.era.tape_capacity)
+							tape_meta:set_string("team", team.name)
+							local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
+							tape_meta:set_string("description", desc)
 
-							meta:set_string("formspec", transmitter_get_formspec(meta))
+							inv:add_item("tapes", tape_stack)
 						end
+
+						-- update node metadata
+						meta:set_int("cache", cache)
+						meta:set_string("formspec", transmitter_get_formspec(meta, throughput))
 					end
 				}
 			}
@@ -99,7 +110,9 @@ minetest.register_node(":reseau:testreceiver", {
 				"copper", "fiber"
 			},
 			rules = reseau.rules.default,
-			action = function(pos, content)
+			action = function(pos, packet)
+				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
+				teams.add_points(packet.team, dp)
 			end
 		}
 	},
@@ -171,7 +184,7 @@ for _, team in ipairs(teams.get_all()) do
 						reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
 					)
 				end,
-				action = function(pos, message, depth)
+				action = function(pos, packet, depth)
 					local node = minetest.get_node(pos)
 					local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
 					reseau.transmit(pos, cablepos, message, depth + ROUTER_DELAY)
