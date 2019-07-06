@@ -1,0 +1,2 @@
+default
+homedecor_common

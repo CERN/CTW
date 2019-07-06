@@ -1,0 +1,1595 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-14 03:47+0800\n"
+"PO-Revision-Date: 2017-08-21 16:17+0300\n"
+"Last-Translator: inpos <inpos@yandex.ru>\n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+#: ../building_blocks/alias.lua
+msgid "Granite"
+msgstr "Гранит"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Grate"
+msgstr "Каминная решётка"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Streak Free Glass"
+msgstr "Стекло без стыков"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Wood Framed Glass"
+msgstr "Деревянное окно"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Adobe"
+msgstr "Саман"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Fake Grass"
+msgstr "Псевдо трава"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Hardwood"
+msgstr "Твёрдая древесина"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Roof block"
+msgstr "Кровельный блок"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Tar"
+msgstr "Смола"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Marble"
+msgstr "Мрамор"
+
+#. Translators: "Brobble" is a portmanteau of "Brick" and "Cobble".
+#. Translate however you see fit.
+#: ../building_blocks/node_stairs.lua
+msgid "Brobble Spread"
+msgstr "Настил кирпичного булыжника"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Gravel Spread"
+msgstr "Настил гравия"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Tarmac Spread"
+msgstr "Покрытие гудронной смолой"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Terrycloth towel"
+msgstr "Махровое полотенце"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Chess board tiling"
+msgstr "Шахматная плитка"
+
+#: ../building_blocks/node_stairs.lua
+msgid "Fireplace"
+msgstr "Камин"
+
+#: ../building_blocks/others.lua
+msgid "Small bundle of sticks"
+msgstr "Небольшая связка палок"
+
+#: ../building_blocks/others.lua
+msgid "Tar base"
+msgstr "Смоляная основа"
+
+#: ../building_blocks/others.lua
+msgid "Tar Knife"
+msgstr "Смоляной нож"
+
+#: ../chains/init.lua
+msgid "Hanging chain (wrought iron)"
+msgstr "Висящая цепь (кованое железо)"
+
+#: ../chains/init.lua
+msgid "Hanging chain (brass)"
+msgstr "Висящая цепь (латунь)"
+
+#: ../chains/init.lua
+msgid "Hanging chain (ceiling mount, wrought iron)"
+msgstr "Висящая цепь (потолочное крепление, кованое железо)"
+
+#: ../chains/init.lua
+msgid "Hanging chain (ceiling mount, brass)"
+msgstr "Висящая цепь (потолочное крепление, латунь)"
+
+#: ../chains/init.lua
+msgid "Chandelier (wrought iron)"
+msgstr "Люстра (кованое железо)"
+
+#: ../chains/init.lua
+msgid "Chandelier (brass)"
+msgstr "Люстра (латунь)"
+
+#: ../computer/computers.lua
+msgid "Monitor and keyboard"
+msgstr "Монитор и клавиатура"
+
+#: ../computer/computers.lua
+msgid "WIFI Router"
+msgstr "WIFI-роутер"
+
+#: ../computer/computers.lua
+msgid "Computer Tower"
+msgstr "Системный блок"
+
+#: ../computer/computers.lua
+msgid "Printer-Scanner Combo"
+msgstr "МФУ"
+
+#: ../computer/computers.lua
+msgid "Rack Server"
+msgstr "Стоечный сервер"
+
+#: ../computer/computers.lua
+msgid "Not enough vertical space to place a server!"
+msgstr "Недостаточно вертикального пространства для размещения сервера!"
+
+#: ../computer/miscitems.lua ../homedecor/crafts.lua
+msgid "Plastic sheet"
+msgstr "Лист пластика"
+
+#: ../computer/miscitems.lua
+msgid "Unprocessed Plastic base"
+msgstr "Необработанная пластиковая основа"
+
+#: ../computer/tetris.lua
+msgid "L"
+msgstr "Лев."
+
+#: ../computer/tetris.lua
+msgid "R"
+msgstr "Прав."
+
+#: ../computer/tetris.lua
+msgid "New Game"
+msgstr "Новая игра"
+
+#: ../computer/tetris.lua
+msgid "Next..."
+msgstr "Далее..."
+
+#: ../computer/tetris.lua
+msgid "Score: "
+msgstr "Счёт: "
+
+#: ../computer/tetris.lua
+msgid "Tetris Arcade"
+msgstr "Игровой автомат Тетрис"
+
+#: ../computer/tetris.lua
+msgid "No room for place the Arcade!"
+msgstr "Недостаточно места для размещения игрового автомата!"
+
+#: ../fake_fire/init.lua
+msgid "Ice fire"
+msgstr "Ледяной огонь"
+
+#: ../fake_fire/init.lua
+msgid "Fancy Fire"
+msgstr "Необычный огонь"
+
+#: ../fake_fire/init.lua
+msgid "Glowing Embers"
+msgstr "Светящиеся угли"
+
+#: ../fake_fire/init.lua
+msgid "Stone chimney top"
+msgstr "Каменный дымоход на крышу"
+
+#: ../fake_fire/init.lua
+msgid "Sandstone chimney top"
+msgstr "Дымоход из песчаника на крышу"
+
+#: ../homedecor/bathroom_furniture.lua
+msgid "Bathroom/kitchen tiles (dark)"
+msgstr "Плитка для ванной/кухни (тёмная)"
+
+#: ../homedecor/bathroom_furniture.lua
+msgid "Bathroom/kitchen tiles (medium)"
+msgstr "Плитка для ванной/кухни (обычная)"
+
+#: ../homedecor/bathroom_furniture.lua
+msgid "Bathroom/kitchen tiles (light)"
+msgstr "Плитка для ванной/кухни (светлая)"
+
+#: ../homedecor/bathroom_furniture.lua
+msgid "Towel rod with towel"
+msgstr "Полотенцедержатель с полотенцем"
+
+#: ../homedecor/bathroom_furniture.lua
+msgid "Medicine cabinet"
+msgstr "Медицинский кабинет"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Toilet"
+msgstr "Туалет"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Toilet paper"
+msgstr "Туалетная бумага"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathroom Sink"
+msgstr "Раковина для ванной комнаты"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathroom taps/faucet"
+msgstr "м"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathroom taps/faucet (brass)"
+msgstr "Краны(смесители) для ванной комнаты (латунь)"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Shower Tray"
+msgstr "Душевой поддон"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Shower Head"
+msgstr "Душевая лейка"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathtub, clawfoot, with brass taps"
+msgstr "Ванна на острых ножках с латунными кранами"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathtub, clawfoot, with chrome taps"
+msgstr "Ванна на острых ножках с хромированными кранами"
+
+#: ../homedecor/bathroom_sanitation.lua
+msgid "Bathroom sundries set"
+msgstr "Набор для ванных комнат"
+
+#: ../homedecor/bedroom.lua
+msgid "Bed"
+msgstr "Кровать"
+
+#: ../homedecor/bedroom.lua
+msgid "Bed (king sized)"
+msgstr "Кровать (большая)"
+
+#: ../homedecor/bedroom.lua
+msgid "mahogany"
+msgstr "красное дерево"
+
+#: ../homedecor/bedroom.lua
+msgid "oak"
+msgstr "дуб"
+
+#: ../homedecor/bedroom.lua
+msgid "Nightstand with One Drawer (@1)"
+msgstr "Тумба с одним ящиком (@1)"
+
+#: ../homedecor/bedroom.lua
+msgid "One-drawer Nightstand"
+msgstr "Тумба с одним ящиком"
+
+#: ../homedecor/bedroom.lua
+msgid "Nightstand with Two Drawers (@1)"
+msgstr "Тумба с двумя ящиками (@1)"
+
+#: ../homedecor/bedroom.lua
+msgid "Two-drawer Nightstand"
+msgstr "Тумба с двумя ящиками"
+
+#: ../homedecor/books.lua ../homedecor/exterior.lua
+msgid "red"
+msgstr "красный"
+
+#: ../homedecor/books.lua ../homedecor/exterior.lua ../homedecor/misc-nodes.lua
+msgid "green"
+msgstr "зелёный"
+
+#: ../homedecor/books.lua
+msgid "blue"
+msgstr ""
+
+#: ../homedecor/books.lua
+msgid "violet"
+msgstr ""
+
+#: ../homedecor/books.lua
+msgid "grey"
+msgstr ""
+
+#: ../homedecor/books.lua
+msgid "brown"
+msgstr ""
+
+#: ../homedecor/books.lua
+#, fuzzy
+msgid "Writable Book (@1)"
+msgstr "Записная книга"
+
+#: ../homedecor/books.lua
+msgid "@1 has written in a book (title: \"@2\"): \"@3\" at location @4"
+msgstr "@1 написал в книге (заголовок: \"@2\"): \"@3\" в позиции @4"
+
+#: ../homedecor/climate-control.lua
+msgid "Air Conditioner"
+msgstr "Кондиционер"
+
+#: ../homedecor/climate-control.lua
+msgid "Desk Fan"
+msgstr "Настольный вентилятор"
+
+#: ../homedecor/climate-control.lua
+msgid "Ceiling Fan"
+msgstr "Потолочный вентилятор"
+
+#: ../homedecor/climate-control.lua
+msgid "Space heater"
+msgstr "Обогреватель"
+
+#: ../homedecor/climate-control.lua
+msgid "Radiator heater"
+msgstr "Масленый обогреватель"
+
+#: ../homedecor/clocks.lua
+msgid "Plastic analog clock"
+msgstr "Пластиковые стрелочные часы"
+
+#: ../homedecor/clocks.lua
+msgid "Wooden analog clock"
+msgstr "Деревянные стрелочные часы"
+
+#: ../homedecor/clocks.lua
+msgid "Digital clock"
+msgstr "Цифровые часы"
+
+#: ../homedecor/clocks.lua
+msgid "Alarm clock"
+msgstr "Будильник"
+
+#: ../homedecor/clocks.lua
+msgid "Grandfather Clock"
+msgstr "Дедушкины часы"
+
+#: ../homedecor/cobweb.lua
+msgid "Cobweb"
+msgstr "Паутина"
+
+#: ../homedecor/crafts.lua
+msgid "Uncooked Terracotta Base"
+msgstr "Необработанная терракотовая основа"
+
+#: ../homedecor/crafts.lua
+msgid "Terracotta Roof Tile"
+msgstr "Терракотовая крыша"
+
+#: ../homedecor/crafts.lua
+msgid "Oil extract"
+msgstr "Выжимка масла"
+
+#: ../homedecor/crafts.lua
+msgid "Unprocessed paraffin"
+msgstr "Необработанный парафин"
+
+#: ../homedecor/crafts.lua
+msgid "Plastic strips"
+msgstr "Пластиковые полоски"
+
+#: ../homedecor/crafts.lua
+msgid "Small Wooden Drawer"
+msgstr "Маленький деревянный выдвижной ящик"
+
+#: ../homedecor/crafts.lua
+msgid "Simple Integrated Circuit"
+msgstr "Простая интегральная схема"
+
+#: ../homedecor/crafts.lua
+msgid "Heating element"
+msgstr ""
+"Нагревательный элемент\n"
+"Предложить исправление"
+
+#: ../homedecor/crafts.lua
+msgid "Motor"
+msgstr "Двигатель"
+
+#: ../homedecor/crafts.lua
+msgid "Power Crystal"
+msgstr "Силовой кристалл"
+
+#: ../homedecor/crafts.lua
+msgid "Blank Canvas"
+msgstr "Пустой холст"
+
+#: ../homedecor/crafts.lua
+msgid "VCR"
+msgstr "Видеомагнитофон"
+
+#: ../homedecor/crafts.lua
+msgid "DVD Player"
+msgstr "DVD-проигрыватель"
+
+#: ../homedecor/crafts.lua
+msgid "Spool of copper wire"
+msgstr "Катушка из медной проволоки"
+
+#: ../homedecor/crafts.lua
+msgid "Spool of steel wire"
+msgstr "Катушка из стальной проволоки"
+
+#: ../homedecor/crafts.lua
+msgid "Speaker driver"
+msgstr "Динамик"
+
+#: ../homedecor/crafts.lua
+msgid "Fan blades"
+msgstr "Лопасти вентилятора"
+
+#: ../homedecor/crafts.lua
+msgid "Copper Strip"
+msgstr "Медные полоски"
+
+#: ../homedecor/crafts.lua
+msgid "Steel Strip"
+msgstr "Стальные полоски"
+
+#: ../homedecor/crafts.lua
+msgid "Steel chainlink"
+msgstr "Стальное звено цепи"
+
+#: ../homedecor/crafts.lua
+msgid "Brass chainlink"
+msgstr "Латунное звено цепи"
+
+#: ../homedecor/crafts.lua
+msgid "Soda Can"
+msgstr "Банка газировки"
+
+#: ../homedecor/crafts.lua
+msgid "Gold Coin (for soda vending machine)"
+msgstr "Золотая монета (для автомата с газировкой)"
+
+#: ../homedecor/crafts.lua
+msgid "Silicon lump"
+msgstr "Кусок кремния"
+
+#: ../homedecor/crafts.lua
+msgid "Brass Ingot"
+msgstr "Слиток латуни"
+
+#: ../homedecor/crafts.lua
+msgid "Small Flower Pot"
+msgstr "Маленький цветочный горшок"
+
+#: ../homedecor/crafts.lua
+msgid "coin crafting is disabled!"
+msgstr "Крафт монет отключен!"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Mahogany Closet Door (@1 opening)"
+msgstr "Дверь стенного шкафа из красного дерева (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Oak Closet Door (@1 opening)"
+msgstr "Дверь стенного шкафа из дуба (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Fancy Wood/Glass Door (@1 opening)"
+msgstr "Необычная деревянная/стеклянная дверь (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Glass Office Door (@1 opening)"
+msgstr "Стеклянная офисная дверь (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Glass and Wood, Oak-colored (@1 opening)"
+msgstr "Стекло и дерево, дуб (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Glass and Wood, Mahogany-colored (@1 opening)"
+msgstr "Стекло и дерево, красное дерево (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Glass and Wood, White (@1 opening)"
+msgstr "Стекло и дерево, Белое (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Plain Wooden Door (@1 opening)"
+msgstr "Простая деревянная дверь (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "White Bedroom Door (@1 opening)"
+msgstr "Белая дверь спальни (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Wrought Iron Gate/Door (@1 opening)"
+msgstr "Кованные железные ворота/дверь (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Wooden door with glass insert (@1 opening)"
+msgstr "Деревянная дверь со стеклянной вставкой (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Wooden door with glass insert, type 2 (@1 opening)"
+msgstr "Деревянная дверь со стеклянной вставкой, второй тип (открывается @1)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "left"
+msgstr "влево"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "right"
+msgstr "вправо"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Unpainted Picket Fence Gate"
+msgstr "Некрашеные ворота для забора из частокола"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "White Picket Fence Gate"
+msgstr "Белые ворота для забора из частокола"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Barbed Wire Fence Gate"
+msgstr "Ворота для забора из колючей проволоки"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Chainlink Fence Gate"
+msgstr "Ворота для цепного забора"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "\"Half\" Door"
+msgstr "Полуразмерная дверь"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "\"Half\" Door (white)"
+msgstr "Полуразмерная дверь (белая)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Japanese wall (top)"
+msgstr "Японская стена (верх)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Japanese wall"
+msgstr "Японская стена"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Japanese wall (bottom)"
+msgstr "Японская стена (низ)"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Japanese tatami"
+msgstr "Японский татами"
+
+#: ../homedecor/doors_and_gates.lua
+msgid "Japanese-style door"
+msgstr "Дверь в японском стиле"
+
+#: ../homedecor/electrics.lua
+msgid "Power Outlet"
+msgstr "Розетка"
+
+#: ../homedecor/electrics.lua
+msgid "Light switch"
+msgstr "Выключатель света"
+
+#: ../homedecor/electrics.lua
+msgid "Doorbell"
+msgstr "Дверной звонок"
+
+#: ../homedecor/electronics.lua
+msgid "Large Stereo Speaker"
+msgstr "Большой стерео громкоговоритель"
+
+#: ../homedecor/electronics.lua
+msgid "Large Stereo Speaker, open front"
+msgstr "Большой стерео громкоговоритель (открытый)"
+
+#: ../homedecor/electronics.lua
+msgid "Small Surround Speaker"
+msgstr "Малый круговой громкоговоритель"
+
+#: ../homedecor/electronics.lua
+msgid "Stereo Receiver"
+msgstr "Стерео приёмник"
+
+#: ../homedecor/electronics.lua
+msgid "Projection Screen Material"
+msgstr "Материал проекционного экрана"
+
+#: ../homedecor/electronics.lua
+msgid "Small CRT Television"
+msgstr "Малый кинескопный телевизор"
+
+#: ../homedecor/electronics.lua
+msgid "DVD and VCR"
+msgstr "DVD и Видеомагнитофон"
+
+#: ../homedecor/electronics.lua
+msgid "Telephone"
+msgstr "Телефон"
+
+#: ../homedecor/exterior.lua
+msgid "Barbecue"
+msgstr "Барбекю"
+
+#: ../homedecor/exterior.lua
+msgid "Garden Bench (style 1)"
+msgstr "Садовая скамья (1й стиль)"
+
+#: ../homedecor/exterior.lua
+msgid "Garden Bench (style 2)"
+msgstr "Садовая скамья (2й стиль)"
+
+#: ../homedecor/exterior.lua
+msgid "Deck Chair"
+msgstr "Шезлонг"
+
+#: ../homedecor/exterior.lua
+msgid "Deck Chair (blue striped)"
+msgstr ""
+
+#: ../homedecor/exterior.lua
+msgid "Doghouse"
+msgstr "Собачья будка"
+
+#: ../homedecor/exterior.lua
+msgid "Simple Bench"
+msgstr "Простая скамья"
+
+#: ../homedecor/exterior.lua
+msgid "Garden stone path"
+msgstr "Садовая каменная дорожка"
+
+#: ../homedecor/exterior.lua ../homedecor/kitchen_appliances.lua
+#: ../homedecor/misc-nodes.lua ../homedecor/roofing.lua
+#: ../homedecor/window_treatments.lua
+msgid "wood"
+msgstr "дерево"
+
+#: ../homedecor/exterior.lua
+msgid "white wood"
+msgstr "белое дерево"
+
+#: ../homedecor/exterior.lua
+msgid "wood, with vegetation"
+msgstr "дерево с растительностью"
+
+#: ../homedecor/exterior.lua
+msgid "white wood, with vegetation"
+msgstr "белое дерево с растительностью"
+
+#: ../homedecor/exterior.lua
+msgid "Garden Lattice (@1)"
+msgstr "Садовая решётка (@1)"
+
+#: ../homedecor/exterior.lua
+msgid "Tree's swing"
+msgstr "Качели для дерева"
+
+#: ../homedecor/exterior.lua
+msgid "Water well"
+msgstr "Колодец с водой"
+
+#: ../homedecor/exterior.lua
+msgid "yellow"
+msgstr "жёлтый"
+
+#: ../homedecor/exterior.lua
+#, fuzzy
+msgid "Shrubbery (large, @1)"
+msgstr "Кустарник (@1)"
+
+#: ../homedecor/exterior.lua
+msgid "Shrubbery (@1)"
+msgstr "Кустарник (@1)"
+
+#: ../homedecor/fences.lua ../homedecor/misc-nodes.lua ../homedecor/tables.lua
+#: ../homedecor/window_treatments.lua
+msgid "brass"
+msgstr "латунь"
+
+#: ../homedecor/fences.lua ../homedecor/misc-nodes.lua ../homedecor/tables.lua
+#: ../homedecor/window_treatments.lua
+msgid "wrought iron"
+msgstr "кованное железо"
+
+#: ../homedecor/fences.lua
+msgid "Fence/railing (@1)"
+msgstr "Забор/ограда (@1)"
+
+#: ../homedecor/fences.lua
+msgid "Fence/railing with sign (@1)"
+msgstr "Забор/ограда со знаком (@1)"
+
+#: ../homedecor/fences.lua
+msgid "Unpainted Picket Fence"
+msgstr "Некрашеный забор из частокола"
+
+#: ../homedecor/fences.lua
+msgid "Unpainted Picket Fence Corner"
+msgstr "Угол некрашеного забора из частокола"
+
+#: ../homedecor/fences.lua
+msgid "White Picket Fence"
+msgstr "Белый забор из частокола"
+
+#: ../homedecor/fences.lua
+msgid "White Picket Fence Corner"
+msgstr "Угол белого забора из частокола"
+
+#: ../homedecor/fences.lua
+msgid "Wooden Privacy Fence"
+msgstr "Деревянный глухой забор"
+
+#: ../homedecor/fences.lua
+msgid "Wooden Privacy Fence Corner"
+msgstr "Угол деревянного глухого забора"
+
+#: ../homedecor/fences.lua
+msgid "Barbed Wire Fence"
+msgstr "Забор из колючей проволоки"
+
+#: ../homedecor/fences.lua
+msgid "Barbed Wire Fence Corner"
+msgstr "Угол забора из колючей проволоки"
+
+#: ../homedecor/fences.lua
+msgid "Chainlink Fence"
+msgstr "Цепной забор"
+
+#: ../homedecor/fences.lua
+msgid "Chainlink Fence Corner"
+msgstr "Угол цепного забора"
+
+#: ../homedecor/fences.lua
+msgid "Wrought Iron fence (type 2)"
+msgstr "Кованный железный забор (2й тип)"
+
+#: ../homedecor/fences.lua
+msgid "Wrought Iron fence (type 2) Corner"
+msgstr "Угол кованного железного забора (2й тип)"
+
+#: ../homedecor/foyer.lua
+msgid "Wall-mounted coat rack"
+msgstr "Настенная вешалка для одежды"
+
+#: ../homedecor/foyer.lua
+msgid "Coat tree"
+msgstr "Стоечная вешалка для одежды"
+
+#: ../homedecor/foyer.lua
+msgid "Green welcome mat"
+msgstr "Зелёный коврик под входную дверь"
+
+#: ../homedecor/foyer.lua
+msgid "Brown welcome mat"
+msgstr "Коричневый коврик под входную дверь"
+
+#: ../homedecor/foyer.lua
+msgid "Grey welcome mat"
+msgstr "Серый коврик под входную дверь"
+
+#: ../homedecor/furniture.lua
+msgid "Table"
+msgstr "Стол"
+
+#: ../homedecor/furniture.lua
+msgid "Mahogany Table"
+msgstr "Стол из красного дерева"
+
+#: ../homedecor/furniture.lua
+msgid "White Table"
+msgstr "Белый стол"
+
+#: ../homedecor/furniture.lua
+msgid "Kitchen chair"
+msgstr "Кухонный стул"
+
+#: ../homedecor/furniture.lua ../lrfurn/armchairs.lua
+msgid "Armchair"
+msgstr "Кресло"
+
+#: ../homedecor/furniture.lua
+msgid "Bookshelf (open-frame)"
+msgstr "Книжная полка (открытая)"
+
+#: ../homedecor/furniture.lua
+msgid "Wall Shelf"
+msgstr "Настенная полка"
+
+#: ../homedecor/furniture_medieval.lua
+msgid "Bars"
+msgstr "Стержни"
+
+#: ../homedecor/furniture_medieval.lua
+msgid "Binding Bars"
+msgstr "Связующие стержни"
+
+#: ../homedecor/furniture_medieval.lua
+msgid "Chains"
+msgstr "Цепи"
+
+#: ../homedecor/furniture_medieval.lua
+msgid "Wall Torch"
+msgstr "Настенный факел"
+
+#: ../homedecor/furniture_medieval.lua
+msgid "Wall Lamp"
+msgstr "Настенная лампа"
+
+#: ../homedecor/gastronomy.lua
+msgid "Cutlery set"
+msgstr "Набор столовых приборов"
+
+#: ../homedecor/gastronomy.lua
+msgid "Brown bottle"
+msgstr "Коричневая бутылка"
+
+#: ../homedecor/gastronomy.lua
+msgid "Four brown bottles"
+msgstr "Четыре коричневых бутылки"
+
+#: ../homedecor/gastronomy.lua
+msgid "Four green bottles"
+msgstr "Четыре зелёных бутылки"
+
+#: ../homedecor/gastronomy.lua
+msgid "Green bottle"
+msgstr "Зелёная бутылка"
+
+#: ../homedecor/gastronomy.lua
+msgid "Four misc brown/green bottles"
+msgstr "Четыре разные коричневые/зелёные "
+
+#: ../homedecor/gastronomy.lua
+msgid "Wine rack"
+msgstr "Винный шкаф"
+
+#: ../homedecor/gastronomy.lua
+msgid "Dartboard"
+msgstr "Мишень для дротиков"
+
+#: ../homedecor/gastronomy.lua
+msgid "Beer tap"
+msgstr "Пивной кран"
+
+#: ../homedecor/gastronomy.lua
+msgid "Ahh, a frosty cold beer - look in your inventory for it!"
+msgstr "О, холодное пиво! Ищи его в инвентаре!"
+
+#: ../homedecor/gastronomy.lua
+msgid "No room in your inventory to add a beer mug!"
+msgstr "В инвентаре нет места для пивной кружки!"
+
+#: ../homedecor/gastronomy.lua
+msgid "Beer mug"
+msgstr "Пивная кружка"
+
+#: ../homedecor/gastronomy.lua
+msgid "Soda vending machine"
+msgstr "Автомат с газировкой"
+
+#: ../homedecor/gastronomy.lua
+msgid "Please insert a coin in the machine."
+msgstr "Вставьте монету в автомат."
+
+#: ../homedecor/handlers/expansion.lua
+msgid "Not enough room - the space for the headboard is occupied!"
+msgstr "Не хватает места - пространство для изголовья занято!"
+
+#: ../homedecor/handlers/expansion.lua
+msgid "Someone already owns the spot where the headboard goes."
+msgstr "Точка, куда ставится изголовье, уже принадлежит кому-то."
+
+#: ../homedecor/handlers/expansion.lua
+msgid "Not enough room - the upper space is occupied!"
+msgstr "Не хватает места - верхнее пространство занято!"
+
+#: ../homedecor/handlers/expansion.lua
+msgid "Someone already owns that spot."
+msgstr "Та точка уже принадлежит кому-то."
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "Furnace"
+msgstr "Печь"
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "@1 (empty)"
+msgstr "@1 (пусто)"
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "@1 (active)"
+msgstr "@1 (активно)"
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "@1 (active: @2%)"
+msgstr "@1 (активно: @2%)"
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "@1 (out of fuel)"
+msgstr "@1 (не хватает топлива)"
+
+#: ../homedecor/handlers/furnaces.lua
+msgid "@1 (output bins are full)"
+msgstr "@1 (выходные ячейки заполнены)"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 moves stuff in @2 at @3"
+msgstr "@1 перемещает вещи в @2 в @3"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 moves @2 to @3 at @4"
+msgstr "@1 перемещает @2 в @3 в @4"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 takes @2 from @3 at @4"
+msgstr "@1 берёт @2 из @3 в @4"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 (owned by @2)"
+msgstr "@1 (принадлежит @2)"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 tried to access a @2 belonging to @3 at @4"
+msgstr "@1 пытается получить доступ к @2, принадлежащий @3 в @4"
+
+#: ../homedecor/handlers/inventory.lua
+msgid "@1 (Locked)"
+msgstr "@1 (Закрыто)"
+
+#: ../homedecor/init.lua ../lrfurn/armchairs.lua ../lrfurn/coffeetable.lua
+#: ../lrfurn/endtable.lua ../lrfurn/longsofas.lua ../lrfurn/sofas.lua
+msgid "Loaded!"
+msgstr "Загружен!"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Refrigerator (stainless steel)"
+msgstr "Холодильник (нержавеющая сталь)"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Refrigerator"
+msgstr "Холодильник"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Oven"
+msgstr "Духовка"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Oven (stainless steel)"
+msgstr "Духовка (нержавеющая сталь)"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Microwave Oven"
+msgstr "Микроволновая печь"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Coffee Maker"
+msgstr "Кофеварка"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Toaster"
+msgstr "Тостер"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Dishwasher"
+msgstr "Посудомоечная машина"
+
+#: ../homedecor/kitchen_appliances.lua ../homedecor/kitchen_furniture.lua
+msgid "granite"
+msgstr "гранит"
+
+#: ../homedecor/kitchen_appliances.lua ../homedecor/kitchen_furniture.lua
+msgid "marble"
+msgstr "мрамор"
+
+#: ../homedecor/kitchen_appliances.lua ../homedecor/kitchen_furniture.lua
+msgid "steel"
+msgstr "сталь"
+
+#: ../homedecor/kitchen_appliances.lua
+msgid "Dishwasher (@1)"
+msgstr "Посудомоечная машина (@1)"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Kitchen Cabinet"
+msgstr "Кухонный шкаф"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Kitchen Cabinet (@1 top)"
+msgstr "Кухонный шкаф (@1 верх)"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Half-height Kitchen Cabinet (on ceiling)"
+msgstr "Полуразмерный кухонный шкаф (потолочный)"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Kitchen Cabinet with sink"
+msgstr "Кухонный шкаф с раковиной"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Under-sink cabinet"
+msgstr "Шкаф для раковины"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Copper pans"
+msgstr "Медные кастрюли"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Kitchen Faucet"
+msgstr "Кухонный смеситель"
+
+#: ../homedecor/kitchen_furniture.lua
+msgid "Paper towels"
+msgstr "Бумажные полотенца"
+
+#: ../homedecor/lighting.lua
+msgid "Thick Glowlight"
+msgstr "Толстый светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Thin Glowlight"
+msgstr "Тонкий светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Small Glowlight Cube"
+msgstr "Малый светящийся куб"
+
+#: ../homedecor/lighting.lua
+msgid "Plasma Lamp"
+msgstr "Плазменный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Plasma Ball"
+msgstr "Плазменный шар"
+
+#: ../homedecor/lighting.lua
+msgid "Thick Candle"
+msgstr "Толстая свеча"
+
+#: ../homedecor/lighting.lua
+msgid "Thin Candle"
+msgstr "Тонкая свеча"
+
+#: ../homedecor/lighting.lua
+msgid "Candlestick (wrought iron)"
+msgstr "Подсвечник (кованное железо)"
+
+#: ../homedecor/lighting.lua
+msgid "Candlestick (brass)"
+msgstr "Подсвечник (латунь)"
+
+#: ../homedecor/lighting.lua
+msgid "Wall sconce"
+msgstr "Настенный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Oil lamp (hurricane)"
+msgstr "Масленая лампа (подвесная)"
+
+#: ../homedecor/lighting.lua
+msgid "Oil Lamp (tabletop)"
+msgstr "Масленая лампа (настольная)"
+
+#: ../homedecor/lighting.lua
+msgid "Ground Lantern"
+msgstr "Наземный фонарь"
+
+#: ../homedecor/lighting.lua
+msgid "Hanging Lantern"
+msgstr "Подвесной фонарь"
+
+#: ../homedecor/lighting.lua
+msgid "Ceiling Lantern"
+msgstr "Потолочный фонарь"
+
+#: ../homedecor/lighting.lua
+msgid "Lattice lantern (large)"
+msgstr "Решётчатый фонарь (большой)"
+
+#: ../homedecor/lighting.lua
+msgid "Lattice lantern (small)"
+msgstr "Решётчатый фонарь (малый)"
+
+#: ../homedecor/lighting.lua
+msgid "Table Lamp"
+msgstr "Настольный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Standing Lamp"
+msgstr "Напольный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Desk Lamp"
+msgstr "Настольный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Ceiling Lamp"
+msgstr "Потолочный светильник"
+
+#: ../homedecor/lighting.lua
+msgid "Ceiling Lamp (off)"
+msgstr "Потолочный светильник (выключен)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Textured Ceiling Paint"
+msgstr "Текстурированная потолочная краска"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Drop-Ceiling Tile"
+msgstr "Потолочная плитка"
+
+#: ../homedecor/misc-nodes.lua
+msgid "small"
+msgstr "малый"
+
+#: ../homedecor/misc-nodes.lua
+msgid "large"
+msgstr "большой"
+
+#: ../homedecor/misc-nodes.lua
+msgid "persian"
+msgstr "персидский"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Rug (@1)"
+msgstr "Ковёр (@1)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "black"
+msgstr "чёрный"
+
+#: ../homedecor/misc-nodes.lua ../homedecor/roofing.lua
+msgid "terracotta"
+msgstr "терракотовый"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Flower Pot (@1)"
+msgstr "Цветочный горшок"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Rose"
+msgstr "Роза"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Tulip"
+msgstr "Тюльпан"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Yellow Dandelion"
+msgstr "Жёлтый одуванчик"
+
+#: ../homedecor/misc-nodes.lua
+msgid "White Dandelion"
+msgstr "Белый одуванчик"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Blue Geranium"
+msgstr "Голубая герань"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Viola"
+msgstr "Фиалка"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Cactus"
+msgstr "Кактус"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Bonsai"
+msgstr "Карликовое дерево"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Potted flower (@1)"
+msgstr "Цветок в горшке (@1)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Brass Pole"
+msgstr "Латунный столб"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Wrought Iron Pole"
+msgstr "Кованный железный столб"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Fishtank"
+msgstr "Аквариум"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Fishtank (lighted)"
+msgstr "Аквариум (освещённый)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Cardboard box (big)"
+msgstr "Картонная коробка (большая)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Cardboard box"
+msgstr "Картонная коробка"
+
+#: ../homedecor/misc-nodes.lua
+msgid "DVD/CD cabinet"
+msgstr "Шкаф с дисками DVD/CD"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Pool Table"
+msgstr "Бильярдный стол"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Piano"
+msgstr "Пианино"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Trophy"
+msgstr "Награда"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Sport bench"
+msgstr "Спортивная скамья"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Skateboard"
+msgstr "Скейт"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Metal tool cabinet and work table"
+msgstr "Шкаф с металлическим инструментом и рабочий стол"
+
+#: ../homedecor/misc-nodes.lua
+#, fuzzy
+msgid "Picture Frame "
+msgstr "Рамка для картины"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Decorative painting #@1"
+msgstr "Декоративная живопись #@1"
+
+#: ../homedecor/misc-nodes.lua
+msgid "dark topped"
+msgstr "тёмный верх"
+
+#: ../homedecor/misc-nodes.lua
+msgid "diagonal"
+msgstr "диагональный"
+
+#: ../homedecor/misc-nodes.lua
+msgid "horizontal"
+msgstr "горизонтальный"
+
+#: ../homedecor/misc-nodes.lua
+msgid "Banister for Stairs (@1, @2)"
+msgstr "Перила для ступеней (@1, @2)"
+
+#: ../homedecor/misc-nodes.lua
+msgid "not enough space"
+msgstr "не хватает места"
+
+#: ../homedecor/office.lua
+msgid "Filing cabinet"
+msgstr "Шкаф для документов"
+
+#: ../homedecor/office.lua
+msgid "Desk"
+msgstr "Письменный стол"
+
+#: ../homedecor/office.lua
+msgid "Desk globe"
+msgstr "Настольный глобус"
+
+#: ../homedecor/office.lua
+msgid "Calendar"
+msgstr "Календарь"
+
+#: ../homedecor/office.lua
+msgid ""
+"Date (right-click to update):\n"
+"@1"
+msgstr ""
+"Дата (правая кнопка мыши для обновления):\n"
+"@1"
+
+#: ../homedecor/office.lua
+msgid "Basic office chair"
+msgstr "Офисный стул"
+
+#: ../homedecor/office.lua
+msgid "Upscale office chair"
+msgstr "Высококлассное офисное кресло"
+
+#: ../homedecor/roofing.lua
+msgid "Glass Skylight"
+msgstr "Стеклянный люк"
+
+#: ../homedecor/roofing.lua
+msgid "Glass Skylight Frosted"
+msgstr "Матовый стеклянный люк"
+
+#: ../homedecor/roofing.lua
+msgid "asphalt"
+msgstr "асфальт"
+
+#: ../homedecor/roofing.lua
+msgid "Shingles (@1)"
+msgstr "Черепица (@1)"
+
+#: ../homedecor/roofing.lua
+msgid "@1 (outer corner)"
+msgstr "@1 (внешний угол)"
+
+#: ../homedecor/roofing.lua
+msgid "@1 (inner corner)"
+msgstr "@1 (внутренний угол)"
+
+#: ../homedecor/roofing.lua
+msgid "Wood Shingles"
+msgstr "Деревянная черепица"
+
+#: ../homedecor/roofing.lua
+msgid "Asphalt Shingles"
+msgstr "Асфальтовая черепица"
+
+#: ../homedecor/roofing.lua
+msgid "Terracotta Shingles"
+msgstr "Терракотовая черепица"
+
+#: ../homedecor/roofing.lua
+msgid "Glass Shingles"
+msgstr "Стеклянная черепица"
+
+#: ../homedecor/roofing.lua
+msgid "Chimney"
+msgstr "Дымоход"
+
+#: ../homedecor/shutters.lua
+msgid "Wooden Shutter"
+msgstr "Деревянные ставни"
+
+#: ../homedecor/tables.lua
+msgid "Small square glass table"
+msgstr "Маленький квадратный стеклянный столик"
+
+#: ../homedecor/tables.lua
+msgid "Small round glass table"
+msgstr "Маленький круглый стеклянный столик"
+
+#: ../homedecor/tables.lua
+msgid "Large glass table piece"
+msgstr "Большая стеклянная столешница"
+
+#: ../homedecor/tables.lua
+msgid "Small square wooden table"
+msgstr "Маленький квадратный деревянный столик"
+
+#: ../homedecor/tables.lua
+msgid "Small round wooden table"
+msgstr "Маленький круглый деревянный столик"
+
+#: ../homedecor/tables.lua
+msgid "Large wooden table piece"
+msgstr "Большая деревянная столешница"
+
+#: ../homedecor/tables.lua
+msgid "Utility Table"
+msgstr "Вспомогательный стол"
+
+#: ../homedecor/tables.lua
+msgid "Table Legs (@1)"
+msgstr "Ножки стола (@1)"
+
+#: ../homedecor/tables.lua
+msgid "Legs for Utility Table"
+msgstr "Ножки вспомогательного стола"
+
+#: ../homedecor/trash_cans.lua
+msgid "Green Trash Can"
+msgstr "Зелёный мусорный контейнер"
+
+#: ../homedecor/trash_cans.lua
+msgid "Trash Can"
+msgstr "Мусорный контейнер"
+
+#: ../homedecor/trash_cans.lua
+msgid "Small Trash Can"
+msgstr "Малый мусорный контейнер"
+
+#: ../homedecor/wardrobe.lua
+msgid "Wardrobe"
+msgstr "Гардероб"
+
+#: ../homedecor/wardrobe.lua
+msgid "Clothes"
+msgstr "Одежда"
+
+#: ../homedecor/wardrobe.lua
+msgid "Storage"
+msgstr "Хранилище"
+
+#: ../homedecor/window_treatments.lua
+msgid "Window (quartered)"
+msgstr "Окно (разделённое)"
+
+#: ../homedecor/window_treatments.lua
+msgid "Window (plain)"
+msgstr "Окно (простое)"
+
+#: ../homedecor/window_treatments.lua
+msgid "Window Blinds (thick)"
+msgstr "Жалюзи (широкие)"
+
+#: ../homedecor/window_treatments.lua
+msgid "Window Blinds (thin)"
+msgstr "Жалюзи (узкие)"
+
+#: ../homedecor/window_treatments.lua
+msgid "Curtains"
+msgstr "Шторы"
+
+#: ../homedecor/window_treatments.lua
+#, fuzzy
+msgid "Curtains (open)"
+msgstr "Шторы"
+
+#: ../homedecor/window_treatments.lua
+msgid "Curtain Rod (@1)"
+msgstr "Карниз для штор (@1)"
+
+#: ../homedecor/window_treatments.lua
+msgid "Window flowerbox"
+msgstr "Оконный цветочный ящик"
+
+#: ../homedecor/window_treatments.lua
+msgid "Stained Glass"
+msgstr "Витражное стекло"
+
+#: ../inbox/init.lua
+msgid "Mailbox"
+msgstr "Почтовый ящик"
+
+#: ../inbox/init.lua
+msgid "@1's Mailbox"
+msgstr "Почтовый ящик @1"
+
+#: ../itemframes/init.lua
+msgid "Item frame"
+msgstr "Рамка предметов"
+
+#: ../itemframes/init.lua
+msgid "Item frame (owned by @1)"
+msgstr "Рамка предметов (принадлежит @1)"
+
+#: ../itemframes/init.lua
+msgid "Pedestal"
+msgstr "Пьедестал"
+
+#: ../itemframes/init.lua
+msgid "Pedestal (owned by @1)"
+msgstr "Пьедестал (принадлежит @1)"
+
+#: ../lavalamp/init.lua
+msgid "Lava Lamp"
+msgstr "Лавовый светильник"
+
+#: ../lavalamp/init.lua
+msgid "Lava Lamp (off)"
+msgstr "Лавовый светильник (выключен)"
+
+#: ../lrfurn/coffeetable.lua
+msgid "Coffee Table"
+msgstr "Кофейный столик"
+
+#: ../lrfurn/coffeetable.lua
+msgid "No room to place the coffee table!"
+msgstr "Нет места для установки кофейного столика!"
+
+#: ../lrfurn/endtable.lua
+msgid "End Table"
+msgstr "Оконечный стол"
+
+#: ../lrfurn/init.lua
+msgid "Someone else owns the spot where other end goes!"
+msgstr "Кому-то другому принадлежит точка, где заканчивается другой конец!"
+
+#: ../lrfurn/init.lua
+msgid "Someone else owns the spot where the middle or far end goes!"
+msgstr ""
+"Кому-то другому принадлежит точка, куда выходит средний или дальний конец!"
+
+#: ../lrfurn/init.lua
+msgid "Someone else owns the spot where the other end goes!"
+msgstr "Кому-то другому принадлежит точка, где выходит другой конец!"
+
+#: ../lrfurn/longsofas.lua
+msgid "Long Sofa"
+msgstr "Длинный диван"
+
+#: ../lrfurn/longsofas.lua ../lrfurn/sofas.lua
+msgid "No room to place the sofa!"
+msgstr "Нет места для дивана!"
+
+#: ../lrfurn/sofas.lua
+msgid "Sofa"
+msgstr "Диван"
+
+#: ../plasmascreen/init.lua
+msgid "Plasma Screen TV Stand"
+msgstr "Подставка для плазменного телевизора"
+
+#: ../plasmascreen/init.lua
+msgid "Plasma TV"
+msgstr "Плазменный телевизор"
+
+#: ../plasmascreen/init.lua
+msgid "Plasma TV (off)"
+msgstr "Плазменный телевизор (выключен)"
+
+#~ msgid "Grass"
+#~ msgstr "Трава"
+
+#~ msgid "Roofing"
+#~ msgstr "Кровля"
+
+#~ msgid "Marble stair"
+#~ msgstr "Мраморная ступенька"
+
+#~ msgid "Marble slab"
+#~ msgstr "Мраморная блита"
+
+#~ msgid "Hardwood stair"
+#~ msgstr "Ступенька из твёрдой древесины"
+
+#~ msgid "Hardwood slab"
+#~ msgstr "Плита из твёрдой древесины"
+
+#~ msgid "Grass stair"
+#~ msgstr "Ступенька из травы"
+
+#~ msgid "Grass slab"
+#~ msgstr "Плита из травы"
+
+#~ msgid "Tar stair"
+#~ msgstr "Ступенька из смолы"
+
+#~ msgid "Tar slab"
+#~ msgstr "Плита из смолы"
+
+#~ msgid "Grate Stair"
+#~ msgstr "Решётчатая ступенька"
+
+#~ msgid "Grate Slab"
+#~ msgstr "Решётчатая плита"
+
+#~ msgid "Adobe stair"
+#~ msgstr "Саманная ступенька"
+
+#~ msgid "Adobe slab"
+#~ msgstr "Саманная плита"
+
+#~ msgid "Roofing stair"
+#~ msgstr "Ступенька из кровли"
+
+#~ msgid "Roofing slab"
+#~ msgstr "Плита из кровли"
+
+#~ msgid "Fake fire"
+#~ msgstr "Псевдо огонь"
+
+#~ msgid "Flint and steel"
+#~ msgstr "Кремень и сталь"
+
+#~ msgid "This area is protected!"
+#~ msgstr "Эта область защищена!"
