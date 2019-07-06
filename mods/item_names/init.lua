@@ -6,7 +6,7 @@
 
 -- Based on 4itemnames mod by 4aiman
 
-local item_names = {} -- [player_name] = { hud, dtime, itemname } 
+local item_names = {} -- [player_name] = { hud, dtime, itemname }
 local dlimit = 3  -- HUD element will be hidden after this many seconds
 local air_hud_mod = minetest.get_modpath("4air")
 local hud_mod = minetest.get_modpath("hud")
@@ -75,11 +75,11 @@ minetest.register_globalstep(function(dtime)
 				-- Try to use default description when none is set in the meta
 				desc = def and def.description or ""
 			end
-			
+
 			if def and def._usage_hint then
 				desc = desc .. " (" .. def._usage_hint .. ")"
 			end
-			
+
 			player:hud_change(data.hud, 'text', desc)
 		end
 	end
