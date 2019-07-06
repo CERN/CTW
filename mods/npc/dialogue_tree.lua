@@ -33,7 +33,7 @@ npc.register_event("steve", {
 			text = "Thank you!",
 			target = function(player, event)
 				local teamdef = teams.get_by_player(player)
-				local members = teams.get_members(teamdef.name)
+				local members = teams.get_online_members(teamdef.name)
 				ctw_resources.reveal_idea("html", members)
 			end
 		}
