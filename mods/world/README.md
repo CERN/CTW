@@ -18,9 +18,26 @@ Places a schematic as the world. Use world.mts in schematics/
     * pos2: pos table, optional
     * schematic: path, absolute
 
+## World schematics and configuration
+
+A world consists of 2 files:
+
+* world.mts
+* world.conf
+
+The world.conf file can contain a list of locations like so:
+
+```
+reception = 0,0,0
+spawn = 2,2,2
+red.base = 3,3,3
+blue.base = -3,-3,-3
+```
+
 ## How to import schematics from Tinkercad
 
-Refer to tutorials :
+Refer to tutorials:
+
 * https://forum.minetest.net/viewtopic.php?id=6007
 * https://wikifab.org/wiki/Minetest_and_3D_scanning/en
 * https://dev.minetest.net/minetest.place_schematic
