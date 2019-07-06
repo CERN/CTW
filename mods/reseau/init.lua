@@ -1,5 +1,7 @@
 reseau = {}
 
+reseau.era_speed = 10
+
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
 dofile(minetest.get_modpath("reseau").."/rules.lua")
@@ -9,6 +11,19 @@ dofile(minetest.get_modpath("reseau").."/transmit.lua")
 dofile(minetest.get_modpath("reseau").."/modstorage.lua")
 dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 
+local transmitter_get_formspec = function(meta)
+	local cache = meta:get_int("cache")
+
+	return "size[8,5;]"..
+		"list[context;tapes;3.5,0;8,4;]"..
+		"label[0,1.5;Experiments generate tapes, transport them to the computing center]"..
+		"label[0,1.9;Data generation speed: "..reseau.era_speed.." MB/s]"..
+		"label[0,2.3;Cached data: "..cache.." MB]"..
+		"list[current_player;main;0,4;8,1;]"
+end
+
+local TX_INTERVAL = 3
+local TAPE_CAPACITY = 10
 minetest.register_node(":reseau:testtransmitter", {
 	description = "Transmitter (Testing)",
 	tiles = {"default_tree.png"},
@@ -20,9 +35,22 @@ minetest.register_node(":reseau:testtransmitter", {
 			},
 			rules = reseau.rules.default,
 			autotransmit = {
-				interval = 3,
+				interval = TX_INTERVAL,
 				action = function(pos)
-					reseau.transmit_first(pos, "hello world!")
+					local meta = minetest.get_meta(pos)
+					local inv = meta:get_inventory()
+					if (not reseau.transmit_first(pos, "hello world!")) then
+						local cache = meta:get_int("cache") or 0
+
+						cache = cache + reseau.era_speed / TX_INTERVAL
+						if cache > TAPE_CAPACITY then
+							cache = cache - TAPE_CAPACITY
+							inv:add_item("tapes", "reseau:tape")
+						end
+						meta:set_int("cache", cache)
+
+						meta:set_string("formspec", transmitter_get_formspec(meta))
+					end
 				end
 			}
 		}
@@ -32,13 +60,7 @@ minetest.register_node(":reseau:testtransmitter", {
 		local inv = meta:get_inventory()
 		inv:set_size("tapes", 1)
 
-		meta:set_string("formspec",
-			"size[8,5;]"..
-			"list[context;tapes;3.5,0;8,4;]"..
-			"label[0,1.5;Experiments generate tapes, transport them to the computing center]"..
-			"label[0,2.0;Data generation speed: 10 MB/s]"..
-			"list[current_player;main;0,4;8,1;]"
-		)
+		meta:set_string("formspec", transmitter_get_formspec(meta))
 	end
 })
 
@@ -130,4 +152,10 @@ minetest.register_node(":reseau:testrouter", {
 			end
 		}
 	}
+})
+
+minetest.register_craftitem(":reseau:tape", {
+	image = "reseau_tape.png",
+	stack_max = 4,
+    	description="Data Tape"
 })
