@@ -27,6 +27,9 @@
 			-- List of references (=books) required, as ItemStacks
 			-- Be sure not to include one item name multiple times, this will lead to incorrect behavior!
 		}
+		dp_required = 1000
+		-- Number of Discovery Points that are required to get this idea.
+		-- This is just an orientational value when NPCs should give out the idea
 	}
 	
 	Documentation is automatically generated out of these data
@@ -144,8 +147,16 @@ doc.add_category("ctw_ideas", {
 	build_formspec = idea_form_builder
 })
 
--- Registers a new idea with the given idea_def.
-function ctw_resources.register_idea(id, idea_def)
+local function idea_info(itemstack, player, pointed_thing)
+	local pname = player:get_player_name()
+	local idef = minetest.registered_items[itemstack:get_name()]
+	if idef._ctw_idea_id then
+		doc.show_entry(pname, "ctw_ideas", idef._ctw_idea_id)
+	end
+end
+
+-- Registers a new idea with the given idea_def along with an item
+function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	if ideas[id] then
 		error("Idea with ID "..id.." is already registered!")
 	end
@@ -162,12 +173,32 @@ function ctw_resources.register_idea(id, idea_def)
 		hidden = true,
 	})
 	
+	-- register idea item
+	local itemdef = itemdef_p or { inventory_image = "ctw_resources_idea_generic.png" }
+	if not itemdef.description then
+		itemdef.description = idea_def.name
+	end
+	if not itemdef.groups then
+		itemdef.groups = {}
+	end
+	itemdef.groups.ctw_idea = 1
+	itemdef._ctw_idea_id = id
+	itemdef.on_use = idea_info
+	minetest.register_craftitem("ctw_resources:idea_"..id, itemdef)
+	
 	ideas[id] = idea_def
 	logs("Registered Idea: "..id)
 end
 
 function ctw_resources.get_idea(idea_id)
 	return ideas[idea_id]
+end
+
+function ctw_resources.get_idea_from_istack(itemstack)
+	local idef = minetest.registered_items[itemstack:get_name()]
+	if idef._ctw_idea_id then
+		return ideas[idef._ctw_idea_id]
+	end
 end
 
 -- Checks if the idea can be approved by the management, that is, permission

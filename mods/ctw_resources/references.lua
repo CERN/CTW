@@ -18,6 +18,14 @@ def = {
 
 ]]--
 
+local function ref_info(itemstack, player, pointed_thing)
+	local pname = player:get_player_name()
+	local idef = minetest.registered_items[itemstack:get_name()]
+	if idef._ctw_reference_id then
+		doc.show_entry(pname, "ctw_references", idef._ctw_reference_id)
+	end
+end
+
 doc.add_category("ctw_references", {
 	name = "References",
 	description = "References you can collect",
@@ -30,6 +38,7 @@ function ctw_resources.register_reference(id, itemdef)
 	end
 	itemdef.groups.ctw_reference = 1
 	itemdef._ctw_reference_id = id
+	itemdef.on_use = ref_info
 	
 	doc.add_entry("ctw_references", id, {
 		name = itemdef.description,
