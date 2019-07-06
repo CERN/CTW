@@ -54,7 +54,7 @@ end
 local function idea_form_builder(id)
 	local idea = ideas[id]
 	if not idea then
-		error("idea_form_builder: ID "..idea_id.." is unknown!")
+		error("idea_form_builder: ID "..id.." is unknown!")
 	end
 
 	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required), #idea.technologies_gained)
