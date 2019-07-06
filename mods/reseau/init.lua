@@ -27,6 +27,19 @@ minetest.register_node(":reseau:testtransmitter", {
 			}
 		}
 	},
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		inv:set_size("tapes", 1)
+
+		meta:set_string("formspec",
+			"size[8,5;]"..
+			"list[context;tapes;3.5,0;8,4;]"..
+			"label[0,1.5;Experiments generate tapes, transport them to the computing center]"..
+			"label[0,2.0;Data generation speed: 10 MB/s]"..
+			"list[current_player;main;0,4;8,1;]"
+		)
+	end
 })
 
 local receiveCount = 0

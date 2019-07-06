@@ -109,7 +109,6 @@ function creative.register_tab(name, title, items)
 					image[4.06,3.4;0.8,0.8;creative_trash_icon.png]
 					listcolors[#00000069;#5A5A5A;#141318;#30434C;#FFF]
 					list[current_player;main;0,4.7;8,1;]
-					list[current_player;main;0,5.85;8,3;8]
 					list[detached:creative_trash;main;4,3.3;1,1;]
 					listring[]
 					image_button[5.4,3.25;0.8,0.8;creative_prev_icon.png;creative_prev;]
