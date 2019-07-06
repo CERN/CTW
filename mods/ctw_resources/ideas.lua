@@ -57,7 +57,8 @@ local function idea_form_builder(id)
 		error("idea_form_builder: ID "..id.." is unknown!")
 	end
 
-	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required), #idea.technologies_gained)
+	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required),
+			#idea.technologies_gained)
 
 	local tech_line_h = 1
 	local desc_height = doc.FORMSPEC.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
@@ -67,7 +68,8 @@ local function idea_form_builder(id)
 	local form = "label["
 					..doc.FORMSPEC.ENTRY_START_X..","..doc.FORMSPEC.ENTRY_START_Y
 					..";"..idea.name.."\n"..string.rep("=", #idea.name).."]";
-	form = form .. doc.widgets.text(idea.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1, doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
+	form = form .. doc.widgets.text(idea.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1,
+			doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
 
 	local function form_render_tech_entry(rn, what, label, xstart, img)
 		form = form .. "image_button["

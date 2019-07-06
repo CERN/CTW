@@ -125,7 +125,7 @@ minetest.register_node("computer:router", {
 		"computer_router_t.png","computer_router_bt.png",
 		"computer_router_l.png","computer_router_r.png",
 		"computer_router_b.png",
-		{name="computer_router_f_animated.png", 
+		{name="computer_router_f_animated.png",
 				animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=1.0}},
 	},
 	paramtype = "light",

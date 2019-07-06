@@ -24,6 +24,7 @@ read_globals = {
 	"worldedit",
 	"file_exists",
 	"Settings",
+	"default",
 }
 
 exclude_files = {
