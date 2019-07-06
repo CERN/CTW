@@ -170,11 +170,6 @@ minetest.register_node("computer:server", {
 		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
 	},
 	sounds = default.node_sound_wood_defaults(),
-	on_rightclick = function(pos, node, clicker, itemstack)
-		node.name = "computer:server_on"
-		minetest.set_node(pos, node)
-		return itemstack
-	end,
 	on_place = function(itemstack, placer, pointed_thing)
 		local pos = pointed_thing.above
 		if minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name ~= "air" then
