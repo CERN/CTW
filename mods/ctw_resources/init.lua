@@ -69,4 +69,3 @@ dofile(mp.."ideas.lua")
 dofile(mp.."references.lua")
 
 dofile(mp.."idea_defs.lua")
-dofile(mp.."reference_defs.lua")
