@@ -23,6 +23,7 @@ reseau.extract_rules = function(rulesspec, node)
 end
 
 reseau.get_any_rules = function(pos)
+	reseau.load_position(pos)
 	local node = minetest.get_node(pos)
 	local nodespec = minetest.registered_nodes[node.name]
 	local rules = {}
@@ -59,6 +60,7 @@ reseau.get_all_links = function(startpos)
 	local startrules = reseau.get_any_rules(startpos)
 	for _, rule in ipairs(startrules) do
 		local target_pos = vector.add(startpos, rule)
+		reseau.load_position(target_pos)
 		local target_nodename = minetest.get_node(target_pos).name
 		local target_nodespec = minetest.registered_nodes[target_nodename]
 		if target_nodespec.reseau and (target_nodespec.reseau.conductor or target_nodespec.reseau.receiver) then

@@ -13,6 +13,7 @@ reseau.transmit = function(previous, frontier, message, startdepth)
 		if #links == 0 then break end
 		local link = not vector.equals(links[1], previous) and links[1] or links[2]
 		if link == nil then break end
+		reseau.load_position(link)
 
 		-- switch to next node
 		previous = frontier
