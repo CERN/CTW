@@ -238,9 +238,9 @@ function ctw_technologies.gain_technology(tech_id, team)
 	end
 	
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
-	ctw_technologies.set_team_tech_state(id, team, state)
-	for _, pname in ipairs(teams.get_members(team.name) do
-		doc.mark_entry_as_revealed(pname, "ctw_technologies", tech_id)
+	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
+	for _, player in ipairs(teams.get_members(team.name)) do
+		doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
 	end
 	
 	logs("-!- Benefits not implemented (in gain_technology)")

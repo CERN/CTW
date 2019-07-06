@@ -172,7 +172,7 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	init_default(idea_def, "technologies_gained", {})
 	init_default(idea_def, "references_required", {})
 	
-	init_default(idea_def, "invention_time", 120)
+	init_default(idea_def, "invention_dp", 120)
 	
 	-- check required techs
 	local techreq = {}
@@ -212,7 +212,7 @@ end
 
 function ctw_resources.get_idea(idea_id)
 	if not ideas[idea_id] then
-		error("Idea ID "..id.." is unknown!")
+		error("Idea ID "..idea_id.." is unknown!")
 	end
 	return ideas[idea_id]
 end
@@ -271,9 +271,9 @@ function ctw_resources.publish_idea(idea_id, team, pname)
 	end
 	
 	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
-	ctw_technologies.set_team_tech_state(id, team, "published")
-	for _, pname in ipairs(teams.get_members(team.name) do
-		doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
+	ctw_resources.set_team_idea_state(idea_id, team, "published")
+	for _,player in ipairs(teams.get_members(team.name)) do
+		doc.mark_entry_as_revealed(player:get_player_name(), "ctw_ideas", idea_id)
 	end
 	
 	return true
