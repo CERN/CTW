@@ -26,8 +26,6 @@ function ctw_resources.is_idea_approved(idea_id, team, refs_inv, refs_invlist)
 		end
 	end
 	-- check references
-	atdebug(refs_inv:get_lists())
-	atdebug(refs_inv:get_list(refs_invlist))
 	for _,stack in ipairs(idea.references_required) do
 		if not refs_inv:contains_item(refs_invlist, stack, false) then
 			table.insert(refs_m, stack)
@@ -77,7 +75,7 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
 	
 	-- successful: remove references and issue permission letter
 	for _,stack in ipairs(idea.references_required) do
-		refs_inv:remove_item(refs_invlist, stack, false)
+		inv:remove_item(invlist, stack, false)
 	end
 	
 	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
@@ -87,7 +85,7 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
 	meta:set_string("team", team.name)
 	meta:set_string("idea_id", idea_id)
 	
-	inventory:add_item(invlist, istack)
+	inv:add_item(invlist, istack)
 	ctw_resources.set_team_idea_state(idea_id, team, "approved", pname)
 	return true
 end

@@ -11,5 +11,7 @@ local mp = minetest.get_modpath(minetest.get_current_modname()) .. DIR_DELIM
 
 dofile(mp.."ideas.lua")
 dofile(mp.."references.lua")
+dofile(mp.."permission.lua")
+dofile(mp.."inventing.lua")
 
 dofile(mp.."idea_defs.lua")

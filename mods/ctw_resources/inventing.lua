@@ -8,9 +8,13 @@ local c_time
 -- returns:
 -- true - no error
 -- false, error_reason - something went wrong
+-- no_approval_letter - Passed item is not an approval letter
 -- wrong_team - Approval letter was issued for another team
 -- not_approved - Idea was not approved, letter is faked, or technology is already being invented.
 function ctw_resources.start_inventing(istack, team, pname)
+	if istack:get_name() ~= "ctw_resources:approval" then
+		return false, "no_approval_letter"
+	end
 	local meta = istack:get_meta()
 	local teamname_m = meta:get_string("team")
 	local idea_id = meta:get_string("idea_id")
@@ -33,15 +37,14 @@ function ctw_resources.start_inventing(istack, team, pname)
 end
 
 minetest.register_globalstep(function(dtime)
-	for _,tname in ipairs(teams.get_all()) do
-		local team = teams.get(tname)
-		if team.ctw_resources_idea_state then
-			for idea_id, istate in pairs(team.ctw_resources_idea_state) do
+	for _,team in ipairs(teams.get_all()) do
+		if team._ctw_resources_idea_state then
+			for idea_id, istate in pairs(team._ctw_resources_idea_state) do
 				local idea = ctw_resources.get_idea(idea_id)
 				if istate.state == "inventing" then
 					if team.points >= istate.target then
 						-- The technology is invented.
-						teams.chat_send_team(tname, "Your scientists have successfully prototyped \""..idea.name.."\"!")
+						teams.chat_send_team(team.name, "Your scientists have successfully prototyped \""..idea.name.."\"!")
 						for _, tech_id in ipairs(idea.technologies_gained) do
 							ctw_technologies.gain_technology(tech_id, team)
 						end
