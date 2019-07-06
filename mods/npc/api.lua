@@ -10,7 +10,8 @@ NPC_Event = {
 		dialogue = "Hello $PLAYER. Good luck on your mission!",
 		-- ^ Text to say
 		conditions = {
-			{ technology = "blag", item = "", weight = 2/nil },
+			{ tech_id = "blag", item = "", weight = 2/nil },
+			{ idea_id = "bar", dp_min = 10, weight = 2/nil },
 		}
 		-- ^ Per table entry: AND-connected conditions
 		-- One condition table has to match entirely to be called
@@ -37,8 +38,14 @@ npc.register_event(npc_name, NPC_Event)
 	-- ^ 'dialogue' must be specified
 
 npc.register_event_from_idea(npc_name, dialogue, idea_name)
+	-- Gives the team an idea if the requirements are met
 	-- 'dialogue': string/nil: Text to say
 	-- 'idea_name': From ctw_techologies (untested)
+
+npc.register_event_from_tech(npc_name, dialogue, tech_name)
+	-- Gives the team  technology if the requirements are met
+	-- 'dialogue': string/nil: Text to say
+	-- 'tech_name': From ctw_techologies (untested)
 
 npc.get_event_by_id(id)
 	-- ^ Searchs an unique NPC_Event by ID
@@ -48,6 +55,8 @@ npc.get_event_by_id(id)
 -- Dare you accessing this table outside this mod
 npc.registered_events = {}
 npc.registered_npcs = {}
+
+math.randomseed(os.time())
 
 function npc.register_event(name, def)
 	assert(name)
@@ -62,6 +71,15 @@ function npc.register_event_from_idea(name, dialogue, idea_name)
 	local def = {}
 	def.dialogue = dialogue or idea_def.description
 	def.conditions = { { idea_id = idea_name } }
+	def.options = { { text = "Thank you!" } }
+	npc.register_event(name, def)
+end
+
+function npc.register_event_from_tech(name, dialogue, tech_name)
+	local tech_def = ctw_technologies.get_technology(tech_name)
+	local def = {}
+	def.dialogue = dialogue or tech_def.description
+	def.conditions = { { idea_id = tech_name } }
 	def.options = { { text = "Thank you!" } }
 	npc.register_event(name, def)
 end
@@ -83,7 +101,15 @@ local function check_condition(player, c)
 				{ "tech1", "tech2" }, player:get_inventory(), "main") then
 			return
 		end
-		weight = weight + ctw_resources.get_idea(c.idea_id).technologies_required
+		weight = weight + ctw_resources.get_idea(c.idea_id).references_required
+	end
+	if c.tech_id then
+		-- From ctw_resources
+		if not ctw_technologies.is_tech_approved(c.tech_id,
+				{ "tech1", "tech2" }, player:get_inventory(), "main") then
+			return
+		end
+		weight = weight + ctw_resources.get_technology(c.tech_id).requires
 	end
 	if c.item then
 		if not player:get_inventory():contains_item(c.item) then
@@ -167,11 +193,12 @@ function npc.show_dialogue(player, npc_name, def)
 	-- TODO: Translation goes here
 	local answer = def.dialogue
 	answer = answer:gsub("$PLAYER", player_name)
-	answer = answer:gsub("$TEAM", "TODO")
+	local team_def = teams.get_by_player(player_name)
+	answer = answer:gsub("$TEAM", team_def and team_def.name or "Singleplayer")
 
 	local fs = {
 		"size[10,%f]",
-		"real_coordinates[true]",
+		--"real_coordinates[true]",
 		("textarea[0.5,1;9,3;;%s;%s]"):format(
 			minetest.formspec_escape(npc.registered_npcs[npc_name].infotext),
 			minetest.formspec_escape(answer)
@@ -182,7 +209,7 @@ function npc.show_dialogue(player, npc_name, def)
 	local button_y_pos = 4
 	local function add_button(i, option)
 		if i % 2 == 0 then
-			button_y_pos = button_y_pos + 1.5
+			button_y_pos = button_y_pos + 1 -- + 1.5
 		end
 		local x = (i % 2) * button_spacing + 0.5
 

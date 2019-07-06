@@ -13,7 +13,11 @@ npc.register_event("steve", {
 			target = function(player, event)
 				player:get_inventory():add_item("main", "default:stick")
 			end
-		}
+		},
+		{ text = "a", target = function() end },
+		{ text = "ab", target = function() end },
+		{ text = "ca", target = function() end },
+		{ text = "bab", target = function() end },
 	}
 })
 
