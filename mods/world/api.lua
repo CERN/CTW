@@ -10,6 +10,20 @@ function world.get_team_location(tname, name)
 	return teaml[name]
 end
 
+function world.get_area(name)
+	return {
+		from = world.get_location(name .. "_1"),
+		to = world.get_location(name .. "_2")
+	}
+end
+
+function world.get_team_area(tname, name)
+	return {
+		from = world.get_team_location(tname, name .. "_1"),
+		to = world.get_team_location(tname, name .. "_2")
+	}
+end
+
 function world.load_locations(path)
 	local locs = Settings(path):to_table()
 	print(dump(locs))
