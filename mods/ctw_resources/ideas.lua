@@ -257,7 +257,7 @@ end
 
 -- TODO only for testing
 
-minetest.register_chatcommand("ctwt", {
+minetest.register_chatcommand("ctwi", {
          param = "",
          description = "Reveal the hidden entry of the doc_example mod",
          privs = {},
