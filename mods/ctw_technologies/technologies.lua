@@ -186,6 +186,9 @@ function ctw_technologies.register_technology(id, tech_def)
 end
 
 function ctw_technologies.get_technology(id)
+	if not technologies[id] then
+		error("Technology ID "..id.." is unknown!")
+	end
 	return technologies[id]
 end
 
