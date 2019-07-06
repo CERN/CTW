@@ -39,6 +39,7 @@ function ctw_resources.register_reference(id, itemdef)
 	itemdef.groups.ctw_reference = 1
 	itemdef._ctw_reference_id = id
 	itemdef.on_use = ref_info
+	itemdef._usage_hint = "Left-click to show information"
 	
 	doc.add_entry("ctw_references", id, {
 		name = itemdef.description,

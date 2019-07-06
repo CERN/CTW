@@ -184,6 +184,7 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	itemdef.groups.ctw_idea = 1
 	itemdef._ctw_idea_id = id
 	itemdef.on_use = idea_info
+	itemdef._usage_hint = "Left-click to show information"
 	minetest.register_craftitem("ctw_resources:idea_"..id, itemdef)
 	
 	ideas[id] = idea_def
