@@ -27,6 +27,7 @@ minetest.register_globalstep(function(dtime)
 		reseau.db.autotransmitters[poshash] = reseau.db.autotransmitters[poshash] - dtime
 		if reseau.db.autotransmitters[poshash] < 0 then
 			local pos = minetest.get_position_from_hash(poshash)
+			reseau.load_position(pos)
 			local node = minetest.get_node(pos)
 
 			-- If relaunch succeeds (transmitter is still there), then actually transmit!
