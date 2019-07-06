@@ -128,60 +128,62 @@ minetest.register_node(":reseau:testreceiver", {
 })
 
 local ROUTER_DELAY = 3
-minetest.register_node(":reseau:testrouter", {
-	description = "Router (Testing)",
-	tiles = {
-		"reseau_router_top.png",
-		"reseau_router_bottom.png",
-		"reseau_router_side_connection.png",
-		"reseau_router_side_connection.png",
-		"reseau_router_side_connection.png",
-		"reseau_router_side_noconnection.png"
-	 },
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {cracky = 3},
-	selection_box = {
-		type = "fixed",
-		fixed = {-.5, -.5, -.5, .5, -.5+5/16, .5}
-	},
-	node_box = {type = "fixed", fixed = {
-		{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}, -- x positive
-		{-2/16, -.5, 1/16, 2/16, -.5+2/16, 8/16}, -- z positive
-		{-8/16, -.5, -2/16, -1/16, -.5+2/16, 2/16}, -- x negative
-
-		{-3/16, -.5, -5/16, 3/16, -.5+3/16, 5/16},
-		{-4/16, -.5, -4/16, 4/16, -.5+3/16, 4/16},
-		{-5/16, -.5, -3/16, 5/16, -.5+3/16, 3/16} -- center box
-	}},
-	reseau = {
-		receiver = {
-			technology = {
-				"copper", "fiber"
-			},
-			rules = function(node)
-				return reseau.mergetable(
-					reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
-					reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
-				)
-			end,
-			action = function(pos, message, depth)
-				local node = minetest.get_node(pos)
-				local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
-				reseau.transmit(pos, cablepos, message, depth + ROUTER_DELAY)
-			end
+for _, team in ipairs(teams.get_all()) do
+	minetest.register_node(":reseau:testrouter_" .. team.name, {
+		description = "Router (Testing)",
+		tiles = {
+			reseau.with_overlay("reseau_router_top.png", team.color, "reseau_router_top_overlay.png"),
+			"reseau_router_bottom.png",
+			"reseau_router_side_connection.png",
+			"reseau_router_side_connection.png",
+			"reseau_router_side_connection.png",
+			"reseau_router_side_noconnection.png"
 		},
-		transmitter = {
-			technology = {
-				"copper", "fiber"
+		drawtype = "nodebox",
+		paramtype = "light",
+		paramtype2 = "facedir",
+		groups = { ["protection_" .. team.name] = 1 },
+		selection_box = {
+			type = "fixed",
+			fixed = {-.5, -.5, -.5, .5, -.5+5/16, .5}
+		},
+		node_box = {type = "fixed", fixed = {
+			{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}, -- x positive
+			{-2/16, -.5, 1/16, 2/16, -.5+2/16, 8/16}, -- z positive
+			{-8/16, -.5, -2/16, -1/16, -.5+2/16, 2/16}, -- x negative
+			{-3/16, -.5, -5/16, 3/16, -.5+3/16, 5/16},
+			{-4/16, -.5, -4/16, 4/16, -.5+3/16, 4/16},
+			{-5/16, -.5, -3/16, 5/16, -.5+3/16, 3/16} -- center box
+		}},
+		team_name = team.name,
+		reseau = {
+			receiver = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = function(node)
+					return reseau.mergetable(
+						reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
+						reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
+					)
+				end,
+				action = function(pos, message, depth)
+					local node = minetest.get_node(pos)
+					local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
+					reseau.transmit(pos, cablepos, message, depth + ROUTER_DELAY)
+				end
 			},
-			rules = function(node)
-				return {minetest.facedir_to_dir(node.param2)}
-			end
+			transmitter = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = function(node)
+					return {minetest.facedir_to_dir(node.param2)}
+				end
+			}
 		}
-	}
-})
+	})
+end
 
 minetest.register_craftitem(":reseau:tape", {
 	image = "reseau_tape.png",

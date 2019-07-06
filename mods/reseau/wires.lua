@@ -217,18 +217,14 @@ local function register_wires(name, technologyspec)
 	end
 end
 
-local function with_overlay(base, color, overlay_name)
-	return base .. "^(" .. overlay_name .. "^[multiply:" .. color .. ")"
-end
-
 local function make_wire_tiles(base, color)
-	local top = with_overlay(base, color, "reseau_wire_overlay_top.png")
-	local side = with_overlay(base, color, "reseau_wire_overlay_side.png")
+	local top = reseau.with_overlay(base, color, "reseau_wire_overlay_top.png")
+	local side = reseau.with_overlay(base, color, "reseau_wire_overlay_side.png")
 	return { top, top, side, side, side, side }
 end
 
 local function make_wire_inv(base, color)
-	return with_overlay(base, color, "reseau_wire_overlay_inv.png")
+	return reseau.with_overlay(base, color, "reseau_wire_overlay_inv.png")
 end
 
 for _, team in ipairs(teams.get_all()) do
