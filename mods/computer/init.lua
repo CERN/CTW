@@ -42,7 +42,7 @@ computer.register = function (name, def)
 		paramtype2 = "facedir",
 		groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 		tiles = {
-			(TEXPFX.."tp"..(cdef.tiles_off.top    and "_off" or "")..".png"),
+			(TEXPFX.."tp"..(cdef.tiles_off.top	and "_off" or "")..".png"),
 			(TEXPFX.."bt"..(cdef.tiles_off.bottom and "_off" or "")..".png"),
 			(TEXPFX.."rt"..(cdef.tiles_off.right  and "_off" or "")..".png"),
 			(TEXPFX.."lt"..(cdef.tiles_off.left   and "_off" or "")..".png"),
@@ -186,36 +186,52 @@ minetest.register_node("computer:server", {
 	end
 })
 
-minetest.register_node("computer:server_on", {
-	drawtype = "nodebox",
-	tiles = {
-		'computer_server_t.png',
-		'computer_server_bt.png',
-		'computer_server_l.png',
-		'computer_server_r.png',
-		'computer_server_bt.png',
-		'computer_server_f_on.png',
-	},
-	inventory_image = "computer_server_inv.png",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {snappy=3,not_in_creative_inventory=1},
-	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}
-	},
-	node_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}
-	},
-	sounds = default.node_sound_wood_defaults(),
-	drop = 'computer:server',
-	on_rightclick = function(pos, node, clicker, itemstack)
-		node.name = "computer:server"
-		minetest.set_node(pos, node)
-		return itemstack
-	end
-})
+local function register_server(team)
+	local common = "(teams_color32_" .. team .. ".png^[mask:computer_server_"
+	local maskt = common .. "top.png)"
+	local masks = common .. "side.png)"
+	local maskb = common .. "back.png)"
+	minetest.register_node("computer:server_" .. team, {
+		drawtype = "nodebox",
+		tiles = {
+			'computer_server_t.png^[resize:32x32^' .. maskt,
+			'computer_server_bt.png',
+			'computer_server_l.png^' .. masks,
+			'computer_server_r.png^(' .. masks .. '^[transformFX)',
+			'computer_server_bt.png^[resize:32x32^' .. maskb,
+			'computer_server_f_on.png',
+		},
+		inventory_image = "computer_server_inv.png",
+		paramtype = "light",
+		paramtype2 = "facedir",
+		groups = {snappy=3,not_in_creative_inventory=1}, -- TODO, remove!
+		selection_box = {
+			type = "fixed",
+			fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}
+		},
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375},
+				{-0.125, -0.5, 0.4275, 0.125, -0.25, 0.5}, -- NodeBox2
+			}
+		},
+		sounds = default.node_sound_wood_defaults(),
+		reseau = {
+			transmitter = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = reseau.rules.default,
+			}
+		}
+		--on_metadata_inventory_put
+	})
+end
+
+for i, team_def in ipairs(teams.get_all()) do
+	register_server(team_def.name)
+end
 
 -- Printer/scaner combo
 minetest.register_node("computer:printer", {
