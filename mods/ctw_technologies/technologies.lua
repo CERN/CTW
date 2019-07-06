@@ -197,3 +197,54 @@ function ctw_technologies._get_technologies()
 end
 
 
+-- Get the state of a team technology. This returns a table
+-- {state = "undiscovered"} - Technology is not invented
+-- {state = "gained"} - Idea has been prototyped and technology has been gained.
+function ctw_technologies.get_team_tech_state(id, team)
+	if not team._ctw_technologies_tech_state then
+		team._ctw_technologies_tech_state = {}
+	end
+	local state = team._ctw_technologies_tech_state[id]
+	if not state then
+		return {state = "undiscovered"}
+	end
+	return state
+end
+
+-- Get whether technology is gained by a team
+function ctw_technologies.is_tech_gained(id, team)
+	return ctw_technologies.get_team_tech_state(id, team).state == "gained"
+end
+
+-- Set the state of a team technology.
+function ctw_technologies.set_team_tech_state(id, team, state)
+	if not team._ctw_technologies_tech_state then
+		team._ctw_technologies_tech_state = {}
+	end
+	local tstate = {state = state}
+	team._ctw_technologies_tech_state[id] = tstate
+end
+
+-- Make a team gain a technology. This notifies the team, reveals the technology doc pages
+-- and applies the benefits.
+-- returns true or false, error_reason
+-- "already_gained" - Technology was already gained.
+function ctw_technologies.gain_technology(tech_id, team)
+	local tech = ctw_technologies.get_technology(tech_id)
+	local tstate = ctw_technologies.get_team_tech_state(id, team)
+	
+	if tstate.state == "gained" then
+		return false, "already_gained"
+	end
+	
+	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
+	ctw_technologies.set_team_tech_state(id, team, state)
+	for _, pname in ipairs(teams.get_members(team.name) do
+		doc.mark_entry_as_revealed(pname, "ctw_technologies", tech_id)
+	end
+	
+	logs("-!- Benefits not implemented (in gain_technology)")
+	
+	return true
+end
+
