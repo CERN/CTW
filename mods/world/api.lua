@@ -6,17 +6,20 @@ function world.get_location(name)
 end
 
 function world.get_team_location(tname, name)
-	return _team_locations[tname][name]
+	local teaml = _team_locations[tname] or {}
+	return teaml[name]
 end
 
 function world.load_locations(path)
 	local locs = Settings(path):to_table()
+	print(dump(locs))
 	for key, value in pairs(locs) do
-		local pos = minetest.str_to_pos(value)
+		local pos = minetest.string_to_pos(value)
 
 		local tname, name = key:match("(%w+)%.(%w+)")
 		if tname then
-			_locations[tname][name] = pos
+			_team_locations[tname] = _team_locations[tname] or {}
+			_team_locations[tname][name] = pos
 		else
 			_locations[key] = pos
 		end
