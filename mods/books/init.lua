@@ -58,7 +58,7 @@ end
 
 for key, d in pairs(book_types) do
 	local description = d[1]
-	local can_be_taken = description ~= nil
+	local can_be_taken = description ~= ""
 	if can_be_taken then
 		ctw_resources.register_reference("books:book_" .. key, {
 			description = description,

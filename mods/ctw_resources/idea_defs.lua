@@ -12,8 +12,8 @@ ctw_resources.register_idea("ascii", {
 
 	},
 	references_required = {
-		"ctw_resources:blue_book 3",
-		"ctw_resources:red_book 1",
+		"books:book_blue 3",
+		"books:book_red 1",
 	},
 })
 
@@ -27,8 +27,8 @@ ctw_resources.register_idea("html", {
 		"ascii",
 	},
 	references_required = {
-		"ctw_resources:green_book 2",
-		"ctw_resources:red_book 1",
+		"books:book_green 2",
+		"books:book_red 1",
 	}
 })
 ctw_resources.register_idea("ethernet", {
@@ -42,7 +42,7 @@ ctw_resources.register_idea("ethernet", {
 
 	},
 	references_required = {
-		"ctw_resources:red_book 5",
+		"books:book_red 5",
 	},
 })
 
@@ -57,6 +57,6 @@ ctw_resources.register_idea("www", {
 		"lan",
 	},
 	references_required = {
-		"ctw_resources:red_book 1",
+		"books:book_red 1",
 	},
 })
