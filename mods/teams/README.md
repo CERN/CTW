@@ -22,6 +22,7 @@
 
 * teams.get(team_name) -> Team def
   * Get team by name.
+* teams.get_all() -> array-like table of Team defs
 * teams.get_points(team_name) -> Integer
 * teams.add_points(team_name, pointers) -> Integer
 * teams.create(team_name, def) -> Team def
