@@ -5,13 +5,31 @@
 local enable_bookshelf_randomization = false
 
 local book_types = {
-	white  = { "White book"  , false },
-	red    = { "Red book"    , true  },
-	green  = { "Green book"  , true  },
-	blue   = { "Blue book"   , true  },
-	yellow = { "Yellow book" , true  },
-	orange = { "Orange book" , true  },
-	purple = { "Purple book" , true  },
+	white = { "", "" },
+	red = {
+		"Red book",
+		"This is a book that is red and contains interesting information"
+	},
+	green = {
+		"Green book",
+		"This is a book that is green and contains interesting information"
+	},
+	blue = {
+		"Blue book",
+		"This is a book that is blue and contains interesting information"
+	},
+	yellow = {
+		"Yellow book",
+		"This is a book that is yellow and contains interesting information"
+	},
+	orange = {
+		"Orange book",
+		"This is a book that is orange and contains interesting information"
+	},
+	purple = {
+		"Purple book",
+		"This is a book that is purple and contains interesting information"
+	},
 }
 
 local book_respawn_time_min = 10
@@ -40,11 +58,14 @@ end
 
 for key, d in pairs(book_types) do
 	local description = d[1]
-	local can_be_taken = d[2]
-	minetest.register_craftitem("books:book_" .. key, {
-		description = description,
-		inventory_image = "books_book_" .. key .. ".png",
-	})
+	local can_be_taken = description ~= nil
+	if can_be_taken then
+		ctw_resources.register_reference("books:book_" .. key, {
+			description = description,
+			_ctw_longdesc = d[2],
+			inventory_image = "books_book_" .. key .. ".png",
+		})
+	end
 
 	minetest.register_node("books:bookshelf_" .. key, {
 		tiles = { "books_bookshelf_top.png", "books_bookshelf_bottom.png",
