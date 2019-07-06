@@ -113,6 +113,9 @@ minetest.register_node(":reseau:testreceiver", {
 			action = function(pos, packet)
 				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
 				teams.add_points(packet.team, dp)
+
+				-- return actually received throughput
+				return 5
 			end
 		}
 	},
@@ -188,6 +191,9 @@ for _, team in ipairs(teams.get_all()) do
 					local node = minetest.get_node(pos)
 					local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
 					reseau.transmit(pos, cablepos, message, depth + ROUTER_DELAY)
+
+					-- actually received throughput
+					return 10
 				end
 			},
 			transmitter = {
