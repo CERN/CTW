@@ -30,7 +30,8 @@ Special 'dialogue' fields:
  FUNCTIONS
 -----------
 npc.register_npc(npc_name, def)
-	-- ^ Registers an NPC. 'def' is TODO
+	-- ^ Registers an NPC.
+	-- 'def': Regular entity scaling and texturing fields
 
 npc.register_event(npc_name, NPC_Event)
 	-- ^ 'dialogue' must be specified
@@ -42,6 +43,7 @@ npc.get_event_by_id(id)
 
 -- Dare you accessing this table outside this mod
 npc.registered_events = {}
+npc.registered_npcs = {}
 
 function npc.register_event(name, def)
 	assert(name)
@@ -175,26 +177,70 @@ function npc.show_dialogue(player, npc_name, def)
 	minetest.show_formspec(player_name, "npc:interaction", table.concat(fs))
 end
 
-function npc.register_npc(npc_name)
+local function spawn_entity(pos, npc_name)
+	local entities = minetest.get_objects_inside_radius(pos, 0.6)
+	for i, obj in ipairs(entities) do
+		local ent = obj:get_luaentity()
+		if ent and ent._npc_name == npc_name then
+			return -- Already spawned
+		end
+	end
+	local def = npc.registered_npcs[npc_name]
+	pos.y = pos.y - 0.5
+	local obj = minetest.add_entity(pos, "npc:npc_generic")
+
+	obj:set_properties({
+		visual_size = { x = def.size, y = def.size },
+		textures = def.textures,
+		collisionbox = def.collisionbox,
+		infotext = def.infotext,
+	})
+	obj:get_luaentity()._npc_name = npc_name
+end
+
+function npc.register_npc(npc_name, def)
+	def.size = def.size or 1
+	def.infotext = def.infotext or ""
+	def.textures = def.textures or { "character.png" }
+
+	if not def.collisionbox then
+		def.collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3}
+		for i, s in ipairs(def.collisionbox) do
+			def.collisionbox[i] = s * def.size
+		end
+	end
+
+	npc.registered_npcs[npc_name] = def
 	minetest.register_node("npc:npc_" .. npc_name, {
 		description = "NPC node",
-		drawtype = "mesh",
-		mesh = "character.b3d",
-		tiles = { "character.png" },
-		visual_scale = 0.1,
-		selection_box = {
+		tiles = { "default_glass.png" },
+		paramtype = "light",
+		drawtype = "nodebox",
+		node_box = {
 			type = "fixed",
-			fixed = { -0.4, -0.5, -0.4, 0.4, 1.5, 0.4 },
+			fixed = {
+				{-0.5, -0.5, -0.5, 0.5, -0.4, 0.5},
+			},
 		},
-		collision_box = {
-			type = "fixed",
-			fixed = { -0.4, -0.5, -0.4, 0.4, 1.5, 0.4 },
-		},
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-			npc.show_dialogue(clicker, npc_name)
+		groups = { npc_spawner = 1 },
+		on_construct = function(pos)
+			spawn_entity(pos, npc_name)
 		end
 	})
 end
+
+minetest.register_lbm({
+	label = "Spawn NPCs",
+	name = "npc:spawn_npcs",
+	nodenames = {"groups:npc_spawner"},
+	action = function(pos, node)
+		local npc_name = node:match("npc:npc_(.*)")
+		if not npc_name then
+			return
+		end
+		spawn_entity(pos, npc_name)
+	end
+})
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "npc:interaction" then
