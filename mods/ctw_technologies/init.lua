@@ -11,7 +11,7 @@ dofile(mp.."tree.lua")
 dofile(mp.."tech_defs.lua")
 
 -- construct tree
-ctw_technologies.finish_register_technologies()
+ctw_technologies.build_tech_tree()
 
 
 -- TODO only for testing

@@ -31,6 +31,12 @@ After all tech registrations are complete, some fields are auto-generated (such 
 		-- Optional, if specified tells the minimum level at which this element will be
 		-- positioned in the tree. Defaults to 0
 		
+		tree_line = <n>
+		-- Optional, on which line to place the node
+		
+		tree_conn_loc = <llvl>
+		-- optional, between which nodes to place the bend
+		
 		-- Those fields are filled in after registration automatically:
 		enables = {
 			-- Technologies that are now possible
@@ -171,57 +177,12 @@ function ctw_technologies.register_technology(id, tech_def)
 	logs("Registered Technology: "..id)
 end
 
-function ctw_technologies.finish_register_technologies()
-	logs("Building the technology tree...")
-	for techid, tech in pairs(technologies) do
-		-- scan through technologies and find which techs have this as requirement
-		for atechid, atech in pairs(technologies) do
-			if contains(atech.requires, techid) then
-				table.insert(tech.enables, atechid)
-			end
-		end
-	end
-	-- find parallel topological sorting of tree elements
-	local c_queue = {}
-	-- find roots
-	for techid, tech in pairs(technologies) do
-		-- scan through technologies and find which techs have this as requirement
-		if #tech.requires == 0 then
-			table.insert(c_queue, techid)
-		end
-	end
-	-- for every queue item, add its descendants and add current level
-	while #c_queue > 0 do
-		local techid = c_queue[1]
-		table.remove(c_queue, 1)
-		local tech = technologies[techid]
-		if tech.tree_level then
-			error("Topological sorting tech tree failed at "..techid.." because it has already been placed in the tree! Check for cycles!")
-		end
-		-- get level as max of levels of nodes before
-		local lvl = tech.min_tree_level or 0
-		for _, atechid in ipairs(tech.requires) do
-			local atech = technologies[atechid]
-			if not atech.tree_level then
-				error("Topological sorting tech tree failed at "..techid.." because dependency "..atechid.." has no tree_level set!")
-			end
-			lvl = math.max(lvl, atech.tree_level + 1)
-		end
-		logs("Tech Tree Sort: "..techid.." on level "..lvl)
-		tech.tree_level = lvl
-		
-		-- add enables to the queue
-		for _, atechid in ipairs(tech.enables) do
-			if not contains(c_queue, atechid) then
-				table.insert(c_queue, atechid)
-			end
-		end
-	end
-	logs("Building the technology tree done.")
-	for techid, tech in pairs(technologies) do
-		-- scan through technologies and find which techs have this as requirement
-		if not tech.tree_level then
-			minetest.log("warning", "[ctw_technologies] Technology "..techid.." is not included in the tree, is this a cycle?")
-		end
-	end
+function ctw_technologies.get_technology(id)
+	return technologies[id]
 end
+
+function ctw_technologies._get_technologies()
+	return technologies
+end
+
+
