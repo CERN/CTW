@@ -127,9 +127,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			for rn, ref in ipairs(idea.references_required) do
 				if fields["goto_rr_"..rn] then
 					local istack = ItemStack(ref)
-					local idef = minetest.registered_items[istack:get_name()]
-					local iid = idef and idef._ctw_reference_id
-					if idd then
+					local iid = istack:get_name()
+					if iid then
 						doc.show_entry(pname, "ctw_references", iid)
 					end
 				end

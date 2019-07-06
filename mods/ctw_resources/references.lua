@@ -36,5 +36,5 @@ function ctw_resources.register_reference(id, itemdef)
 		data = "\n"..itemdef.description.."\n"..string.rep("=", #itemdef.description).."\n\n"..itemdef._ctw_longdesc,
 	})
 	
-	minetest.register_craftitem("ctw_resources:"..id, itemdef)
+	minetest.register_craftitem(id, itemdef)
 end
