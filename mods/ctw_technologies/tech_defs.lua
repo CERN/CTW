@@ -2,6 +2,7 @@
 ctw_technologies.register_technology("ascii", {
 	name = "ASCII",
 	description = "There is a standard code for character encoding!",
+	year = 1989,
 	requires = {
 	},
 	benefits = {
@@ -12,6 +13,7 @@ ctw_technologies.register_technology("ascii", {
 ctw_technologies.register_technology("html", {
 	name = "Hypertext Markup Language",
 	description = "There is a standardized language to express documents with hyperlinks!",
+	year = 1991,
 	requires = {
 		"ascii"
 	},
@@ -23,6 +25,7 @@ ctw_technologies.register_technology("html", {
 ctw_technologies.register_technology("phonecable", {
 	name = "Phone Cable",
 	description = "The most basic type of signal cable",
+	year = 1984,
 	requires = {
 	},
 	benefits = {
