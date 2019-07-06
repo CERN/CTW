@@ -42,13 +42,12 @@ minetest.register_node(":reseau:testreceiver", {
 			},
 			rules = reseau.rules.default,
 			action = function(pos, content)
-				print("RECEIVED: "..dump(content))
 				receiveCount = receiveCount + 1
 				local player = minetest.get_player_by_name("singleplayer")
 				local hudtext = "Received: " .. receiveCount
 
 				if receiveCountHud ~= nil then
-					player:hud_change(idx, "text", hudtext)
+					player:hud_change(receiveCountHud, "text", hudtext)
 				else
 					receiveCountHud = player:hud_add({
 						hud_elem_type = "text",

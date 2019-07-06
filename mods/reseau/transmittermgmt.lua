@@ -4,11 +4,12 @@ if not reseau.db.autotransmitters then
 end
 
 reseau.try_launch_autotransmitter = function(pos, node)
-	if minetest.registered_nodes[node.name].reseau
-	and minetest.registered_nodes[node.name].reseau.transmitter
-	and minetest.registered_nodes[node.name].reseau.transmitter.autotransmit then
-		print("launch succeeded!")
-		reseau.db.autotransmitters[minetest.hash_node_position(pos)] = minetest.registered_nodes[node.name].reseau.transmitter.autotransmit.interval
+	local nodespec = minetest.registered_nodes[node.name]
+
+	if nodespec.reseau
+	and nodespec.reseau.transmitter
+	and nodespec.reseau.transmitter.autotransmit then
+		reseau.db.autotransmitters[minetest.hash_node_position(pos)] = nodespec.reseau.transmitter.autotransmit.interval
 		reseau.db_commit()
 		return true
 	end
@@ -32,7 +33,7 @@ minetest.register_globalstep(function(dtime)
 			if reseau.try_launch_autotransmitter(pos, node) then
 				minetest.registered_nodes[node.name].reseau.transmitter.autotransmit.action(pos)
 			else
-				table.insert(marked_for_removal, poshash) 
+				table.insert(marked_for_removal, poshash)
 			end
 		end
 	end

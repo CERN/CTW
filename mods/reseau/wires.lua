@@ -17,7 +17,7 @@ local wire_getconnect = function(from_pos, self_pos, wire_name)
 	end
 
 	if self_nodespec and self_nodespec.reseau then
-		local rules = {}
+		local rules
 		if self_nodespec.is_reseau_wire then
 			rules = reseau.rules.default
 		else
@@ -86,7 +86,8 @@ local update_on_place_dig = function(pos, node)
 	-- Update nodes around it
 	for _, r in ipairs(reseau.rules.default) do
 		local np = vector.add(pos, r)
-		if minetest.registered_nodes[minetest.get_node(np).name] and minetest.registered_nodes[minetest.get_node(np).name].is_reseau_wire then
+		local nodespec = minetest.registered_nodes[minetest.get_node(np).name]
+		if nodespec and nodespec.is_reseau_wire then
 			wire_updateconnect(np)
 		end
 	end

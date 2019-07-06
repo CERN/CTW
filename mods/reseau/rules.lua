@@ -56,7 +56,6 @@ end
 reseau.get_all_links = function(startpos)
 	local links = {}
 
-	local startnode = minetest.get_node(startpos)
 	local startrules = reseau.get_any_rules(startpos)
 	for _, rule in ipairs(startrules) do
 		local target_pos = vector.add(startpos, rule)
