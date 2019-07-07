@@ -123,7 +123,7 @@ local storage = minetest.get_mod_storage()
 function teams.load()
 	local json = storage:get("teams")
 	if json then
-		local list = minetest.parse_json(json)
+		local list = minetest.parse_json(json) or {}
 		for i=1, #list do
 			teams.create(list[i])
 		end
@@ -155,7 +155,7 @@ function teams.load()
 
 	local json2 = storage:get("teamalloc")
 	if json2 then
-		_tname_by_player = minetest.parse_json(json2)
+		_tname_by_player = minetest.parse_json(json2) or {}
 	end
 end
 
