@@ -77,6 +77,9 @@ ctw_technologies.set_team_tech_state(tech_id, team, state)
 	-- 'team': 'Team def'
 	-- 'state': see 'state' in 'TechState'
 
+ctw_technologies.register_on_gain(func(tech_def, team))
+	-- func() return value is ignored.
+
 ctw_technologies.gain_technology(tech_id, team, try)
 	-- Make a team gain a technology. This notifies the team, reveals the
 	-- technology doc pages and applies the benefits.
@@ -87,7 +90,7 @@ ctw_technologies.update_doc_reveals(team)
 	-- Updates the technology documentation pages
 	-- Is called automatically on state changes
 	-- 'team': 'Team def'
-	
+
 
  Graphical Tree API
 --------------------

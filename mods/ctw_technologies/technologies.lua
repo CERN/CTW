@@ -51,6 +51,7 @@ After all tech registrations are complete, some fields are auto-generated (such 
 ]]--
 
 local technologies = {}
+local _register_on_gain = {}
 
 local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
@@ -228,6 +229,10 @@ function ctw_technologies.set_team_tech_state(id, team, state)
 	ctw_technologies.update_doc_reveals(team)
 end
 
+function ctw_technologies.register_on_gain(func)
+	table.insert(_register_on_gain, func)
+end
+
 -- Make a team gain a technology. This notifies the team, reveals the technology doc pages
 -- and applies the benefits.
 -- if "try" is true, will only perform a dry run and do nothing actually.
@@ -245,6 +250,10 @@ function ctw_technologies.gain_technology(tech_id, team, try)
 
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
 	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
+
+	for i=1, _register_on_gain do
+		_register_on_gain[i](tech, team)
+	end
 
 	logs("-!- Benefits not implemented (in gain_technology)")
 
