@@ -43,7 +43,7 @@ reseau.technologies_get_throughput = function(technologies)
 	local inc_throughput = function(throughput)
 		if best_throughput < throughput then
 			best_throughput = throughput
-		end 
+		end
 	end
 
 	for _, tech in ipairs(technologies) do

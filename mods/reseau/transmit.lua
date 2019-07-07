@@ -23,8 +23,7 @@ reseau.transmit = function(previous, frontier, packet, startdepth)
 
 		-- process next node: technology's throughput?
 		local technology = reseau.get_any_technology(minetest.get_node(link).name)
-		local throughput_limit = reseau.technologies_get_throughput(technology)
-		packet.throughput = throughput_limit < packet.throughput and throughput_limit or packet.throughput
+		packet.throughput = math.min(packet.throughput, reseau.technologies_get_throughput(technology))
 
 		-- process next node: conductor or receiver?
 		local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
