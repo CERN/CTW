@@ -183,6 +183,10 @@ function team_billboard.rebuild_billboard_inventory(team)
 	return inv
 end
 
+ctw_resources.register_on_inventing_complete(function(team, idea_id)
+	team_billboard.rebuild_billboard_inventory(team)
+end)
+
 -- Creates all billboard inventories, if not already present
 function team_billboard.create_billboard_inventories()
 	for _, team in ipairs(teams.get_all()) do

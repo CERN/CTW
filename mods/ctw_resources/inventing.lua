@@ -59,6 +59,20 @@ function ctw_resources.get_inventing_progress(team)
 	return prog
 end
 
+local _register_on_inventing_progress = {}
+
+-- func(team)
+function ctw_resources.register_on_inventing_progress(func)
+	table.insert(_register_on_inventing_progress, func)
+end
+
+local _register_on_inventing_complete = {}
+
+-- func(team, idea_id)
+function ctw_resources.register_on_inventing_complete(func)
+	table.insert(_register_on_inventing_complete, func)
+end
+
 local function advance_inv_progress(ideas, delta_dp, team)
 
 	if #ideas == 0 then
@@ -80,13 +94,30 @@ local function advance_inv_progress(ideas, delta_dp, team)
 				ctw_technologies.gain_technology(tech_id, team)
 			end
 			ctw_resources.set_team_idea_state(idea_id, team, "invented")
+			for i=1, #_register_on_inventing_progress do
+				_register_on_inventing_complete[i](team, idea_id)
+			end
 		end
+	end
+	
+	for i=1, #_register_on_inventing_progress do
+		_register_on_inventing_progress[i](team)
 	end
 end
 
 local prev_dp_by_team = {}
 
+local timer = 3
+
 minetest.register_globalstep(function(dtime)
+	
+	timer = timer - dtime
+	if timer > 0 then return end
+	timer = 2
+	
+	-- TODO temporary
+	teams.add_points("red", 1)
+	
 	for _,team in ipairs(teams.get_all()) do
 		if not prev_dp_by_team[team.name] then
 			prev_dp_by_team[team.name] = team.points

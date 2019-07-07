@@ -126,6 +126,10 @@ function team_billboard.update_open_forms(tname, pers_to, pers_msg)
 	end
 end
 
+ctw_resources.register_on_inventing_progress(function(team)
+	team_billboard.update_open_forms(team.name)
+end)
+
 -- Node definition
 
 minetest.register_node("team_billboard:bb", {
