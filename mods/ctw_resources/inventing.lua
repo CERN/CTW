@@ -5,13 +5,14 @@ local c_time
 
 -- This function should be called by the team billboard once the approval letter is posted on it.
 -- istack - the item stack of the approval letter
+-- if "try" is true, will only perform a dry run and do nothing actually.
 -- returns:
 -- true - no error
 -- false, error_reason - something went wrong
 -- no_approval_letter - Passed item is not an approval letter
 -- wrong_team - Approval letter was issued for another team
 -- not_approved - Idea was not approved, letter is faked, or technology is already being invented.
-function ctw_resources.start_inventing(istack, team, pname)
+function ctw_resources.start_inventing(istack, team, pname, try)
 	if istack:get_name() ~= "ctw_resources:approval" then
 		return false, "no_approval_letter"
 	end
@@ -29,11 +30,14 @@ function ctw_resources.start_inventing(istack, team, pname)
 		return false, "not_approved"
 	end
 
+	if try then return true end
+
 	local ready_score = 0
 
 	-- ready, changing the state
 	teams.chat_send_team(team.name, pname.." has gotten permission for prototyping \""..idea.name.."\". Your scientists will work hard! (you don't need to do anything)")
 	ctw_resources.set_team_idea_state(idea_id, team, "inventing", ready_score)
+	return true
 end
 
 -- Returns the state of all ideas a team is inventing, in this format:

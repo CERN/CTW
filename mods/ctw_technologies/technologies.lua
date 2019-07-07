@@ -229,15 +229,18 @@ end
 
 -- Make a team gain a technology. This notifies the team, reveals the technology doc pages
 -- and applies the benefits.
+-- if "try" is true, will only perform a dry run and do nothing actually.
 -- returns true or false, error_reason
 -- "already_gained" - Technology was already gained.
-function ctw_technologies.gain_technology(tech_id, team)
+function ctw_technologies.gain_technology(tech_id, team, try)
 	local tech = ctw_technologies.get_technology(tech_id)
 	local tstate = ctw_technologies.get_team_tech_state(id, team)
 
 	if tstate.state == "gained" then
 		return false, "already_gained"
 	end
+	
+	if try then return true end
 
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
 	ctw_technologies.set_team_tech_state(tech_id, team, "gained")

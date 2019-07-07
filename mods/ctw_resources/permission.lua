@@ -43,6 +43,7 @@ end
 -- Get a permission letter for the passed idea, directed at the given team
 -- idea_id: Idea that is approved for
 -- pname: player applying for permission
+-- if "try" is true, will only perform a dry run and do nothing actually.
 -- Returns:
 -- true - on success
 -- false, error_reason - on failure
@@ -52,7 +53,7 @@ end
 	-- no_team - Player has no team
 	-- insufficient_resources - Player has not brought enough resources
 	-- insufficient_techs - One or more required technologies are not discovered yet
-function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
+function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 	local idea = ctw_resources.get_idea(idea_id)
 
 	local team = teams.get_by_player(pname)
@@ -73,6 +74,8 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
 			return false, "insufficient_resources"
 		end
 	end
+	
+	if try then return true end
 
 	-- successful: remove references and issue permission letter
 	for _,stack in ipairs(idea.references_required) do

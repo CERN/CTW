@@ -228,15 +228,13 @@ end
 -- specified inventory
 -- To be called from an NPC.
 -- Returns true on success and false, error_reason on failure
+-- if "try" is true, will only perform a dry run and do nothing actually.
 -- error reasons:
 	-- idea_present_in_player - Player already has this idea in inventory
 	-- idea_present_in_team - Idea is already posted on the team billboard
 	-- no_team - Player has no team
-function ctw_resources.give_idea(idea_id, pname, inventory, invlist)
-	local idea = ideas[idea_id]
-	if not idea then
-		error("give_idea: ID "..idea_id.." is unknown!")
-	end
+function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
+	local idea = ctw_resources.get_idea(idea_id)
 
 	--check if the player or the team already had the idea
 	if inventory:contains_item(invlist, "ctw_resources:idea_"..idea_id) then
@@ -251,24 +249,30 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist)
 	if istate.state ~= "undiscovered" then
 		return false, "idea_present_in_team"
 	end
+	
+	if try then return true end
 
 	minetest.chat_send_player(pname, "You got an idea: "..idea.name.."! Proceed to your team space and share it on the team billboard!")
 	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
 	doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
 	-- Note: if another player secretly had gotten this idea before, this will be overwritten. Should not cause side-effects.
 	ctw_resources.set_team_idea_state(idea_id, team, "discovered", pname)
+	return true
 end
 
 -- Publish the idea in the team
+-- if "try" is true, will only perform a dry run and do nothing actually.
 -- returns true or false, error_reason
 -- "already_published" - Idea is published or in a later stage
-function ctw_resources.publish_idea(idea_id, team, pname)
+function ctw_resources.publish_idea(idea_id, team, pname, try)
 	local idea = ctw_resources.get_idea(idea_id)
 	local istate = ctw_resources.get_team_idea_state(idea_id, team)
 
 	if istate.state ~= "discovered" and istate.state ~= "undiscovered" then
 		return false, "already_published"
 	end
+	
+	if try then return true end
 
 	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
 	ctw_resources.set_team_idea_state(idea_id, team, "published")
