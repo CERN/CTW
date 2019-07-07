@@ -1,3 +1,28 @@
+
+local book_respawn_time_min = 10
+local book_respawn_time_max = 20
+
+local function random_book_type(probabilities)
+	-- Return a random type of book, given the probabilities for each kind.
+	-- The probabilities should sum to 1.
+	local r = math.random()
+	local cur = 0
+	local lastkey = nil
+	for key, prob in pairs(probabilities) do
+		cur = cur + prob
+		if r <= cur then
+			return key
+		end
+		lastkey = key
+	end
+	-- Should not happen, but make sure we handle this case anyway
+	minetest.log("warning", "random_book_type could not find a book type!")
+	if lastkey ~= nil then
+		return lastkey
+	end
+	error("random_book_type got an empty probability table")
+end
+
 local function read_file(filename)
 	local file = io.open(filename, "r")
 	if file ~= nil then
