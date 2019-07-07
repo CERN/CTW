@@ -150,6 +150,10 @@ minetest.register_node(":reseau:testreceiver", {
 	end
 })
 
+local function get_router_infotext(cache, max_cache)
+	return "Router: (" .. cache .. " MB/" .. max_cache .. " MB)"
+end
+
 local MAX_HOP_COUNT = 50
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:testrouter_" .. team.name, {
@@ -203,6 +207,7 @@ for _, team in ipairs(teams.get_all()) do
 					local used = math.min(available, packet.throughput)
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
+					meta:set_string("infotext", get_router_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
 					return used
 				end
 			},
@@ -234,12 +239,17 @@ for _, team in ipairs(teams.get_all()) do
 							assert (cache >= 0)
 							meta:set_int("hop_count", 0)
 							meta:set_int("cache", cache)
+							meta:set_string("infotext", get_router_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
 						end
 					end
 				}
 			}
 		}
 	})
+end
+
+local function get_splitter_infotext(cache, max_cache)
+	return "Splitter: (" .. cache .. " MB/" .. max_cache .. " MB)"
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -291,6 +301,7 @@ for _, team in ipairs(teams.get_all()) do
 					local used = math.min(available, packet.throughput)
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
+					meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, reseau.era.splitter_max_cache))
 					return used
 				end
 			},
@@ -339,6 +350,7 @@ for _, team in ipairs(teams.get_all()) do
 
 						meta:set_int("hop_count", 0)
 						meta:set_int("cache", cache)
+						meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, reseau.era.splitter_max_cache))
 					end
 				}
 			}
