@@ -20,9 +20,10 @@ function ctw_resources.is_idea_approved(idea_id, team, refs_inv, refs_invlist)
 	local techs_m = {}
 	local refs_m = {}
 	-- check technologies
-	for _,tech in ipairs(idea.technologies_required) do
-		if not contains(techs_provided, tech) then
-			table.insert(techs_m, tech)
+	for _,tech_id in ipairs(idea.technologies_required) do
+		local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
+		if tstate.state == "undiscovered" then
+			table.insert(techs_m, tech_id)
 		end
 	end
 	-- check references
