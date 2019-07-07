@@ -250,8 +250,8 @@ for _, team in ipairs(teams.get_all()) do
 			"reseau_splitter_bottom.png",
 			"reseau_splitter_side_connection.png",
 			"reseau_splitter_side_connection.png",
-			"reseau_splitter_side_connection.png",
-			"reseau_splitter_side_noconnection.png"
+			"reseau_splitter_side_noconnection.png",
+			"reseau_splitter_side_connection.png"
 		},
 		drawtype = "nodebox",
 		paramtype = "light",
