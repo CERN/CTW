@@ -1,7 +1,4 @@
 
-local book_respawn_time_min = 10
-local book_respawn_time_max = 20
-
 local function random_book_type(probabilities)
 	-- Return a random type of book, given the probabilities for each kind.
 	-- The probabilities should sum to 1.

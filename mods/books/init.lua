@@ -61,6 +61,9 @@ local function string_to_color(str)
 	return string.format("#%X%X%X", R, G, B)
 end
 
+local book_respawn_time_min = 10
+local book_respawn_time_max = 20
+
 for key, d in pairs(book_types) do
 	local description = d[1]
 	local can_be_taken = description ~= ""
