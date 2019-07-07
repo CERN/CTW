@@ -1,4 +1,29 @@
-reseau.get_any_technology = function(nodename)
+reseau.technologies = {}
+reseau.technologies.db = {}
+
+reseau.technologies.register = function(name, technology)
+	reseau.technologies.db[name] = technology
+end
+
+reseau.technologies.get = function(technology)
+	return reseau.technologies.db[technology]
+end
+
+reseau.technologies.get_all = function(technology)
+	return reseau.technologies.db
+end
+
+reseau.technologies.all = function()
+	local all = {}
+	for techname in pairs(reseau.technologies.db) do
+		table.insert(all, techname)
+	end
+	return all
+end
+
+-- get a list of all the technologies that a node supports, no matter
+-- whether it is conductor / receiver / transmitter
+reseau.technologies.get_any_node_technology = function(nodename)
 	local nodespec = minetest.registered_nodes[nodename]
 	local technology = nil
 
@@ -15,9 +40,13 @@ reseau.get_any_technology = function(nodename)
 	return technology
 end
 
-reseau.technologies_compatible = function(nodename1, nodename2)
-	local technology1 = reseau.get_any_technology(nodename1)
-	local technology2 = reseau.get_any_technology(nodename2)
+-- return whether or not the two nodes with node names nodename1 and nodename2
+-- have at least one common technology - both nodes may either only support
+-- one technology (e.g. both copper wires) or support multiple technologies
+-- (e.g. experiments / receivers support all available technologies)
+reseau.technologies.node_technologies_compatible = function(nodename1, nodename2)
+	local technology1 = reseau.technologies.get_any_node_technology(nodename1)
+	local technology2 = reseau.technologies.get_any_node_technology(nodename2)
 
 	if type(technology1) == "string" and type(technology2) == "string" then
 		return technology1 == technology2
@@ -33,24 +62,16 @@ end
 -- technology throughput may be static be also depend on year / era / technologies
 -- if a node is compatible with multiple technologies, the best throughput is chosen
 -- returns throughput in MB/s
--- TODO: implement smart throughput calculation
-reseau.technologies_get_throughput = function(technologies)
+reseau.technologies.get_technology_throughput = function(technologies)
 	if type(technologies) == "string" then
 		technologies = {technologies}
 	end
 
 	local best_throughput = 0
-	local inc_throughput = function(throughput)
-		if best_throughput < throughput then
-			best_throughput = throughput
-		end
-	end
-
 	for _, tech in ipairs(technologies) do
-		if tech == "copper" then
-			inc_throughput(20)
-		elseif tech == "fiber" then
-			inc_throughput(1000)
+		local throughput = reseau.technologies.get(tech).throughput
+		if throughput > best_throughput then
+			best_throughput = throughput
 		end
 	end
 
