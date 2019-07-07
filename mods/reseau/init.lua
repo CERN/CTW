@@ -24,16 +24,42 @@ local receiver_get_formspec = function(meta)
 		"list[current_player;main;0,4;8,1;]"
 end
 
-minetest.register_node(":reseau:testreceiver", {
+minetest.register_node(":reseau:receiverscreen", {
 	description = "Receiver (Testing)",
-	tiles = {"default_water.png"},
-	groups = {cracky = 3},
+	tiles = {
+		"reseau_receiverscreen_top.png",
+		"reseau_receiverscreen_bottom.png",
+		"reseau_receiverscreen_right.png",
+		"reseau_receiverscreen_left.png",
+		"reseau_receiverscreen_back.png",
+		"reseau_receiverscreen_front.png"
+	},
+	groups = {},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	drawtype = "nodebox",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5+1/16, -0.5, -6/16, 0.5-1/16, -0.5+2/16, 5/16}, -- base (keyboard)
+			{-0.5+1/16, -0.5, 1/16, 0.5-1/16, -0.5+12/16, 5/16}, -- screen
+			{-0.5+3/16, -0.5+2/16, 5/16, 0.5-3/16, -0.5+11/16, 7/16} -- screen bump
+		}
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5+1/16, -0.5, -6/16, 0.5-1/16, -0.5+2/16, 5/16}, -- base (keyboard)
+			{-0.5+1/16, -0.5, 1/16, 0.5-1/16, -0.5+12/16, 5/16}, -- screen
+			{-0.5+3/16, -0.5+2/16, 5/16, 0.5-3/16, -0.5+11/16, 7/16} -- screen bump
+		}
+	},
 	reseau = {
 		receiver = {
 			technology = {
 				"copper", "fiber"
 			},
-			rules = reseau.rules.default,
+			rules = {vector.new(0, -1, 0)},
 			action = function(pos, packet, depth)
 				reseau.bitparticles_receiver(pos, depth)
 				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
@@ -69,6 +95,61 @@ minetest.register_node(":reseau:testreceiver", {
 		inv:set_size("tapes", 1)
 
 		meta:set_string("formspec", receiver_get_formspec(meta))
+	end
+})
+
+minetest.register_node(":reseau:receiverbase", {
+	drawtype = "nodebox",
+	description = "Receiver Base",
+	tiles = {
+		"reseau_receiverbase_top.png",
+		"reseau_receiverbase_bottom.png",
+		"reseau_receiverbase_left.png",
+		"reseau_receiverbase_right.png",
+		"reseau_receiverbase_back.png",
+		"reseau_receiverbase_front.png"
+	},
+	inventory_image = "reseau_receiverbase_inv.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 3},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -6/16, 0.5, 0.5, 5/16},
+			{-2/16, -.5, 5/16, 2/16, -.5+2/16, 8/16}
+		}
+	},
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -6/16, 0.5, 0.5, 5/16},
+			{-2/16, -.5, 5/16, 2/16, -.5+2/16, 8/16}
+		}
+	},
+	reseau = {
+		conductor = {
+			technology = {
+				"copper", "fiber"
+			},
+			rules = function(node)
+				--return {minetest.facedir_to_dir(node.param2)}
+				return reseau.mergetable(
+					{minetest.facedir_to_dir(node.param2)},
+					{vector.new(0, 1, 0)}
+				)
+			end
+		}
+	},
+	after_place_node = function(pos)
+		local node = minetest.get_node(pos)
+		minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), {
+			name = "reseau:receiverscreen",
+			param2 = node.param2
+		})
+	end,
+	after_dig_node = function(pos)
+		minetest.remove_node(vector.add(pos, vector.new(0, 1, 0)))
 	end
 })
 
@@ -324,6 +405,7 @@ for _, team in ipairs(teams.get_all()) do
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
+		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = {
 			reseau.with_overlay("reseau_experiment_top.png", team.color, "reseau_experiment_top_overlay.png"),
