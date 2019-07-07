@@ -253,7 +253,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		for techid, tech in pairs(technologies) do
 			-- look if field was clicked
 			if fields["goto_tech_"..techid] or fields["goto_techt_"..techid] then
-				if doc.entry_revealed(pname, "ctw_technologies", techid) then
+				if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
 					doc.show_entry(pname, "ctw_technologies", techid)
 				end
 				return

@@ -138,14 +138,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			for rn, techid in ipairs(tech.requires) do
 				if fields["goto_tr_"..rn] then
-					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
 						doc.show_entry(pname, "ctw_technologies", techid)
 					end
 				end
 			end
 			for rn, techid in ipairs(tech.enables) do
 				if fields["goto_te_"..rn] then
-					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
 						doc.show_entry(pname, "ctw_technologies", techid)
 					end
 				end
@@ -188,6 +188,10 @@ function ctw_technologies.register_technology(id, tech_def)
 
 	technologies[id] = tech_def
 	logs("Registered Technology: "..id)
+end
+
+function ctw_technologies.get_technology_raw(id)
+	return technologies[id]
 end
 
 function ctw_technologies.get_technology(id)

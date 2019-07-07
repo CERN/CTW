@@ -130,14 +130,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			for rn, techid in ipairs(idea.technologies_gained) do
 				if fields["goto_tg_"..rn] then
-					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
 						doc.show_entry(pname, "ctw_technologies", techid)
 					end
 				end
 			end
 			for rn, techid in ipairs(idea.technologies_required) do
 				if fields["goto_tr_"..rn] then
-					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
 						doc.show_entry(pname, "ctw_technologies", techid)
 					end
 				end
@@ -146,7 +146,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				if fields["goto_rr_"..rn] then
 					local istack = ItemStack(ref)
 					local iid = istack:get_name()
-					if iid then
+					if iid and doc.entry_exists("ctw_references", iid) then
 						doc.show_entry(pname, "ctw_references", iid)
 					end
 				end
@@ -217,6 +217,10 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 
 	ideas[id] = idea_def
 	logs("Registered Idea: "..id)
+end
+
+function ctw_resources.get_idea_raw(idea_id)
+	return ideas[idea_id]
 end
 
 function ctw_resources.get_idea(idea_id)
