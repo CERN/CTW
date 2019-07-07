@@ -252,10 +252,10 @@ end
 minetest.register_lbm({
 	label = "Spawn NPCs",
 	name = "npc:spawn_npcs",
-	nodenames = {"groups:npc_spawner"},
+	nodenames = {"group:npc_spawner"},
 	run_at_every_load = true,
 	action = function(pos, node)
-		local npc_name = node:match("npc:npc_(.*)")
+		local npc_name = node.name:match("npc:npc_(.*)")
 		if not npc_name then
 			return
 		end
