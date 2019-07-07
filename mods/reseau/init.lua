@@ -139,7 +139,7 @@ minetest.register_node(":reseau:receiverscreen", {
 				-- Process packet: throughput to points
 				reseau.bitparticles_receiver(pos, depth)
 				local throughput_limit = reseau.throughput.get_receiver_throughput_limit()
-				local throughput = throughput_limit > packet.throughput and packet_throughput or throughput_limit
+				local throughput = math.min(throughput_limit, packet.throughput)
 
 				local dp = throughput * TX_INTERVAL * reseau.era.get_current().dp_multiplier
 				teams.add_points(packet.team, dp)
@@ -474,8 +474,6 @@ end
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:experiment_" .. team.name, {
 		description = "Experiment",
-		tiles = {"default_lava.png"},
-		groups = {cracky = 3},
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
