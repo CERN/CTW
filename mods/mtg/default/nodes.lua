@@ -2839,7 +2839,7 @@ minetest.register_node("default:brick", {
 
 minetest.register_node("default:meselamp", {
 	description = "Mese Lamp",
-	drawtype = "glasslike",
+	drawtype = "normal",
 	tiles = {"default_meselamp.png"},
 	paramtype = "light",
 	sunlight_propagates = true,
