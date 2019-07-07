@@ -25,8 +25,11 @@
 		dp_required = 1000
 		-- Number of Discovery Points that are required to get this idea.
 		-- This is just an orientational value when NPCs should give out the idea
-		
-		
+		invention_dp = 1200
+		-- DP which must be gained to invent the technology
+		-- When starting invention, the current DP value is saved, technology will be finished when
+		-- the score goes over DP+invention_dp.
+
 		-- This field will be filled out automatically at registration based on technologies
 		technologies_required = {
 			[technology IDs],...
@@ -168,7 +171,9 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	init_default(idea_def, "description", "No description")
 	init_default(idea_def, "technologies_gained", {})
 	init_default(idea_def, "references_required", {})
-	
+
+	init_default(idea_def, "invention_dp", 120)
+
 	-- check required techs
 	local techreq = {}
 	for _, techid in ipairs(idea_def.technologies_gained) do
@@ -207,7 +212,7 @@ end
 
 function ctw_resources.get_idea(idea_id)
 	if not ideas[idea_id] then
-		error("Idea ID "..id.." is unknown!")
+		error("Idea ID "..idea_id.." is unknown!")
 	end
 	return ideas[idea_id]
 end
@@ -219,58 +224,109 @@ function ctw_resources.get_idea_from_istack(itemstack)
 	end
 end
 
--- Checks if the idea can be approved by the management, that is, permission
--- should be granted
---  techs_provided - list of technology IDs the team has achieved
---  refs_inv, refs_invlist - inventory (list) which contains the references
---  returns true when the technology is approved
---  returns false, technologies_missing, references_missing when the technology can not be approved
-function ctw_resources.is_idea_approved(idea_id, techs_provided, refs_inv, refs_invlist)
+-- Give an idea to a player. The idea item will be issued into the
+-- specified inventory
+-- To be called from an NPC.
+-- Returns true on success and false, error_reason on failure
+-- error reasons:
+	-- idea_present_in_player - Player already has this idea in inventory
+	-- idea_present_in_team - Idea is already posted on the team billboard
+	-- no_team - Player has no team
+function ctw_resources.give_idea(idea_id, pname, inventory, invlist)
 	local idea = ideas[idea_id]
 	if not idea then
-		error("is_idea_approved: ID "..idea_id.." is unknown!")
+		error("give_idea: ID "..idea_id.." is unknown!")
 	end
-	local techs_m = {}
-	local refs_m = {}
-	-- check technologies
-	for _,tech in ipairs(idea.technologies_required) do
-		if not contains(techs_provided, tech) then
-			table.insert(techs_m, tech)
-		end
+
+	--check if the player or the team already had the idea
+	if inventory:contains_item(invlist, "ctw_resources:idea_"..idea_id) then
+		return false, "idea_present_in_player"
 	end
-	-- check references
-	atdebug(refs_inv:get_lists())
-	atdebug(refs_inv:get_list(refs_invlist))
-	for _,stack in ipairs(idea.references_required) do
-		if not refs_inv:contains_item(refs_invlist, stack, false) then
-			table.insert(refs_m, stack)
-		end
+
+	local team = teams.get_by_player(pname)
+	if not team then return false, "no_team" end
+
+	local istate = ctw_resources.get_team_idea_state(idea_id, team)
+
+	if istate.state ~= "undiscovered" then
+		return false, "idea_present_in_team"
 	end
-	if (#techs_m == 0) and (#refs_m == 0) then
-		return true
-	end
-	return false, techs_m, refs_m
+
+	minetest.chat_send_player(pname, "You got an idea: "..idea.name.."! Proceed to your team space and share it on the team billboard!")
+	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
+	doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
+	-- Note: if another player secretly had gotten this idea before, this will be overwritten. Should not cause side-effects.
+	ctw_resources.set_team_idea_state(idea_id, team, "discovered", pname)
 end
 
-function ctw_resources.reveal_idea(idea_id, team_members)
-	local idea = ideas[idea_id]
-	if not idea then
-		error("reveal_idea: ID "..idea_id.." is unknown!")
+-- Publish the idea in the team
+-- returns true or false, error_reason
+-- "already_published" - Idea is published or in a later stage
+function ctw_resources.publish_idea(idea_id, team, pname)
+	local idea = ctw_resources.get_idea(idea_id)
+	local istate = ctw_resources.get_team_idea_state(idea_id, team)
+
+	if istate.state ~= "discovered" and istate.state ~= "undiscovered" then
+		return false, "already_published"
 	end
-	for _,pname in ipairs(team_members) do
-		doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
+
+	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
+	ctw_resources.set_team_idea_state(idea_id, team, "published")
+
+	return true
+end
+
+
+-- Get the state of a team idea. This returns a table
+-- {state = "undiscovered"} - Idea is not discovered yet
+-- {state = "discovered", by = "pname"} - Idea is discovered by a team member but not on team billboard
+-- {state = "published"} - Idea is discovered and published on team billboard. Every team member can access it.
+-- {state = "approved", by = "pname"} - Idea is approved, but prototyping has not started yet
+-- {state = "inventing", target = <DP score>} - Idea is being prototyped
+-- {state = "invented"} - Idea has been prototyped and technologies have been gained.
+function ctw_resources.get_team_idea_state(idea_id, team)
+	if not team._ctw_resources_idea_state then
+		team._ctw_resources_idea_state = {}
+	end
+	local state = team._ctw_resources_idea_state[idea_id]
+	if not state then
+		return {state = "undiscovered"}
+	end
+	return state
+end
+-- Set the state of a team idea. param is either "by" or "finish" depending on situation
+function ctw_resources.set_team_idea_state(idea_id, team, state, param)
+	if not team._ctw_resources_idea_state then
+		team._ctw_resources_idea_state = {}
+	end
+	local istate = {state = state}
+	if state=="discovered" or state=="approved" then
+		istate.by = param
+	elseif state=="inventing" then
+		istate.target = param
+	end
+	team._ctw_resources_idea_state[idea_id] = istate
+
+	ctw_resources.update_doc_reveals(team)
+end
+
+function ctw_resources.update_doc_reveals(team)
+	for idea_id, idea in pairs(ideas) do
+		local istate = ctw_resources.get_team_idea_state(idea_id, team)
+		for _,player in ipairs(teams.get_members(team.name)) do
+			if istate.state ~= "undiscovered" then
+				if istate.state ~= "discovered" or player:get_player_name() == istate.by then
+					doc.mark_entry_as_revealed(player:get_player_name(), "ctw_ideas", idea_id)
+				end
+			end
+		end
 	end
 end
 
-function ctw_resources.take_idea_references(idea_id, refs_inv, refs_invlist, try_run)
-	local idea = ideas[idea_id]
-	if not idea then
-		error("take_references: ID "..idea_id.." is unknown!")
-	end
-	for _,stack in ipairs(idea.references_required) do
-		refs_inv:remove_item(refs_invlist, stack, false)
-	end
-end
+minetest.register_on_joinplayer(function(player)
+	local team = teams.get_by_player(player:get_player_name())
+	ctw_resources.update_doc_reveals(team)
+end)
 
 -- TODO only for testing
 

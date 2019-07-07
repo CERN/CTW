@@ -197,3 +197,68 @@ function ctw_technologies._get_technologies()
 end
 
 
+-- Get the state of a team technology. This returns a table
+-- {state = "undiscovered"} - Technology is not invented
+-- {state = "gained"} - Idea has been prototyped and technology has been gained.
+function ctw_technologies.get_team_tech_state(id, team)
+	if not team._ctw_technologies_tech_state then
+		team._ctw_technologies_tech_state = {}
+	end
+	local state = team._ctw_technologies_tech_state[id]
+	if not state then
+		return {state = "undiscovered"}
+	end
+	return state
+end
+
+-- Get whether technology is gained by a team
+function ctw_technologies.is_tech_gained(id, team)
+	return ctw_technologies.get_team_tech_state(id, team).state == "gained"
+end
+
+-- Set the state of a team technology.
+function ctw_technologies.set_team_tech_state(id, team, state)
+	if not team._ctw_technologies_tech_state then
+		team._ctw_technologies_tech_state = {}
+	end
+	local tstate = {state = state}
+	team._ctw_technologies_tech_state[id] = tstate
+
+	ctw_technologies.update_doc_reveals(team)
+end
+
+-- Make a team gain a technology. This notifies the team, reveals the technology doc pages
+-- and applies the benefits.
+-- returns true or false, error_reason
+-- "already_gained" - Technology was already gained.
+function ctw_technologies.gain_technology(tech_id, team)
+	local tech = ctw_technologies.get_technology(tech_id)
+	local tstate = ctw_technologies.get_team_tech_state(id, team)
+
+	if tstate.state == "gained" then
+		return false, "already_gained"
+	end
+
+	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
+	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
+
+	logs("-!- Benefits not implemented (in gain_technology)")
+
+	return true
+end
+
+function ctw_technologies.update_doc_reveals(team)
+	for tech_id, tech in pairs(technologies) do
+		local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
+		for _,player in ipairs(teams.get_members(team.name)) do
+			if tstate.state ~= "undiscovered" then
+				doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
+			end
+		end
+	end
+end
+
+minetest.register_on_joinplayer(function(player)
+	local team = teams.get_by_player(player:get_player_name())
+	ctw_technologies.update_doc_reveals(team)
+end)
