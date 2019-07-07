@@ -101,22 +101,21 @@ local function tech_form_builder(id)
 					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
 					..";Technologies required:]";
 	for rn, techid in ipairs(tech.requires) do
-		local tech2 = {name= techid} --TODO
+		local tech2 = ctw_technologies.get_technology(techid)
 		form_render_tech_entry(rn, "tr", tech2.name, 0, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
 					..";Technologies enabled:]";
 	for rn, techid in ipairs(tech.enables) do
-		local tech2 = {name= techid} --TODO
+		local tech2 = ctw_technologies.get_technology(techid)
 		form_render_tech_entry(rn, "te", tech2.name, third_width, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
 					..";Benefits:]";
 	for rn, bene in ipairs(tech.benefits) do
-		local iname = bene.label
-		local itex = bene.image or "ctw_texture_missing.png"
+		local itex, iname = ctw_technologies.render_benefit(bene)
 		form_render_tech_entry(rn, "bf", iname, 2*third_width, itex)
 	end
 

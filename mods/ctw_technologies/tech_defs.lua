@@ -7,7 +7,6 @@ ctw_technologies.register_technology("ascii", {
 	requires = {
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "Some benefit"}
 	},
 })
 
@@ -19,8 +18,6 @@ ctw_technologies.register_technology("html", {
 		"ascii"
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "Some benefit"},
-		{image = "ctw_texture_missing.png", label = "Some other benefit"}
 	},
 })
 
@@ -34,7 +31,7 @@ ctw_technologies.register_technology("phonecable", {
 	requires = {
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
+		{ type = "supply", item="reseau:copper_cable" }
 	},
 	tree_line = 2,
 })
@@ -46,11 +43,7 @@ ctw_technologies.register_technology("coaxial", {
 		"phonecable"
 	},
 	benefits = {
-		cable_throughput_multiplier = {
-			image = "ctw_texture_missing.png",
-			label = "10x faster cable throughput",
-			value = 10
-		}
+		{ type = "cable_throughput_multiplier", value = 10 }
 	},
 	tree_line = 2,
 })
@@ -61,11 +54,7 @@ ctw_technologies.register_technology("twisted-pair", {
 		"coaxial"
 	},
 	benefits = {
-		cable_throughput_multiplier = {
-			image = "ctw_texture_missing.png",
-			label = "5x faster cable throughput",
-			value = 5
-		}
+		{ type = "cable_throughput_multiplier", value = 5 }
 	},
 	tree_line = 2,
 })
@@ -76,11 +65,7 @@ ctw_technologies.register_technology("ethernet", {
 		"twisted-pair"
 	},
 	benefits = {
-		cable_throughput_multiplier = {
-			image = "ctw_texture_missing.png",
-			label = "10x faster cable throughput",
-			value = 10
-		}
+		{ type = "cable_throughput_multiplier", value = 10 }
 	},
 	tree_line = 2,
 })
@@ -93,6 +78,6 @@ ctw_technologies.register_technology("www", {
 		"html"
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "You won!"}
+		{type="victory"}
 	},
 })

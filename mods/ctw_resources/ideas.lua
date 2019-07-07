@@ -95,14 +95,14 @@ local function idea_form_builder(id)
 					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
 					..";Technologies gained:]";
 	for rn, techid in ipairs(idea.technologies_gained) do
-		local tech = {name= techid} --TODO
+		local tech = ctw_technologies.get_technology(techid)
 		form_render_tech_entry(rn, "tg", tech.name, 0, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
 					..";Technologies required:]";
 	for rn, techid in ipairs(idea.technologies_required) do
-		local tech = {name= techid} --TODO
+		local tech = ctw_technologies.get_technology(techid)
 		form_render_tech_entry(rn, "tr", tech.name, third_width, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
