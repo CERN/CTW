@@ -74,7 +74,11 @@ for _, team in ipairs(teams.get_all()) do
 							local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
 							tape_meta:set_string("description", desc)
 
-							inv:add_item("tapes", tape_stack)
+							if inv:room_for_item("tapes", tape_stack) then
+								inv:add_item("tapes", tape_stack)
+							else
+								cache = reseau.era.tape_capacity
+							end
 						end
 
 						-- update node metadata
