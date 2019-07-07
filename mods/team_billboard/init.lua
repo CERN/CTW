@@ -114,13 +114,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		doc.show_doc(pname)
 		return
 	end
+
 	for field, _ in pairs(fields) do
 		local idea_id = string.match(field, "^idea_(.+)$")
 		if idea_id then
-			doc.show_entry(pname, "ctw_ideas", idea_id)
-			return
+			if doc.entry_exists("ctw_ideas", idea_id) then
+				doc.show_entry(pname, "ctw_ideas", idea_id)
+				return
+			end
 		end
 	end
+
 end)
 
 
