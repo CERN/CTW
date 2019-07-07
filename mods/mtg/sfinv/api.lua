@@ -140,6 +140,7 @@ function sfinv.get_page(player)
 end
 
 minetest.register_on_joinplayer(function(player)
+	player:get_inventory():set_size("main", 8)
 	if sfinv.enabled then
 		sfinv.set_player_inventory_formspec(player)
 	end
