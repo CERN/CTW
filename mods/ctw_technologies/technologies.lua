@@ -254,12 +254,18 @@ function ctw_technologies.gain_technology(tech_id, team, try)
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
 	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
 
-	for i=1, _register_on_gain do
+	for i=1, #_register_on_gain do
 		_register_on_gain[i](tech, team)
 	end
 
-	logs("-!- Benefits not implemented (in gain_technology)")
-
+	for _, benefit in pairs(tech.benefits) do
+		if benefit.type == "supply" then
+			ctw_technologies.queue_delivery(team.name, benefit.item:gsub("%%t", team.name),
+					math.random(benefit.time_min or 30, benefit.time_max or 200))
+		else
+			logs("-!- Benefits not implemented (in gain_technology)")
+		end
+	end
 	return true
 end
 

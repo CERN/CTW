@@ -7,7 +7,7 @@ ctw_technologies.register_technology("ascii", {
 	requires = {
 	},
 	benefits = {
-	},
+	}
 })
 
 ctw_technologies.register_technology("html", {
@@ -43,10 +43,12 @@ ctw_technologies.register_technology("coaxial", {
 		"phonecable"
 	},
 	benefits = {
-		{ type = "cable_throughput_multiplier", value = 10 }
+		{ type = "cable_throughput_multiplier", value = 10 },
+		{ type = "supply",  item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
 	tree_line = 2,
 })
+
 ctw_technologies.register_technology("twisted-pair", {
 	name = "Twisted-Pair Cable",
 	description = "A cable with twisted pairs!",
