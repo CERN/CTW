@@ -217,6 +217,10 @@ function ctw_resources.get_idea(idea_id)
 	return ideas[idea_id]
 end
 
+function ctw_resources._get_ideas()
+	return ideas
+end
+
 function ctw_resources.get_idea_from_istack(itemstack)
 	local idef = minetest.registered_items[itemstack:get_name()]
 	if idef._ctw_idea_id then
@@ -334,14 +338,3 @@ minetest.register_on_joinplayer(function(player)
 	end
 end)
 
--- TODO only for testing
-
-minetest.register_chatcommand("ctwi", {
-         param = "",
-         description = "Reveal the hidden entry of the doc_example mod",
-         privs = {},
-         func = function(playername, params)
-                ctw_resources.reveal_idea(params, {"singleplayer"})
-                doc.show_category("singleplayer", "ctw_ideas")
-        end,
-})

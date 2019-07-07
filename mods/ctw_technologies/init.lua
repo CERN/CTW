@@ -17,11 +17,10 @@ ctw_technologies.build_tech_tree()
 -- TODO only for testing
 
 minetest.register_chatcommand("ctwt", {
-         param = "",
-         description = "Reveal the hidden entry of the doc_example mod",
+         param = "tech",
+         description = "Gain a technology",
          privs = {},
-         func = function(playername, params)
-				doc.mark_entry_as_revealed("singleplayer", "ctw_technologies", params)
-                doc.show_category("singleplayer", "ctw_technologies")
+         func = function(pname, params)
+				return ctw_technologies.gain_technology(params, teams.get_by_player(pname))
         end,
 })

@@ -15,3 +15,23 @@ dofile(mp.."permission.lua")
 dofile(mp.."inventing.lua")
 
 dofile(mp.."idea_defs.lua")
+
+minetest.register_chatcommand("ctwi", {
+         param = "idea",
+         description = "Get an idea",
+         privs = {},
+         func = function(pname, params)
+			local player = minetest.get_player_by_name(pname)
+			return ctw_resources.give_idea(params, pname, player:get_inventory(), "main")
+        end,
+})
+
+minetest.register_chatcommand("ctwa", {
+         param = "idea",
+         description = "Get an approval",
+         privs = {},
+         func = function(pname, params)
+			local player = minetest.get_player_by_name(pname)
+			return ctw_resources.approve_idea(params, pname, player:get_inventory(), "main")
+        end,
+})
