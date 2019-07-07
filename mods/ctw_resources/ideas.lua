@@ -28,8 +28,8 @@
 		invention_dp = 1200
 		-- DP which must be gained to invent the technology
 		-- When starting invention, the current DP value is saved, technology will be finished when
-		-- the score goes over DP+invention_dp. 
-		
+		-- the score goes over DP+invention_dp.
+
 		-- This field will be filled out automatically at registration based on technologies
 		technologies_required = {
 			[technology IDs],...
@@ -171,9 +171,9 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	init_default(idea_def, "description", "No description")
 	init_default(idea_def, "technologies_gained", {})
 	init_default(idea_def, "references_required", {})
-	
+
 	init_default(idea_def, "invention_dp", 120)
-	
+
 	-- check required techs
 	local techreq = {}
 	for _, techid in ipairs(idea_def.technologies_gained) do
@@ -237,21 +237,21 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist)
 	if not idea then
 		error("give_idea: ID "..idea_id.." is unknown!")
 	end
-	
+
 	--check if the player or the team already had the idea
 	if inventory:contains_item(invlist, "ctw_resources:idea_"..idea_id) then
 		return false, "idea_present_in_player"
 	end
-	
+
 	local team = teams.get_by_player(pname)
 	if not team then return false, "no_team" end
-	
+
 	local istate = ctw_resources.get_team_idea_state(idea_id, team)
-	
+
 	if istate.state ~= "undiscovered" then
 		return false, "idea_present_in_team"
 	end
-	
+
 	minetest.chat_send_player(pname, "You got an idea: "..idea.name.."! Proceed to your team space and share it on the team billboard!")
 	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
 	doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
@@ -265,14 +265,14 @@ end
 function ctw_resources.publish_idea(idea_id, team, pname)
 	local idea = ctw_resources.get_idea(idea_id)
 	local istate = ctw_resources.get_team_idea_state(idea_id, team)
-	
+
 	if istate.state ~= "discovered" and istate.state ~= "undiscovered" then
 		return false, "already_published"
 	end
-	
+
 	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
 	ctw_resources.set_team_idea_state(idea_id, team, "published")
-	
+
 	return true
 end
 
@@ -306,7 +306,7 @@ function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 		istate.target = param
 	end
 	team._ctw_resources_idea_state[idea_id] = istate
-	
+
 	ctw_resources.update_doc_reveals(team)
 end
 

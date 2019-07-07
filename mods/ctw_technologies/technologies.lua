@@ -223,7 +223,7 @@ function ctw_technologies.set_team_tech_state(id, team, state)
 	end
 	local tstate = {state = state}
 	team._ctw_technologies_tech_state[id] = tstate
-	
+
 	ctw_technologies.update_doc_reveals(team)
 end
 
@@ -234,16 +234,16 @@ end
 function ctw_technologies.gain_technology(tech_id, team)
 	local tech = ctw_technologies.get_technology(tech_id)
 	local tstate = ctw_technologies.get_team_tech_state(id, team)
-	
+
 	if tstate.state == "gained" then
 		return false, "already_gained"
 	end
-	
+
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
 	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
-	
+
 	logs("-!- Benefits not implemented (in gain_technology)")
-	
+
 	return true
 end
 
