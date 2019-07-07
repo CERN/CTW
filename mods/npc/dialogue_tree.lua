@@ -37,3 +37,8 @@ npc.register_npc("engineer", {
 npc.register_event("engineer", {
 	dialogue = "Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.",
 })
+
+npc.register_event_idea_discover("engineer", "ethernet", {
+	dp_min = 2000,
+	dialogue = "Some kind of twisted cable thingy would be lovely."
+})

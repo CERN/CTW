@@ -40,11 +40,11 @@ npc.register_event(npc_name, NPC_Event)
 
 npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	-- Gives the player a new idea
-	-- 'def_e': (optional) 'NPC_Event' (only 'dialogue')
+	-- 'def_e': (optional) '{ discovery = string, dp_min = number }'
 
 npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	-- Approves the specified idea
-	-- 'def_e': (optional) 'NPC_Event' (only 'dialogue')
+	-- 'def_e': (optional) '{ discovery = string, dp_min = number }'
 
 npc.register_event_from_idea(npc_name, dialogue, idea_id)
 	-- Gives the team an idea if the requirements are met

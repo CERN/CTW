@@ -21,6 +21,7 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
 	def.conditions = {{
+		dp_min = def_e.dp_min,
 		func = function(player)
 			if ctw_resources.get_team_idea_state(idea_id,
 					teams.get_by_player(player)).state == "undiscovered" then
@@ -46,9 +47,11 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
 	def.conditions = {{
+		dp_min = def_e.dp_min,
+		item = "ctw_resources:idea_" .. idea_id,
 		func = function(player)
-			if ctw_resources.get_team_idea_state(idea_id,
-					teams.get_by_player(player)).state == "published" then
+			if ctw_resources.approve_idea(idea_id, player:get_player_name(),
+					player:get_inventory(), "main", true) then
 				return #idea_def.references_required + 1
 			end
 		end
@@ -57,8 +60,11 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 		text = "Approve",
 		target = function(player, event)
 			-- Mark as 'approved'
-			ctw_resources.approve_idea(idea_id, player:get_player_name(),
-				player:get_inventory(), "main")
+			local status, message = ctw_resources.approve_idea(idea_id,
+					player:get_player_name(), player:get_inventory(), "main")
+			if not status then
+				print("NPC: " .. message)
+			end
 		end
 	}}
 	npc.register_event(npc_name, def)
@@ -87,7 +93,7 @@ local function check_condition(player, c)
 		weight = weight + w
 	end
 	if c.item then
-		if not player:get_inventory():contains_item(c.item) then
+		if not player:get_inventory():contains_item("main", c.item) then
 			return
 		end
 		weight = weight + 1
@@ -257,6 +263,7 @@ function npc.register_npc(npc_name, def)
 		description = "NPC node " .. npc_name,
 		paramtype = "light",
 		drawtype = "airlike",
+		inventory_image = "default_stick.png",
 		walkable = false,
 		pointable = false,
 		liquids_pointable = true,

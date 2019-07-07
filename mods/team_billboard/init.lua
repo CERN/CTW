@@ -40,7 +40,7 @@ end
 function team_billboard.show_billboard_form(pname, tname, pers_msg)
 	local team = teams.get(tname)
 	if not team then
-		minetest.chat_send_player(pname, "-!- Team '"..tname"' does not exist!")
+		minetest.chat_send_player(pname, "-!- Team '"..tname.."' does not exist!")
 		return
 	end
 
@@ -94,25 +94,31 @@ end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
-	if formname == "team_billboard:bb" then
-		local team = teams.get_by_player(pname)
-		if not team then return end
-		local tname = team.name
-		if fields.quit then
-			open_forms[tname][pname] = nil
+	if formname ~= "team_billboard:bb" then
+		return
+	end
+
+	local team = teams.get_by_player(pname)
+	if not team then return end
+	local tname = team.name
+	if not open_forms[tname] then
+		return -- when opening other team's billboards
+	end
+
+	if fields.quit then
+		open_forms[tname][pname] = nil
+		return
+	end
+	if fields.doc then
+		open_forms[tname][pname] = nil
+		doc.show_doc(pname)
+		return
+	end
+	for field, _ in pairs(fields) do
+		local idea_id = string.match(field, "^idea_(.+)$")
+		if idea_id then
+			doc.show_entry(pname, "ctw_ideas", idea_id)
 			return
-		end
-		if fields.doc then
-			open_forms[tname][pname] = nil
-			doc.show_doc(pname)
-			return
-		end
-		for field, _ in pairs(fields) do
-			local idea_id = string.match(field, "^idea_(.+)$")
-			if idea_id then
-				doc.show_entry(pname, "ctw_ideas", idea_id)
-				return
-			end
 		end
 	end
 end)
