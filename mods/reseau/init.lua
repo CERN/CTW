@@ -325,7 +325,6 @@ for _, team in ipairs(teams.get_all()) do
 						for _, dir in ipairs(rules) do
 							if cache > 0 then
 								-- try to transmit as much data as possible via network
-								local node = minetest.get_node(pos)
 								local cablepos = vector.add(pos, dir)
 								local throughput = reseau.transmit(pos, cablepos, {
 									throughput = cache,
