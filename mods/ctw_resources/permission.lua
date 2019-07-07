@@ -16,7 +16,7 @@ Once it arrives there, the technology starts to be developed
 --  returns false, technologies_missing, references_missing when the technology can not be approved
 function ctw_resources.is_idea_approved(idea_id, team, refs_inv, refs_invlist)
 	local idea = ctw_resources.get_idea(idea_id)
-	
+
 	local techs_m = {}
 	local refs_m = {}
 	-- check technologies
@@ -54,18 +54,18 @@ end
 	-- insufficient_techs - One or more required technologies are not discovered yet
 function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
 	local idea = ctw_resources.get_idea(idea_id)
-	
+
 	local team = teams.get_by_player(pname)
 	if not team then return false, "no_team" end
-	
+
 	local istate = ctw_resources.get_team_idea_state(idea_id, team)
-	
+
 	if istate.state=="approved" or istate.state=="inventing" or istate.state=="invented" then
 		return false, "already_approved"
 	end
-	
+
 	local appr_ok, m_tech, m_ref = ctw_resources.is_idea_approved(idea_id, team, inv, invlist)
-	
+
 	if not appr_ok then
 		if #m_tech > 0 then
 			return false, "insufficient_techs"
@@ -73,19 +73,19 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist)
 			return false, "insufficient_resources"
 		end
 	end
-	
+
 	-- successful: remove references and issue permission letter
 	for _,stack in ipairs(idea.references_required) do
 		inv:remove_item(invlist, stack, false)
 	end
-	
+
 	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
 	local istack = ItemStack("ctw_resources:approval")
 	local meta = istack:get_meta()
 	meta:set_string("description", "Approval letter for \""..idea.name.."\" (issued for team "..team.name..")")
 	meta:set_string("team", team.name)
 	meta:set_string("idea_id", idea_id)
-	
+
 	inv:add_item(invlist, istack)
 	ctw_resources.set_team_idea_state(idea_id, team, "approved", pname)
 	return true

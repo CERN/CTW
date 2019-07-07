@@ -18,9 +18,9 @@ function ctw_resources.start_inventing(istack, team, pname)
 	local meta = istack:get_meta()
 	local teamname_m = meta:get_string("team")
 	local idea_id = meta:get_string("idea_id")
-	
+
 	local idea = ctw_resources.get_idea(idea_id)
-	
+
 	if teamname_m ~= team.name then
 		return false, "wrong_team"
 	end
@@ -28,9 +28,9 @@ function ctw_resources.start_inventing(istack, team, pname)
 	if istate.state ~= "approved" then
 		return false, "not_approved"
 	end
-	
+
 	local ready_score = 0
-	
+
 	-- ready, changing the state
 	teams.chat_send_team(team.name, pname.." has gotten permission for prototyping \""..idea.name.."\". Your scientists will work hard! (you don't need to do anything)")
 	ctw_resources.set_team_idea_state(idea_id, team, "inventing", ready_score)
@@ -52,19 +52,19 @@ function ctw_resources.get_inventing_progress(team)
 end
 
 local function advance_inv_progress(ideas, delta_dp, team)
-	
+
 	if #ideas == 0 then
 		return
 	end
-	
+
 	local dp_share = delta_dp / #ideas
-	
+
 	for _, idea_id in ipairs(ideas) do
 		local idea = ctw_resources.get_idea(idea_id)
 		local istate = ctw_resources.get_team_idea_state(idea_id, team)
-		
+
 		istate.target = istate.target + dp_share
-		
+
 		if istate.target >= idea.invention_dp then
 			-- The technology is invented.
 			teams.chat_send_team(team.name, "Your scientists have successfully prototyped \""..idea.name.."\"!")
