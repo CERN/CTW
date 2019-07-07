@@ -83,15 +83,20 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 	end
 
 	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
+	local istack = ctw_resources.get_approval_letter_istack(idea_id, idea, team)
+
+	inv:add_item(invlist, istack)
+	ctw_resources.set_team_idea_state(idea_id, team, "approved", pname)
+	return true
+end
+
+function ctw_resources.get_approval_letter_istack(idea_id, idea, team)
 	local istack = ItemStack("ctw_resources:approval")
 	local meta = istack:get_meta()
 	meta:set_string("description", "Approval letter for \""..idea.name.."\" (issued for team "..team.name..")")
 	meta:set_string("team", team.name)
 	meta:set_string("idea_id", idea_id)
-
-	inv:add_item(invlist, istack)
-	ctw_resources.set_team_idea_state(idea_id, team, "approved", pname)
-	return true
+	return istack
 end
 
 minetest.register_craftitem("ctw_resources:approval", {

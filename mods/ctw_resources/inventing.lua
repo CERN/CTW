@@ -11,7 +11,8 @@ local c_time
 -- false, error_reason - something went wrong
 -- no_approval_letter - Passed item is not an approval letter
 -- wrong_team - Approval letter was issued for another team
--- not_approved - Idea was not approved, letter is faked, or technology is already being invented.
+-- not_approved - Idea was not approved, letter is faked
+-- already_invented - technology is already being invented.
 function ctw_resources.start_inventing(istack, team, pname, try)
 	if istack:get_name() ~= "ctw_resources:approval" then
 		return false, "no_approval_letter"
@@ -27,7 +28,11 @@ function ctw_resources.start_inventing(istack, team, pname, try)
 	end
 	local istate = ctw_resources.get_team_idea_state(idea_id, team)
 	if istate.state ~= "approved" then
-		return false, "not_approved"
+		if istate.state == "inventing" or istate.state == "invented" then
+			return false, "already_invented"
+		else
+			return false, "not_approved"
+		end
 	end
 
 	if try then return true end
