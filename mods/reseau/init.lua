@@ -485,8 +485,6 @@ end
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:experiment_" .. team.name, {
 		description = "Experiment",
-		tiles = {"default_lava.png"},
-		groups = {cracky = 3},
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
