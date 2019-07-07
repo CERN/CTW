@@ -24,7 +24,7 @@ local wire_getconnect = function(from_pos, self_pos, wire_name)
 
 	if self_nodespec and self_nodespec.reseau then
 		local rules
-		if self_nodespec.is_reseau_wire then
+		if self_nodespec.is_reseau_wire and not self_nodespec.is_fully_connected then
 			rules = reseau.rules.default
 		else
 			rules = reseau.get_any_rules(self_pos)
@@ -99,7 +99,40 @@ local update_on_place_dig = function(pos, node)
 	end
 end
 
-minetest.register_on_placenode(update_on_place_dig)
+minetest.register_on_placenode(function(pos, node, placer)
+	-- make sure there is an existing cable / transmitter nearby, only then
+	-- conductor placement is allowed
+	if minetest.registered_nodes[node.name].is_reseau_wire then
+		-- create a list of connections to other cables or transmitters
+		local connections = {}
+		for _, r in ipairs(reseau.rules.default) do
+			local link = vector.add(pos, r)
+			local linknode = minetest.get_node(link)
+			local linknodespec = minetest.registered_nodes[linknode.name]
+
+			if linknodespec and linknodespec.reseau
+			and (linknodespec.reseau.transmitter or linknodespec.reseau.conductor)
+			and wire_getconnect(pos, link, node.name) then
+				table.insert(connections, r)
+			end
+		end
+
+		-- not allowed to place conductor? remove and send error message!
+		if #connections == 0 then
+			local chatmsg = "You can only place cables next to existing one. Start at your team's experiment!"
+			minetest.chat_send_player(placer:get_player_name(), chatmsg)
+			minetest.remove_node(pos)
+			return true
+		end
+
+		-- place conductor and update connection
+		update_on_place_dig(pos, node)
+	elseif minetest.registered_nodes[node.name].reseau then
+		update_on_place_dig(pos, node)
+	end
+end)
+
+
 minetest.register_on_dignode(update_on_place_dig)
 
 
@@ -190,6 +223,8 @@ local function register_wires(name, technologyspec)
 			groups["not_in_creative_inventory"] = 1
 		end
 
+		local fully_connected = (nid[1] + nid[2] + nid[3] + nid[4]) > 1
+
 		local spec = reseau.mergetable(technologyspec, {
 			drawtype = "nodebox",
 			paramtype = "light",
@@ -200,6 +235,7 @@ local function register_wires(name, technologyspec)
 			walkable = false,
 			drop = "reseau:"..name.."_wire_00000000",
 			is_reseau_wire = true,
+			is_fully_connected = fully_connected,
 			on_rotate = false,
 			reseau = {
 				conductor = {
