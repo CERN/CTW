@@ -3,7 +3,7 @@
 teams.register_on_team_changed(function(player, team_def)
 	local inv = player:get_inventory()
 	-- Does not work on empty stack
- 	local stack = ItemStack("default:axe_wood")
+	local stack = ItemStack("default:axe_wood")
 	local meta = stack:get_meta()
 	local caps = stack:get_tool_capabilities()
 
