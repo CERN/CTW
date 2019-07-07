@@ -14,10 +14,12 @@ area:
 ```
 
 * world.get_location(name) -> pos
+* world.set_location(name, pos)
 * world.get_team_location(team_name, name) -> pos
   * Team-dependent position on map.
   * name:
     * base
+* world.set_team_location(team_name, pos)
 * world.get_area(name) -> area
 * world.get_team_area(name) -> area
 * world.load_locations(conf_path)
