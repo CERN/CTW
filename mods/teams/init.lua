@@ -121,7 +121,7 @@ end)
 teams.register_on_team_changed(on_team_change)
 
 teams.register_on_points_changed(function(team, _)
-	for _, player in pairs(minetest.get_connected_players()) do
+	for _, player in pairs(teams.get_online_members(team.name)) do
 		set_dp(player, team)
 	end
 end)
