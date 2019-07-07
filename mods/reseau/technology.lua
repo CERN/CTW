@@ -9,7 +9,7 @@ reseau.technologies.get = function(technology)
 	return reseau.technologies.db[technology]
 end
 
-reseau.technologies.getAll = function(technology)
+reseau.technologies.get_all = function(technology)
 	return reseau.technologies.db
 end
 

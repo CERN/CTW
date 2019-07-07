@@ -303,7 +303,7 @@ end
 -- register one wire type for each technology (e.g. copper, fiber)
 -- and each team
 for _, team in ipairs(teams.get_all()) do
-	for techname, techdef in pairs(reseau.technologies.getAll()) do
+	for techname, techdef in pairs(reseau.technologies.get_all()) do
 		register_wires(techname.."_" .. team.name, {
 			description = techdef.name.." Transmission Line",
 			technology = techname,

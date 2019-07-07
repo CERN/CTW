@@ -26,7 +26,7 @@ reseau.get_any_rules = function(node)
 	local nodespec = minetest.registered_nodes[node.name]
 	local rules = {}
 
-	if nodespec.reseau then
+	if nodespec and nodespec.reseau then
 		if nodespec.reseau.conductor then
 			rules = reseau.mergetable(rules, reseau.extract_rules(nodespec.reseau.conductor.rules, node))
 		else

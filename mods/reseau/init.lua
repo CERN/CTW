@@ -8,12 +8,52 @@ dofile(minetest.get_modpath("reseau").."/transmit.lua")
 dofile(minetest.get_modpath("reseau").."/modstorage.lua")
 dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 dofile(minetest.get_modpath("reseau").."/era.lua")
+dofile(minetest.get_modpath("reseau").."/throughput.lua")
 
 -- ######################
 -- #      Defines       #
 -- ######################
 local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
+
+-- TODO: Fix router help text units
+-- TODO: Rename era definition properties to something more structured
+
+-- ######################
+-- #       Eras         #
+-- ######################
+-- TODO: Define reasonable values for eras!
+reseau.era.register(true, 1986, {
+	genspeed = 10,
+	tape_capacity = 500,
+	dp_multiplier = 1,
+	router_max_cache = 60,
+	receiver_throughput = 20
+})
+
+reseau.era.register(1986, 1990, {
+	genspeed = 10,
+	tape_capacity = 500,
+	dp_multiplier = 1,
+	router_max_cache = 60,
+	receiver_throughput = 50
+})
+
+reseau.era.register(1990, 1994, {
+	genspeed = 10,
+	tape_capacity = 500,
+	dp_multiplier = 1,
+	router_max_cache = 60,
+	receiver_throughput = 100
+})
+
+reseau.era.register(1994, true, {
+	genspeed = 10,
+	tape_capacity = 500,
+	dp_multiplier = 1,
+	router_max_cache = 60,
+	receiver_throughput = 1000
+})
 
 -- ######################
 -- #   Technologies     #
@@ -56,6 +96,7 @@ local receiver_get_formspec = function(meta, throughput, points)
 		"label[0,1.5;The computing center processes and stores experiment data to make discoveries.]"..
 		"label[0,1.9;Connect this rack to an experiment or feed it tapes to gain points!]"..
 		"label[0,2.3;Current network throughput: "..throughput.."MB/s, your team gains "..points.." points/s]"..
+		"label[0,2.7;Processing throughput limit: "..reseau.throughput.get_receiver_throughput_limit().." MB/s]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
@@ -96,10 +137,10 @@ minetest.register_node(":reseau:receiverscreen", {
 			action = function(pos, packet, depth)
 				-- Process packet: throughput to points
 				reseau.bitparticles_receiver(pos, depth)
-				local throughput_limit = 1000 -- TODO
+				local throughput_limit = reseau.throughput.get_receiver_throughput_limit()
 				local throughput = throughput_limit > packet.throughput and packet_throughput or throughput_limit
 
-				local dp = throughput * TX_INTERVAL * reseau.era.dp_multiplier
+				local dp = throughput * TX_INTERVAL * reseau.era.get_current().dp_multiplier
 				teams.add_points(packet.team, dp)
 
 				-- Update formspec
@@ -115,7 +156,7 @@ minetest.register_node(":reseau:receiverscreen", {
 			local tape_meta = stack:get_meta()
 			local capacity = tape_meta:get_int("capacity")
 			local team = tape_meta:get_string("team")
-			local dp = capacity * reseau.era.dp_multiplier
+			local dp = capacity * reseau.era.get_current().dp_multiplier
 
 			if teams.get(team) then
 				teams.add_points(team, dp)
@@ -194,8 +235,8 @@ minetest.register_node(":reseau:receiverbase", {
 -- ######################
 -- #      Routers       #
 -- ######################
-local function get_merger_infotext(cache, max_cache)
-	return "Router: (" .. cache .. " MB/" .. max_cache .. " MB)"
+local function get_merger_infotext(cache, cache_limit)
+	return "Router: (" .. cache .. " MB/" .. cache_limit .. " MB)"
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -243,12 +284,12 @@ for _, team in ipairs(teams.get_all()) do
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local max_cache = reseau.era.router_max_cache / TX_INTERVAL
-					local available = max_cache - cache
+					local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
+					local available = cache_limit - cache
 					local used = math.min(available, packet.throughput)
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
-					meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
+					meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, cache_limit))
 					return used
 				end
 			},
@@ -268,6 +309,7 @@ for _, team in ipairs(teams.get_all()) do
 							-- try to transmit as much data as possible via network
 							local node = minetest.get_node(pos)
 							local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
+							local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
 							local throughput = reseau.transmit(pos, cablepos, {
 								throughput = cache,
 								team = team.name,
@@ -278,7 +320,7 @@ for _, team in ipairs(teams.get_all()) do
 							assert (cache >= 0)
 							meta:set_int("hop_count", 0)
 							meta:set_int("cache", cache)
-							meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
+							meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, cache_limit))
 						end
 					end
 				}
@@ -287,8 +329,8 @@ for _, team in ipairs(teams.get_all()) do
 	})
 end
 
-local function get_splitter_infotext(cache, max_cache)
-	return "Splitter: (" .. cache .. " MB/" .. max_cache .. " MB)"
+local function get_splitter_infotext(cache, cache_limit)
+	return "Splitter: (" .. cache .. " MB/" .. cache_limit .. " MB)"
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -333,12 +375,12 @@ for _, team in ipairs(teams.get_all()) do
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local max_cache = reseau.era.splitter_max_cache / TX_INTERVAL
-					local available = max_cache - cache
+					local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
+					local available = cache_limit - cache
 					local used = math.min(available, packet.throughput)
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
-					meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, reseau.era.splitter_max_cache))
+					meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, cache_limit))
 					return used
 				end
 			},
@@ -357,6 +399,7 @@ for _, team in ipairs(teams.get_all()) do
 						local cache = meta:get_int("cache") or 0
 						local hop_count = meta:get_int("hop_count") or 0
 						local first_side = meta:get_int("first_side") or 0
+						local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
 						meta:set_int("first_side", 1 - first_side)
 						local node = minetest.get_node(pos)
 						local rules = reseau.mergetable(
@@ -385,7 +428,7 @@ for _, team in ipairs(teams.get_all()) do
 
 						meta:set_int("hop_count", 0)
 						meta:set_int("cache", cache)
-						meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, reseau.era.splitter_max_cache))
+						meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, cache_limit))
 					end
 				}
 			}
@@ -421,8 +464,8 @@ local experiment_get_formspec = function(meta, throughput)
 		"list[context;tapes;2,0;4,1;]"..
 		"label[0,1.5;Experiments generate data that has to be moved to the computing center.]"..
 		"label[0,1.9;Data can be transported manually by carrying tapes or by a network link.]"..
-		"label[0,2.3;Data generation speed: "..reseau.era.genspeed.." MB/s]"..
-		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.tape_capacity.." MB]"..
+		"label[0,2.3;Data generation speed: "..reseau.throughput.get_experiment_throughput().." MB/s]"..
+		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.get_current().tape_capacity.." MB]"..
 		"label[0,3.1;Network throughput: "..throughput.." MB/s]"..
 		"list[current_player;main;0,4;8,1;]"
 end
@@ -492,7 +535,7 @@ for _, team in ipairs(teams.get_all()) do
 						-- generate data to transmit
 						local meta = minetest.get_meta(pos)
 						local cache = meta:get_int("cache") or 0
-						cache = cache + reseau.era.genspeed * TX_INTERVAL
+						cache = cache + reseau.throughput.get_experiment_throughput() * TX_INTERVAL
 
 						-- try to transmit as much data as possible via network
 						local throughput = reseau.transmit_first(pos, {
@@ -504,21 +547,22 @@ for _, team in ipairs(teams.get_all()) do
 						-- if there is enough cached data to put on a tape, just
 						-- write a tape
 						cache = cache - throughput * TX_INTERVAL
-						if cache > reseau.era.tape_capacity then
-							cache = cache - reseau.era.tape_capacity
+						local tape_capacity = reseau.era.get_current().tape_capacity
+						if cache > tape_capacity then
+							cache = cache - reseau.era.get_current().tape_capacity
 
 							local inv = meta:get_inventory()
 							local tape_stack = ItemStack("reseau:tape 1")
 							local tape_meta = tape_stack:get_meta()
-							tape_meta:set_int("capacity", reseau.era.tape_capacity)
+							tape_meta:set_int("capacity", tape_capacity)
 							tape_meta:set_string("team", team.name)
-							local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
+							local desc = tape_capacity.." MB tape (team " .. team.name .. ")"
 							tape_meta:set_string("description", desc)
 
 							if inv:room_for_item("tapes", tape_stack) then
 								inv:add_item("tapes", tape_stack)
 							else
-								cache = reseau.era.tape_capacity
+								cache = tape_capacity
 							end
 						end
 

@@ -145,18 +145,6 @@ minetest.register_node("computer:router", {
 	}
 })
 
-minetest.register_node("computer:bottom", {
-	drawtype = "airlike",
-	reseau = {
-		transmitter = {
-			technology = {
-				"copper", "fiber"
-			},
-			rules = reseau.rules.default,
-		}
-	}
-})
-
 --Rack Server
 minetest.register_node("computer:server", {
 	drawtype = "nodebox",
@@ -228,16 +216,7 @@ local function register_server(team)
 				{-0.125, -0.5, 0.4275, 0.125, -0.25, 0.5}, -- NodeBox2
 			}
 		},
-		sounds = default.node_sound_wood_defaults(),
-		reseau = {
-			transmitter = {
-				technology = {
-					"copper", "fiber"
-				},
-				rules = reseau.rules.default,
-			}
-		}
-		--on_metadata_inventory_put
+		sounds = default.node_sound_wood_defaults()
 	})
 end
 
