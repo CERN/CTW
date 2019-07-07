@@ -64,6 +64,7 @@ for key, d in pairs(book_types) do
 			description = description,
 			_ctw_longdesc = d[2],
 			inventory_image = "books_book_" .. key .. ".png",
+			stack_max = 1,
 		})
 	end
 
@@ -75,7 +76,13 @@ for key, d in pairs(book_types) do
 		groups = { bookshelf = 1 },
 		on_punch = function(pos, node, puncher, pointed_thing)
 			if puncher ~= nil and can_be_taken then
-				puncher:get_inventory():add_item("main", "books:book_" .. key)
+				local inv = puncher:get_inventory()
+				if not inv:room_for_item("main", "books:book_" .. key) then
+					minetest.chat_send_player(puncher:get_player_name(),
+						"Your inventory is full already!")
+					return
+				end
+				inv:add_item("main", "books:book_" .. key)
 				node.name = "books:bookshelf_empty_" .. key
 				minetest.swap_node(pos, node)
 				minetest.get_node_timer(pos):start(math.random(book_respawn_time_min, book_respawn_time_max))
