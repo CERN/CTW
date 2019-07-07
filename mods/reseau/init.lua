@@ -1,12 +1,5 @@
 reseau = {}
 
-reseau.era = {}
-reseau.era.genspeed = 10 -- experiment data generation speed in MB/s
-reseau.era.tape_capacity = 500 -- tape capacity in MB
-reseau.era.dp_multiplier = 1 -- discovery points per delivered MB
-reseau.era.router_max_cache = 60 -- router cache in MB
-reseau.era.splitter_max_cache = 60 -- splitter cache in MB
-
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
 dofile(minetest.get_modpath("reseau").."/rules.lua")
@@ -15,23 +8,14 @@ dofile(minetest.get_modpath("reseau").."/particles.lua")
 dofile(minetest.get_modpath("reseau").."/transmit.lua")
 dofile(minetest.get_modpath("reseau").."/modstorage.lua")
 dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
-
+dofile(minetest.get_modpath("reseau").."/era.lua")
 
 local TX_INTERVAL = 3
-local transmitter_get_formspec = function(meta, throughput)
-	throughput = throughput or 0
-	local cache = meta:get_int("cache")
+local MAX_HOP_COUNT = 50
 
-	return "size[8,5;]"..
-		"list[context;tapes;2,0;4,1;]"..
-		"label[0,1.5;Experiments generate data that has to be moved to the computing center.]"..
-		"label[0,1.9;Data can be transported manually by carrying tapes or by a network link.]"..
-		"label[0,2.3;Data generation speed: "..reseau.era.genspeed.." MB/s]"..
-		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.tape_capacity.." MB]"..
-		"label[0,3.1;Network throughput: "..throughput.." MB/s]"..
-		"list[current_player;main;0,4;8,1;]"
-end
-
+-- ######################
+-- #     Receivers      #
+-- ######################
 local receiver_get_formspec = function(meta)
 	return "size[8,5;]"..
 		"list[context;tapes;3.5,0;1,1;]"..
@@ -40,16 +24,42 @@ local receiver_get_formspec = function(meta)
 		"list[current_player;main;0,4;8,1;]"
 end
 
-minetest.register_node(":reseau:testreceiver", {
+minetest.register_node(":reseau:receiverscreen", {
 	description = "Receiver (Testing)",
-	tiles = {"default_water.png"},
-	groups = {cracky = 3},
+	tiles = {
+		"reseau_receiverscreen_top.png",
+		"reseau_receiverscreen_bottom.png",
+		"reseau_receiverscreen_right.png",
+		"reseau_receiverscreen_left.png",
+		"reseau_receiverscreen_back.png",
+		"reseau_receiverscreen_front.png"
+	},
+	groups = {},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	drawtype = "nodebox",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5+1/16, -0.5, -6/16, 0.5-1/16, -0.5+2/16, 5/16}, -- base (keyboard)
+			{-0.5+1/16, -0.5, 1/16, 0.5-1/16, -0.5+12/16, 5/16}, -- screen
+			{-0.5+3/16, -0.5+2/16, 5/16, 0.5-3/16, -0.5+11/16, 7/16} -- screen bump
+		}
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5+1/16, -0.5, -6/16, 0.5-1/16, -0.5+2/16, 5/16}, -- base (keyboard)
+			{-0.5+1/16, -0.5, 1/16, 0.5-1/16, -0.5+12/16, 5/16}, -- screen
+			{-0.5+3/16, -0.5+2/16, 5/16, 0.5-3/16, -0.5+11/16, 7/16} -- screen bump
+		}
+	},
 	reseau = {
 		receiver = {
 			technology = {
 				"copper", "fiber"
 			},
-			rules = reseau.rules.default,
+			rules = {vector.new(0, -1, 0)},
 			action = function(pos, packet, depth)
 				reseau.bitparticles_receiver(pos, depth)
 				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
@@ -88,14 +98,71 @@ minetest.register_node(":reseau:testreceiver", {
 	end
 })
 
-local function get_router_infotext(cache, max_cache)
+minetest.register_node(":reseau:receiverbase", {
+	drawtype = "nodebox",
+	description = "Receiver Base",
+	tiles = {
+		"reseau_receiverbase_top.png",
+		"reseau_receiverbase_bottom.png",
+		"reseau_receiverbase_left.png",
+		"reseau_receiverbase_right.png",
+		"reseau_receiverbase_back.png",
+		"reseau_receiverbase_front.png"
+	},
+	inventory_image = "reseau_receiverbase_inv.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 3},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -6/16, 0.5, 0.5, 5/16},
+			{-2/16, -.5, 5/16, 2/16, -.5+2/16, 8/16}
+		}
+	},
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.5, -0.5, -6/16, 0.5, 0.5, 5/16},
+			{-2/16, -.5, 5/16, 2/16, -.5+2/16, 8/16}
+		}
+	},
+	reseau = {
+		conductor = {
+			technology = {
+				"copper", "fiber"
+			},
+			rules = function(node)
+				--return {minetest.facedir_to_dir(node.param2)}
+				return reseau.mergetable(
+					{minetest.facedir_to_dir(node.param2)},
+					{vector.new(0, 1, 0)}
+				)
+			end
+		}
+	},
+	after_place_node = function(pos)
+		local node = minetest.get_node(pos)
+		minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), {
+			name = "reseau:receiverscreen",
+			param2 = node.param2
+		})
+	end,
+	after_dig_node = function(pos)
+		minetest.remove_node(vector.add(pos, vector.new(0, 1, 0)))
+	end
+})
+
+-- ######################
+-- #      Routers       #
+-- ######################
+local function get_merger_infotext(cache, max_cache)
 	return "Router: (" .. cache .. " MB/" .. max_cache .. " MB)"
 end
 
-local MAX_HOP_COUNT = 50
 for _, team in ipairs(teams.get_all()) do
-	minetest.register_node(":reseau:testrouter_" .. team.name, {
-		description = "Router (Testing)",
+	minetest.register_node(":reseau:merger_" .. team.name, {
+		description = "Router (Merging)",
 		tiles = {
 			reseau.with_overlay("reseau_router_top.png", team.color, "reseau_router_top_overlay.png"),
 			"reseau_router_bottom.png",
@@ -145,7 +212,7 @@ for _, team in ipairs(teams.get_all()) do
 					local used = math.min(available, packet.throughput)
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
-					meta:set_string("infotext", get_router_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
+					meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
 					return used
 				end
 			},
@@ -177,7 +244,7 @@ for _, team in ipairs(teams.get_all()) do
 							assert (cache >= 0)
 							meta:set_int("hop_count", 0)
 							meta:set_int("cache", cache)
-							meta:set_string("infotext", get_router_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
+							meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, reseau.era.router_max_cache))
 						end
 					end
 				}
@@ -191,8 +258,8 @@ local function get_splitter_infotext(cache, max_cache)
 end
 
 for _, team in ipairs(teams.get_all()) do
-	minetest.register_node(":reseau:testsplitter_" .. team.name, {
-		description = "Splitter (Testing)",
+	minetest.register_node(":reseau:splitter_" .. team.name, {
+		description = "Router (Splitting)",
 		tiles = {
 			reseau.with_overlay("reseau_splitter_top.png", team.color, "reseau_splitter_top_overlay.png"),
 			"reseau_splitter_bottom.png",
@@ -296,6 +363,9 @@ for _, team in ipairs(teams.get_all()) do
 	})
 end
 
+-- ######################
+-- #    Experiments     #
+-- ######################
 minetest.register_entity("reseau:atom", {
 	initial_properties = {
 		visual = "mesh",
@@ -313,14 +383,29 @@ minetest.register_entity("reseau:atom", {
 	}
 })
 
+local experiment_get_formspec = function(meta, throughput)
+	throughput = throughput or 0
+	local cache = meta:get_int("cache")
+
+	return "size[8,5;]"..
+		"list[context;tapes;2,0;4,1;]"..
+		"label[0,1.5;Experiments generate data that has to be moved to the computing center.]"..
+		"label[0,1.9;Data can be transported manually by carrying tapes or by a network link.]"..
+		"label[0,2.3;Data generation speed: "..reseau.era.genspeed.." MB/s]"..
+		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.tape_capacity.." MB]"..
+		"label[0,3.1;Network throughput: "..throughput.." MB/s]"..
+		"list[current_player;main;0,4;8,1;]"
+end
+
 for _, team in ipairs(teams.get_all()) do
-minetest.register_node(":reseau:experiment_" .. team.name, {
+	minetest.register_node(":reseau:experiment_" .. team.name, {
 		description = "Experiment",
 		tiles = {"default_lava.png"},
 		groups = {cracky = 3},
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
+		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = {
 			reseau.with_overlay("reseau_experiment_top.png", team.color, "reseau_experiment_top_overlay.png"),
@@ -354,7 +439,7 @@ minetest.register_node(":reseau:experiment_" .. team.name, {
 			local inv = meta:get_inventory()
 			inv:set_size("tapes", 4)
 
-			meta:set_string("formspec", transmitter_get_formspec(meta))
+			meta:set_string("formspec", experiment_get_formspec(meta))
 		end,
 		on_destruct = function(pos)
 			local objs = minetest.get_objects_inside_radius(pos, 1.0)
@@ -411,7 +496,7 @@ minetest.register_node(":reseau:experiment_" .. team.name, {
 
 						-- update node metadata
 						meta:set_int("cache", cache)
-						meta:set_string("formspec", transmitter_get_formspec(meta, throughput))
+						meta:set_string("formspec", experiment_get_formspec(meta, throughput))
 					end
 				}
 			}
@@ -419,6 +504,9 @@ minetest.register_node(":reseau:experiment_" .. team.name, {
 	})
 end
 
+-- ######################
+-- #        Tape        #
+-- ######################
 minetest.register_craftitem(":reseau:tape", {
 	image = "reseau_tape.png",
 	stack_max = 1,

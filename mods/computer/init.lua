@@ -175,11 +175,11 @@ minetest.register_node("computer:server", {
 	groups = {snappy=3},
 	selection_box = {
 		type = "fixed",
-		fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}
+		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
 	},
 	node_box = {
 		type = "fixed",
-		fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}
+		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
 	},
 	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack)
