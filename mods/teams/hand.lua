@@ -8,10 +8,10 @@ teams.register_on_team_changed(function(player, team_def)
 	local caps = stack:get_tool_capabilities()
 
 	caps.groupcaps["protection_" .. team_def.name] = {
-		times = { 1 }, uses = 0, maxlevel = 1
+		times = { [1] = 0.3, [2] = 0 }, uses = 0, maxlevel = 1
 	}
 
-   	meta:set_tool_capabilities(caps)
+	meta:set_tool_capabilities(caps)
 
 	inv:set_width("hand", 1)
 	inv:set_list("hand", { stack })

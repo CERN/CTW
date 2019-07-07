@@ -235,7 +235,7 @@ for _, team in ipairs(teams.get_all()) do
 		tiles = make_wire_tiles("reseau_copper_wire.png", team.color),
 		inventory_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
 		wield_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
-		groups = { ["protection_" .. team.name] = 1 }
+		groups = { ["protection_" .. team.name] = 2 }
 	})
 
 	register_wires("fiber_" .. team.name, {
@@ -246,6 +246,6 @@ for _, team in ipairs(teams.get_all()) do
 		tiles = make_wire_tiles("reseau_fiber_wire.png", team.color),
 		inventory_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
 		wield_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
-		groups = { ["protection_" .. team.name] = 1 }
+		groups = { ["protection_" .. team.name] = 2 }
 	})
 end
