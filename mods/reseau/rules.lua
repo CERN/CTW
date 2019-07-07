@@ -22,9 +22,7 @@ reseau.extract_rules = function(rulesspec, node)
 	end
 end
 
-reseau.get_any_rules = function(pos)
-	reseau.load_position(pos)
-	local node = minetest.get_node(pos)
+reseau.get_any_rules = function(node)
 	local nodespec = minetest.registered_nodes[node.name]
 	local rules = {}
 
@@ -56,16 +54,18 @@ end
 
 reseau.get_all_links = function(startpos)
 	local links = {}
+	local startnode = minetest.get_node(startpos)
 
-	local startrules = reseau.get_any_rules(startpos)
+	local startrules = reseau.get_any_rules(startnode)
 	for _, rule in ipairs(startrules) do
 		local target_pos = vector.add(startpos, rule)
 		reseau.load_position(target_pos)
-		local target_nodename = minetest.get_node(target_pos).name
+		local target_node = minetest.get_node(target_pos)
+		local target_nodename = target_node.name
 		local target_nodespec = minetest.registered_nodes[target_nodename]
 		if target_nodespec and target_nodespec.reseau and
 				(target_nodespec.reseau.conductor or target_nodespec.reseau.receiver) then
-			local target_rules = reseau.get_any_rules(target_pos)
+			local target_rules = reseau.get_any_rules(target_node)
 			if reseau.rules_link_oneway(target_pos, target_rules, startpos) then
 				table.insert(links, target_pos)
 			end
