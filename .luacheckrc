@@ -30,4 +30,5 @@ read_globals = {
 exclude_files = {
 	"mods/mtg",
 	"mods/libs",
+	"mods/homedecor",
 }
