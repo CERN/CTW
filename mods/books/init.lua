@@ -2,7 +2,7 @@
 	This flag should be set to false if you are building the world that will be preloaded.
 	However, in normal play, it should be set to true.
 ]]--
-local enable_bookshelf_randomization = true
+local enable_bookshelf_randomization = false
 
 if enable_bookshelf_randomization then
 	dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/mapgen.lua")
@@ -10,7 +10,6 @@ else
 	minetest.log("error",
 		"Bookshelf randomization disabled. Please make sure you are "..
 		"pre-building the world and not playing a game.")
-	return
 end
 
 
