@@ -64,7 +64,6 @@ homedecor.color_med_grey  = 0xffa0a0a0
 -- load different handler subsystems
 dofile(modpath.."/nodeboxes.lua")
 dofile(modpath.."/expansion.lua")
-dofile(modpath.."/furnaces.lua")
 dofile(modpath.."/inventory.lua")
 dofile(modpath.."/registration.lua")
 dofile(modpath.."/water_particles.lua")

@@ -12,31 +12,34 @@ homedecor.register("refrigerator_white", {
 	collision_box = homedecor.nodebox.slab_y(2),
 	sounds = default.node_sound_stone_defaults(),
 	expand = { top="placeholder" },
-	inventory = {
-		size=50,
-	},
 	on_rotate = screwdriver.rotate_simple
 })
 
-minetest.register_alias("homedecor:refrigerator_white_bottom", "homedecor:refrigerator_white")
-minetest.register_alias("homedecor:refrigerator_white_top", "air")
-
--- kitchen "furnaces"
-homedecor.register_furnace("oven", {
+-- Oven
+minetest.register_node(":homedecor:oven", {
 	description = "Oven",
-	tile_format = "homedecor_oven_%s%s.png",
-	output_slots = 4,
-	output_width = 2,
-	cook_speed = 1.25,
+	tiles = {
+		"homedecor_oven_top.png",
+		"homedecor_oven_bottom.png",
+		"homedecor_oven_side.png",
+		"homedecor_oven_side.png",
+		"homedecor_oven_side.png",
+		"homedecor_oven_front.png"
+	},
+	paramtype2 = "facedir",
+	groups = {choppy = 2, flammable = 2, wood = 1},
+	on_place = minetest.rotate_node
 })
 
+
+-- Kitchen Cabinet and sink
 local cabinet_sides = "(default_wood.png^[transformR90)^homedecor_kitchen_cabinet_bevel.png"
 local cabinet_bottom = "(default_wood.png^[colorize:#000000:100)^(homedecor_kitchen_cabinet_bevel.png^[colorize:#46321580)"
 
 local function N_(x) return x end
 
 homedecor.register("kitchen_cabinet_granite", {
-	description = desc,
+	description = "Kitchen Cabinet",
 	tiles = { 'homedecor_kitchen_cabinet_top_granite.png',
 			cabinet_bottom,
 			cabinet_sides,
@@ -45,14 +48,10 @@ homedecor.register("kitchen_cabinet_granite", {
 			'homedecor_kitchen_cabinet_front.png'},
 	groups = { snappy = 3 },
 	sounds = default.node_sound_wood_defaults(),
-	inventory = {
-		size=24,
-	},
 })
 
-
 homedecor.register("kitchen_cabinet_with_sink", {
-	description = "Kitchen Cabinet with sink",
+	description = "Kitchen Cabinet with Sink",
 	mesh = "homedecor_kitchen_sink.obj",
 	tiles = {
 		"homedecor_kitchen_sink_top.png",
@@ -62,9 +61,6 @@ homedecor.register("kitchen_cabinet_with_sink", {
 	},
 	groups = { snappy = 3 },
 	sounds = default.node_sound_wood_defaults(),
-	inventory = {
-		size=16,
-	},
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -80,23 +76,16 @@ homedecor.register("kitchen_cabinet_with_sink", {
 	end
 })
 
-local cp_cbox = {
-	type = "fixed",
-	fixed = { -0.375, -0.5, -0.5, 0.375, -0.3125, 0.3125 }
-}
-
-local kf_cbox = {
-	type = "fixed",
-	fixed = { -2/16, -8/16, 1/16, 2/16, -1/16, 8/16 }
-}
-
 homedecor.register("kitchen_faucet", {
 	mesh = "homedecor_kitchen_faucet.obj",
 	tiles = { "homedecor_generic_metal_bright.png" },
 	inventory_image = "homedecor_kitchen_faucet_inv.png",
 	description = "Kitchen Faucet",
 	groups = {snappy=3},
-	selection_box = kf_cbox,
+	selection_box = {
+		type = "fixed",
+		fixed = { -2/16, -8/16, 1/16, 2/16, -1/16, 8/16 }
+	},
 	walkable = false,
 	on_rotate = screwdriver.disallow,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)

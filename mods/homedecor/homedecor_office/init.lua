@@ -1,6 +1,6 @@
 
 homedecor.register("filing_cabinet", {
-	description = "Filing cabinet",
+	description = "Filing Cabinet",
 	mesh = "homedecor_filing_cabinet.obj",
 	tiles = {
 		{ name = "homedecor_generic_wood_plain.png",  color = 0xffa76820 },
@@ -17,7 +17,7 @@ homedecor.register("desk", {
 	tiles = {
 		{ name = "homedecor_generic_wood_plain.png",  color = 0xffa76820 },
 		"homedecor_desk_drawers.png",
-		{ name = "homedecor_generic_metal.png", color = homedecor.color_black }
+		{ name = "homedecor_generic_metal.png", color = 0xff303030 }
 	},
 	inventory_image = "homedecor_desk_inv.png",
 	selection_box = {

@@ -22,4 +22,3 @@ homedecor.register("office_chair_basic", {
 	expand = { top = "placeholder" },
 	on_rotate = screwdriver.rotate_simple
 })
-
