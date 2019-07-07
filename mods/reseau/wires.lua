@@ -118,10 +118,20 @@ local function wire_update_recursive(pos)
 end
 
 minetest.register_on_placenode(function(pos, node, placer)
-	-- make sure there is an existing cable / transmitter nearby, only then
+	-- make sure there is an existing transmission line / transmitter nearby, only then
 	-- conductor placement is allowed
 	if minetest.registered_nodes[node.name].is_reseau_wire then
-		-- create a list of potential connections to other cables or transmitters
+		-- wires can only be placed on top of actual blocks (default drawtype)
+		local below = minetest.get_node(vector.add(pos, vector.new(0, -1, 0)))
+		if not below or (minetest.registered_nodes[below.name].drawtype ~= nil
+		and minetest.registered_nodes[below.name].drawtype ~= "normal") then
+			local chatmsg = "You can only place transmission lines on top of proper blocks."
+			minetest.chat_send_player(placer:get_player_name(), chatmsg)
+			minetest.remove_node(pos)
+			return true
+		end
+
+		-- create a list of potential connections to other transmission lines or transmitters
 		local connections = {}
 		for _, r in ipairs(reseau.rules.default) do
 			local link = vector.add(pos, r)
@@ -137,7 +147,7 @@ minetest.register_on_placenode(function(pos, node, placer)
 
 		-- not allowed to place conductor? remove and send error message!
 		if #connections == 0 then
-			local chatmsg = "You can only place cables next to existing one. Start at your team's experiment!"
+			local chatmsg = "You can only place a transmission line next to an existing one. Start at one of your team's experiments!"
 			minetest.chat_send_player(placer:get_player_name(), chatmsg)
 			minetest.remove_node(pos)
 			return true
@@ -292,7 +302,7 @@ end
 
 for _, team in ipairs(teams.get_all()) do
 	register_wires("copper_" .. team.name, {
-		description = "Copper Cable",
+		description = "Copper Transmission Line",
 		technology = "copper",
 		team_name = team.name,
 		tiles = make_wire_tiles("reseau_copper_wire.png", team.color),
@@ -302,7 +312,7 @@ for _, team in ipairs(teams.get_all()) do
 	})
 
 	register_wires("fiber_" .. team.name, {
-		description = "Fiber Cable",
+		description = "Fiber Transmission Line",
 		technology = "fiber",
 		team_name = team.name,
 		-- TODO: per-team image
