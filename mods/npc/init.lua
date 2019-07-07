@@ -18,6 +18,12 @@ minetest.register_entity("npc:npc_generic", {
 	stepheight = 0.6,
 	_npc_name = "UNSPECIFIED",
 	on_rightclick = function(self, clicker)
+		local team = teams.get_by_player(clicker)
+		if not team then
+			minetest.chat_send_player(clicker:get_player_name(),
+					"You seem to have lost your team. Where's it?")
+			return
+		end
 		local dir = vector.subtract(clicker:get_pos(), self.object:get_pos())
 		self.object:set_yaw(math.atan2(-dir.x, dir.z))
 		minetest.after(1, function()

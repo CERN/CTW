@@ -31,7 +31,8 @@ ctw_resources.register_idea("ethernet", {
 		"ethernet",
 	},
 	references_required = {
-		"books:hf_freq 2",
+		"books:hf_freq 1",
+		"books:cable_crafting 2",
 		"books:hf_freq2 2",
 	},
 })

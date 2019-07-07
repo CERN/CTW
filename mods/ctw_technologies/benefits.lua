@@ -77,7 +77,7 @@ function ctw_technologies.accumulate_benefits(t, benelist)
 	if not t or not benefit_types[t] then
 		return nil
 	end
-	return benefit_types[t].accumulator(bene)
+	return benefit_types[t].accumulator(benelist)
 end
 
 

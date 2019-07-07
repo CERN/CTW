@@ -35,6 +35,10 @@ local book_types = {
 		"Program in C - The Handbook",
 		"Small and compact C programming handbook. Develop applications with this book."
 	},
+	cable_crafting = {
+		"The Art Of Crafting",
+		"Metal processing and compact wire designs are part of this wook."
+	},
 	-- add whatever you want here. colors are key-hash-based
 }
 
@@ -49,7 +53,7 @@ if false then -- TODO DEBUG
 end
 
 local function string_to_color(str)
-	local color = minetest.sha1(str)
+	local color = minetest.sha1(str, true)
 	local R = color:byte( 1) % 0x10
 	local G = color:byte(10) % 0x10
 	local B = color:byte(20) % 0x10
@@ -66,7 +70,6 @@ local book_respawn_time_max = 20
 
 for key, d in pairs(book_types) do
 	local description = d[1]
-	local can_be_taken = description ~= ""
 	local color = string_to_color(key)
 
 	-- Register craftitem and documentation entry
