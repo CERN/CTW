@@ -131,7 +131,7 @@ end
 minetest.register_node("team_billboard:bb", {
 	description = "Team Billboard",
 	drawtype = "signlike",
-	visual_scale = 3.0,
+	visual_scale = 2.0,
 	tiles = { "team_billboard_billboard.png" },
 	inventory_image = "team_billboard_billboard.png",
 	paramtype = "light",
