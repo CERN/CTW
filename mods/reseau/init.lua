@@ -18,11 +18,12 @@ local MAX_HOP_COUNT = 50
 
 -- TODO: Fix router help text units
 -- TODO: Rename era definition properties to something more structured
+-- TODO: Define reasonable values for eras!
+-- TODO: Hook in technology benefits into throughput.lua
 
 -- ######################
 -- #       Eras         #
 -- ######################
--- TODO: Define reasonable values for eras!
 reseau.era.register(true, 1986, {
 	genspeed = 10,
 	tape_capacity = 500,
