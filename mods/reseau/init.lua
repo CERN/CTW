@@ -32,72 +32,6 @@ local transmitter_get_formspec = function(meta, throughput)
 		"list[current_player;main;0,4;8,1;]"
 end
 
-for _, team in ipairs(teams.get_all()) do
-	-- TODO: team ownership (save in tape meta)!
-	minetest.register_node(":reseau:testtransmitter_" .. team.name, {
-		description = "Transmitter (Testing)",
-		tiles = { reseau.with_overlay("default_tree.png", team.color, "reseau_wire_overlay_side.png") },
-		groups = { ["protection_" .. team.name] = 1 },
-		team_name = team.name,
-		reseau = {
-			transmitter = {
-				technology = {
-					"copper", "fiber"
-				},
-				rules = reseau.rules.default,
-				autotransmit = {
-					interval = TX_INTERVAL,
-					action = function(pos)
-						-- generate data to transmit
-						local meta = minetest.get_meta(pos)
-						local cache = meta:get_int("cache") or 0
-						cache = cache + reseau.era.genspeed * TX_INTERVAL
-
-						-- try to transmit as much data as possible via network
-						local throughput = reseau.transmit_first(pos, {
-							throughput = cache / TX_INTERVAL,
-							team = team.name,
-							hop_count = 0
-						})
-
-						-- if there is enough cached data to put on a tape, just
-						-- write a tape
-						cache = cache - throughput * TX_INTERVAL
-						if cache > reseau.era.tape_capacity then
-							cache = cache - reseau.era.tape_capacity
-
-							local inv = meta:get_inventory()
-							local tape_stack = ItemStack("reseau:tape 1")
-							local tape_meta = tape_stack:get_meta()
-							tape_meta:set_int("capacity", reseau.era.tape_capacity)
-							tape_meta:set_string("team", team.name)
-							local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
-							tape_meta:set_string("description", desc)
-
-							if inv:room_for_item("tapes", tape_stack) then
-								inv:add_item("tapes", tape_stack)
-							else
-								cache = reseau.era.tape_capacity
-							end
-						end
-
-						-- update node metadata
-						meta:set_int("cache", cache)
-						meta:set_string("formspec", transmitter_get_formspec(meta, throughput))
-					end
-				}
-			}
-		},
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			local inv = meta:get_inventory()
-			inv:set_size("tapes", 4)
-
-			meta:set_string("formspec", transmitter_get_formspec(meta))
-		end
-	})
-end
-
 local receiver_get_formspec = function(meta)
 	return "size[8,5;]"..
 		"list[context;tapes;3.5,0;1,1;]"..
@@ -362,6 +296,125 @@ for _, team in ipairs(teams.get_all()) do
 	})
 end
 
+minetest.register_entity("reseau:atom", {
+	initial_properties = {
+		visual = "mesh",
+		visual_size = {x=0.4, y=0.4},
+		mesh = "reseau_atom_ts.obj",
+		textures = {
+			"reseau_atom_core.png",
+			"reseau_atom_electron.png",
+			"reseau_atom_ring.png"
+		},
+		automatic_rotate = 1,
+		collisionbox = {},
+		selectionbox = {},
+		glow = 10
+	}
+})
+
+for _, team in ipairs(teams.get_all()) do
+minetest.register_node(":reseau:experiment_" .. team.name, {
+		description = "Experiment",
+		tiles = {"default_lava.png"},
+		groups = {cracky = 3},
+		groups = { ["protection_" .. team.name] = 1 },
+		team_name = team.name,
+		light_source = 10,
+		tiles = {
+			reseau.with_overlay("reseau_experiment_top.png", team.color, "reseau_experiment_top_overlay.png"),
+			reseau.with_overlay("reseau_experiment_bottom_overlay.png", team.color, "reseau_experiment_bottom_overlay.png"),
+			reseau.with_overlay("reseau_experiment_side_connection.png", team.color, "reseau_experiment_side_connection_overlay.png"),
+			reseau.with_overlay("reseau_experiment_side.png", team.color, "reseau_experiment_side_overlay.png"),
+			reseau.with_overlay("reseau_experiment_right.png", team.color, "reseau_experiment_side_overlay.png"),
+			reseau.with_overlay("reseau_experiment_left.png", team.color, "reseau_experiment_side_overlay.png")
+		},
+		drawtype = "nodebox",
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-6/16, -.5, -6/16, 6/16, -.5+8/16, 6/16},
+				{-4/16, -.5, -4/16, 4/16, -.5+10/16, 4/16},
+				{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}
+			}
+		},
+		selection_box = {
+			type = "fixed",
+			fixed = {
+				{-6/16, -.5, -6/16, 6/16, -.5+8/16, 6/16},
+				{-4/16, -.5, -4/16, 4/16, -.5+10/16, 4/16},
+				{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}
+			}
+		},
+		on_construct = function(pos)
+			minetest.add_entity(vector.add(pos, vector.new(0, 0.5, 0)), "reseau:atom")
+
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			inv:set_size("tapes", 4)
+
+			meta:set_string("formspec", transmitter_get_formspec(meta))
+		end,
+		on_destruct = function(pos)
+			local objs = minetest.get_objects_inside_radius(pos, 1.0)
+			for _, obj in ipairs(objs) do
+				local entity = obj:get_luaentity()
+				if entity and entity.name == "reseau:atom" then
+					obj:remove()
+				end
+			end
+		end,
+		reseau = {
+			transmitter = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = {vector.new(1, 0, 0)},
+				autotransmit = {
+					interval = TX_INTERVAL,
+					action = function(pos)
+						-- generate data to transmit
+						local meta = minetest.get_meta(pos)
+						local cache = meta:get_int("cache") or 0
+						cache = cache + reseau.era.genspeed * TX_INTERVAL
+
+						-- try to transmit as much data as possible via network
+						local throughput = reseau.transmit_first(pos, {
+							throughput = cache / TX_INTERVAL,
+							team = team.name,
+							hop_count = 0
+						})
+
+						-- if there is enough cached data to put on a tape, just
+						-- write a tape
+						cache = cache - throughput * TX_INTERVAL
+						if cache > reseau.era.tape_capacity then
+							cache = cache - reseau.era.tape_capacity
+
+							local inv = meta:get_inventory()
+							local tape_stack = ItemStack("reseau:tape 1")
+							local tape_meta = tape_stack:get_meta()
+							tape_meta:set_int("capacity", reseau.era.tape_capacity)
+							tape_meta:set_string("team", team.name)
+							local desc = reseau.era.tape_capacity.." MB tape (team " .. team.name .. ")"
+							tape_meta:set_string("description", desc)
+
+							if inv:room_for_item("tapes", tape_stack) then
+								inv:add_item("tapes", tape_stack)
+							else
+								cache = reseau.era.tape_capacity
+							end
+						end
+
+						-- update node metadata
+						meta:set_int("cache", cache)
+						meta:set_string("formspec", transmitter_get_formspec(meta, throughput))
+					end
+				}
+			}
+		}
+	})
+end
 
 minetest.register_craftitem(":reseau:tape", {
 	image = "reseau_tape.png",
