@@ -30,7 +30,7 @@ for tname, _ in pairs(teams.get_dict()) do
 		on_rightclick = function(pos, node, puncher)
 			local team = teams.get_by_player(puncher)
 			if not puncher or not team or team.name ~= tname then
-				minetest.chat_send_player(puncher, "You are not in team " .. tname .. "!")
+				minetest.chat_send_player(puncher:get_player_name(), "You are not in team " .. tname .. "!")
 				return
 			end
 
