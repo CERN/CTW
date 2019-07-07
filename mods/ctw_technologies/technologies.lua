@@ -223,6 +223,8 @@ function ctw_technologies.set_team_tech_state(id, team, state)
 	end
 	local tstate = {state = state}
 	team._ctw_technologies_tech_state[id] = tstate
+	
+	ctw_technologies.update_doc_reveals(team)
 end
 
 -- Make a team gain a technology. This notifies the team, reveals the technology doc pages
@@ -239,12 +241,24 @@ function ctw_technologies.gain_technology(tech_id, team)
 	
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")
 	ctw_technologies.set_team_tech_state(tech_id, team, "gained")
-	for _, player in ipairs(teams.get_members(team.name)) do
-		doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
-	end
 	
 	logs("-!- Benefits not implemented (in gain_technology)")
 	
 	return true
 end
 
+function ctw_technologies.update_doc_reveals(team)
+	for tech_id, tech in pairs(technologies) do
+		local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
+		for _,player in ipairs(teams.get_members(team.name)) do
+			if tstate.state ~= "undiscovered" then
+				doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
+			end
+		end
+	end
+end
+
+minetest.register_on_joinplayer(function(player)
+	local team = teams.get_by_player(player:get_player_name())
+	ctw_technologies.update_doc_reveals(team)
+end)

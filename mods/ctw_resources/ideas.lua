@@ -272,9 +272,6 @@ function ctw_resources.publish_idea(idea_id, team, pname)
 	
 	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
 	ctw_resources.set_team_idea_state(idea_id, team, "published")
-	for _,player in ipairs(teams.get_members(team.name)) do
-		doc.mark_entry_as_revealed(player:get_player_name(), "ctw_ideas", idea_id)
-	end
 	
 	return true
 end
@@ -309,7 +306,27 @@ function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 		istate.target = param
 	end
 	team._ctw_resources_idea_state[idea_id] = istate
+	
+	ctw_resources.update_doc_reveals(team)
 end
+
+function ctw_resources.update_doc_reveals(team)
+	for idea_id, idea in pairs(ideas) do
+		local istate = ctw_resources.get_team_idea_state(idea_id, team)
+		for _,player in ipairs(teams.get_members(team.name)) do
+			if istate.state ~= "undiscovered" then
+				if istate.state ~= "discovered" or player:get_player_name() == istate.by then
+					doc.mark_entry_as_revealed(player:get_player_name(), "ctw_ideas", idea_id)
+				end
+			end
+		end
+	end
+end
+
+minetest.register_on_joinplayer(function(player)
+	local team = teams.get_by_player(player:get_player_name())
+	ctw_resources.update_doc_reveals(team)
+end)
 
 -- TODO only for testing
 
