@@ -135,5 +135,9 @@ function palettes.deliver(tname, stack)
 		_on_deliver(tname, stack, pos)
 	end
 
+	local stackdef = minetest.registered_items[stack:get_name()]
+	local desc = stackdef and stackdef.description or stack:get_name()
+	teams.chat_send_team(tname, "Delivery arrived: " .. desc)
+
 	return true, nil
 end

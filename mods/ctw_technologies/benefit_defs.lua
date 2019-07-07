@@ -10,7 +10,7 @@ ctw_technologies.register_benefit_type("transmitter_throughput_multiplier", tpl.
 ctw_technologies.register_benefit_type("supply", {
 	accumulator = function(list)
 		local item_list = {}
-		for _, b in ipairs(list) do 
+		for _, b in ipairs(list) do
 			table.insert(item_list, b.item)
 		end
 	end,
@@ -26,7 +26,7 @@ ctw_technologies.register_benefit_type("supply", {
 		if istack:get_count() > 0 then
 			return image, desc.." x"..istack:get_count()
 		end
-		
+
 		return image, desc
 	end
 })
