@@ -1,10 +1,12 @@
 
-npc.register_npc("steve", {
-	infotext = "Tutor",
-	textures = { "npc_skin_doctor_sam.png" }
+-- == THE PROGRAMMER == --
+
+npc.register_npc("programmer", {
+	infotext = "Computer specialist",
+	textures = { "npc_skin_geopbyte.png" }
 })
 
-npc.register_event("steve", {
+npc.register_event("programmer", {
 	id = "test1",
 	dialogue = "$PLAYER, line1\n\n\nlineX;:/\\]",
 	options = {
@@ -21,26 +23,17 @@ npc.register_event("steve", {
 	}
 })
 
-npc.register_event("steve", {
-	id = "test2",
-	dialogue = "Oh, that's some great literature you've got there!" ..
-		"\nI'll call this one 'HTML'.",
-	conditions = {
-		{ idea_id = "html" }
-	},
-	options = {
-		{
-			text = "Thank you!",
-			target = function(player, event)
-				local teamdef = teams.get_by_player(player)
-				local members = teams.get_online_members(teamdef.name)
-				ctw_resources.reveal_idea("html", members)
-			end
-		}
-	}
+npc.register_event_idea_discover("programmer", "ascii", {
+	dialogue = "What if there was a standard for character encoding?"
 })
 
+npc.register_event_idea_approve("programmer", "ascii")
 
-npc.register_event("steve", {
+npc.register_npc("engineer", {
+	infotext = "Engineer",
+	textures = { "npc_skin_doctor_sam.png" }
+})
+
+npc.register_event("engineer", {
 	dialogue = "Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.",
 })

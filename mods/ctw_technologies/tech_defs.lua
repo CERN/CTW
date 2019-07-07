@@ -1,4 +1,5 @@
 
+-- === DATA FORMATS === --
 ctw_technologies.register_technology("ascii", {
 	name = "ASCII",
 	description = "There is a standard code for character encoding!",
@@ -22,6 +23,10 @@ ctw_technologies.register_technology("html", {
 		{image = "ctw_texture_missing.png", label = "Some other benefit"}
 	},
 })
+
+
+
+-- === WIRES === --
 ctw_technologies.register_technology("phonecable", {
 	name = "Phone Cable",
 	description = "The most basic type of signal cable",
@@ -33,6 +38,7 @@ ctw_technologies.register_technology("phonecable", {
 	},
 	tree_line = 2,
 })
+
 ctw_technologies.register_technology("coaxial", {
 	name = "Coaxial Cable",
 	description = "A cable with one conductor and a shield!",
@@ -40,7 +46,11 @@ ctw_technologies.register_technology("coaxial", {
 		"phonecable"
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
+		cable_throughput_multiplier = {
+			image = "ctw_texture_missing.png",
+			label = "10x faster cable throughput",
+			value = 10
+		}
 	},
 	tree_line = 2,
 })
@@ -51,7 +61,11 @@ ctw_technologies.register_technology("twisted-pair", {
 		"coaxial"
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "A cable, yay!"}
+		cable_throughput_multiplier = {
+			image = "ctw_texture_missing.png",
+			label = "5x faster cable throughput",
+			value = 5
+		}
 	},
 	tree_line = 2,
 })
@@ -62,7 +76,11 @@ ctw_technologies.register_technology("ethernet", {
 		"twisted-pair"
 	},
 	benefits = {
-		{image = "ctw_texture_missing.png", label = "Some benefit"}
+		cable_throughput_multiplier = {
+			image = "ctw_texture_missing.png",
+			label = "10x faster cable throughput",
+			value = 10
+		}
 	},
 	tree_line = 2,
 })

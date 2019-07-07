@@ -4,8 +4,8 @@ local modpath = minetest.get_modpath("npc")
 npc = {}
 
 dofile(modpath .. "/api.lua")
-dofile(modpath .. "/sanity_check.lua")
 dofile(modpath .. "/dialogue_tree.lua")
+dofile(modpath .. "/sanity_check.lua")
 
 
 minetest.register_entity("npc:npc_generic", {
@@ -13,6 +13,8 @@ minetest.register_entity("npc:npc_generic", {
 	visual = "mesh",
 	visual_size = {x = 1, y = 1},
 	static_save = false,
+	physical = true,
+	collide_with_objects = true,
 	stepheight = 0.6,
 	_npc_name = "UNSPECIFIED",
 	on_rightclick = function(self, clicker)

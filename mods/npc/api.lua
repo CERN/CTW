@@ -5,43 +5,67 @@ npc.registered_npcs = {}
 
 math.randomseed(os.time())
 
-function npc.register_event(name, def)
-	assert(name)
+function npc.register_event(npc_name, def)
+	assert(npc.registered_events[npc_name], "NPC " ..
+			npc_name .. " was yet not registered")
+	assert(npc_name)
 	assert(def.dialogue)
 	def.options = def.options or {}
-	npc.registered_events[name] = npc.registered_events[name] or {}
-	table.insert(npc.registered_events[name], def)
+	table.insert(npc.registered_events[npc_name], def)
 end
 
 -- 1) Give idea (state = "undiscovered")
--- 2) Approve (needs state = "pubished")
-function npc.register_event_from_idea(name, dialogue, idea_id)
+function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	local idea_def = ctw_resources.get_idea(idea_id)
+	def_e = def_e or {}
 	local def = {}
-	def.dialogue = dialogue or idea_def.description
-	def.conditions = {{ idea_id = idea_id }}
-	def.options = {{
-		text = "Thank you!",
-		target = function(player, event)
-			ctw_resources.give_idea(idea_id, player:get_player_name(),
-				getbillboardinv(), getbillboardname())
+	def.dialogue = def_e.dialogue or idea_def.description
+	def.conditions = {{
+		func = function(player)
+			if ctw_resources.get_team_idea_state(idea_id,
+					teams.get_by_player(player)).state == "undiscovered" then
+				return #idea_def.references_required + 1
+			end
 		end
 	}}
-	npc.register_event(name, def)
+	def.options = {{
+		text = "New discovery",
+		target = function(player, event)
+			-- Mark as 'discovered'
+			ctw_resources.give_idea(idea_id, player:get_player_name(),
+				player:get_inventory(), "main")
+		end
+	}}
+	npc.register_event(npc_name, def)
 end
 
-function npc.register_event_from_tech(name, dialogue, tech_id)
-	local tech_def = ctw_technologies.get_technology(tech_id)
+-- 2) Approve (needs state = "pubished")
+function npc.register_event_idea_approve(npc_name, idea_id, def_e)
+	local idea_def = ctw_resources.get_idea(idea_id)
+	def_e = def_e or {}
 	local def = {}
-	def.dialogue = dialogue or tech_def.description
-	def.conditions = {{ tech_id = tech_id }}
-	def.options = {{
-		text = "Thank you!",
-		target = function(player, event)
-			ctw_technologies.gain_technology(tech_id, team)
+	def.dialogue = def_e.dialogue or idea_def.description
+	def.conditions = {{
+		func = function(player)
+			if ctw_resources.get_team_idea_state(idea_id,
+					teams.get_by_player(player)).state == "published" then
+				return #idea_def.references_required + 1
+			end
 		end
 	}}
-	npc.register_event(name, def)
+	def.options = {{
+		text = "Approve",
+		target = function(player, event)
+			-- Mark as 'approved'
+			ctw_resources.approve_idea(idea_id, player:get_player_name(),
+				player:get_inventory(), "main")
+		end
+	}}
+	npc.register_event(npc_name, def)
+end
+
+function npc.register_event_from_idea(npc_name, dialogue, idea_id)
+	error("Deprecated")
 end
 
 local player_formspecs = {}
@@ -55,21 +79,12 @@ local function check_condition(player, c)
 		end
 		weight = weight + 1
 	end
-	if c.idea_id then
-		-- From ctw_resources
-		if not ctw_resources.is_idea_approved(c.idea_id,
-				{ "tech1", "tech2" }, player:get_inventory(), "main") then
+	if c.func then
+		local w = c.func(player)
+		if not w then
 			return
 		end
-		weight = weight + ctw_resources.get_idea(c.idea_id).references_required
-	end
-	if c.tech_id then
-		-- From ctw_resources
-		if not ctw_technologies.is_tech_approved(c.tech_id,
-				{ "tech1", "tech2" }, player:get_inventory(), "main") then
-			return
-		end
-		weight = weight + ctw_resources.get_technology(c.tech_id).requires
+		weight = weight + w
 	end
 	if c.item then
 		if not player:get_inventory():contains_item(c.item) then
@@ -89,7 +104,7 @@ local function check_conditions(player, def)
 		return 0 -- Nothing to do
 	end
 
-	local weight_max = 0
+	local weight_max = -0xFFFF
 	for i, condition in ipairs(def.conditions) do
 		local weight = check_condition(player, condition)
 		if weight then
@@ -213,9 +228,14 @@ local function spawn_entity(pos, npc_name)
 		visual_size = { x = def.size, y = def.size },
 		textures = def.textures,
 		collisionbox = def.collisionbox,
-		infotext = def.infotext,
+		infotext = def.infotext
 	})
+	obj:set_armor_groups({immortable=1})
+
+	-- Wiggle animation
 	obj:get_luaentity()._npc_name = npc_name
+	local model = player_api.registered_models["character.b3d"]
+	obj:set_animation(model.animations["stand"], model.animation_speed, 0)
 end
 
 function npc.register_npc(npc_name, def)
@@ -231,17 +251,14 @@ function npc.register_npc(npc_name, def)
 	end
 
 	npc.registered_npcs[npc_name] = def
+	npc.registered_events[npc_name] = {}
 	minetest.register_node("npc:npc_" .. npc_name, {
-		description = "NPC node",
-		tiles = { "default_glass.png" },
+		description = "NPC node " .. npc_name,
 		paramtype = "light",
-		drawtype = "nodebox",
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{-0.5, -0.5, -0.5, 0.5, -0.4, 0.5},
-			},
-		},
+		drawtype = "airlike",
+		walkable = false,
+		pointable = false,
+		liquids_pointable = true,
 		groups = { npc_spawner = 1 },
 		on_construct = function(pos)
 			spawn_entity(pos, npc_name)

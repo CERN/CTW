@@ -3,6 +3,7 @@ allow_defined_top = true
 
 globals = {
 	"teams",
+	"ctw_resources",
 }
 
 read_globals = {
