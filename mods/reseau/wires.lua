@@ -27,7 +27,7 @@ local wire_getconnect = function(from_pos, self_pos, wire_name)
 		if self_nodespec.is_reseau_wire and not self_nodespec.is_fully_connected then
 			rules = reseau.rules.default
 		else
-			rules = reseau.get_any_rules(self_pos)
+			rules = reseau.get_any_rules(self_node)
 		end
 
 		for _, r in ipairs(rules) do
@@ -46,16 +46,29 @@ local wire_updateconnect = function(pos)
 
 	local connections = {}
 
-	for _, r in ipairs(reseau.rules.default) do
+	for i, r in ipairs(minetest.registered_nodes[wire_name].reseau.conductor.rules) do
 		if wire_getconnect(pos, vector.add(pos, r), wire_name) then
+			table.insert(connections, r)
+		end
+	end
+
+	for i, r in ipairs(reseau.rules.default) do
+		local known = false
+		for _, c in ipairs(connections) do
+			if vector.equals(c, r) then
+				known = true
+			end
+		end
+
+		if not known and wire_getconnect(pos, vector.add(pos, r), wire_name) then
 			table.insert(connections, r)
 		end
 	end
 
 	-- Wire may only have two connections at max (no T-pieces / crossings):
 	-- Truncate connections table to two connections
-	while #connections > 2 do
-		table.remove(connections, 1)
+	if #connections > 2 then
+		connections = {connections[1], connections[2]}
 	end
 
 	local nid = {}
@@ -78,23 +91,28 @@ local wire_updateconnect = function(pos)
 	local nodeid = (nid[0] or "0")..(nid[1] or "0")..(nid[2] or "0")..(nid[3] or "0")
 			..(nid[4] or "0")..(nid[5] or "0")..(nid[6] or "0")..(nid[7] or "0")
 
-	minetest.set_node(pos, {name = "reseau:"..basename.."_wire_"..nodeid})
+	local new_wire_name = "reseau:"..basename.."_wire_"..nodeid
+	minetest.set_node(pos, {name = new_wire_name})
+
+	return new_wire_name ~= wire_name, connections
 end
 
 
-local update_on_place_dig = function(pos, node)
+local function wire_update_recursive(pos)
 	-- Update placed node (get_node again as it may have been dug)
 	local nn = minetest.get_node(pos)
 	if (minetest.registered_nodes[nn.name]) and (minetest.registered_nodes[nn.name].is_reseau_wire) then
-		wire_updateconnect(pos)
-	end
+		local wire_changed, connections = wire_updateconnect(pos)
 
-	-- Update nodes around it
-	for _, r in ipairs(reseau.rules.default) do
-		local np = vector.add(pos, r)
-		local nodespec = minetest.registered_nodes[minetest.get_node(np).name]
-		if nodespec and nodespec.is_reseau_wire then
-			wire_updateconnect(np)
+		-- Update connected nodes around it
+		if wire_changed then
+			for _, r in ipairs(connections) do
+				local np = vector.add(pos, r)
+				local nodespec = minetest.registered_nodes[minetest.get_node(np).name]
+				if nodespec and nodespec.is_reseau_wire then
+					wire_update_recursive(np)
+				end
+			end
 		end
 	end
 end
@@ -103,7 +121,7 @@ minetest.register_on_placenode(function(pos, node, placer)
 	-- make sure there is an existing cable / transmitter nearby, only then
 	-- conductor placement is allowed
 	if minetest.registered_nodes[node.name].is_reseau_wire then
-		-- create a list of connections to other cables or transmitters
+		-- create a list of potential connections to other cables or transmitters
 		local connections = {}
 		for _, r in ipairs(reseau.rules.default) do
 			local link = vector.add(pos, r)
@@ -126,14 +144,23 @@ minetest.register_on_placenode(function(pos, node, placer)
 		end
 
 		-- place conductor and update connection
-		update_on_place_dig(pos, node)
+		wire_update_recursive(pos, node)
 	elseif minetest.registered_nodes[node.name].reseau then
-		update_on_place_dig(pos, node)
+		wire_update_recursive(pos, node)
 	end
 end)
 
 
-minetest.register_on_dignode(update_on_place_dig)
+minetest.register_on_dignode(function(pos, node)
+	-- If digged node was part of reseau, update nodes it used to connect to
+	for _, r in ipairs(reseau.get_any_rules(node)) do
+		local np = vector.add(pos, r)
+		local nodespec = minetest.registered_nodes[minetest.get_node(np).name]
+		if nodespec and nodespec.is_reseau_wire then
+			wire_update_recursive(np)
+		end
+	end
+end)
 
 
 -- ############################
@@ -183,7 +210,7 @@ nid_inc = function(nid)
 end
 
 local function register_wires(name, technologyspec)
-	local nid = {0, 0, 0, 0, 0, 0, 0, 0}
+	local nid = {[0] = 0, 0, 0, 0, 0, 0, 0, 0}
 	while true do
 		-- Create group specifiction and nodeid string (see note above for details)
 		local nodeid = 	  (nid[0] or "0")..(nid[1] or "0")..(nid[2] or "0")..(nid[3] or "0")
@@ -223,7 +250,7 @@ local function register_wires(name, technologyspec)
 			groups["not_in_creative_inventory"] = 1
 		end
 
-		local fully_connected = (nid[1] + nid[2] + nid[3] + nid[4]) > 1
+		local fully_connected = (nid[0] + nid[1] + nid[2] + nid[3]) > 1
 
 		local spec = reseau.mergetable(technologyspec, {
 			drawtype = "nodebox",
