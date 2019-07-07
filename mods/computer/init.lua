@@ -145,6 +145,18 @@ minetest.register_node("computer:router", {
 	}
 })
 
+minetest.register_node("computer:bottom", {
+	drawtype = "airlike",
+	reseau = {
+		transmitter = {
+			technology = {
+				"copper", "fiber"
+			},
+			rules = reseau.rules.default,
+		}
+	}
+})
+
 --Rack Server
 minetest.register_node("computer:server", {
 	drawtype = "nodebox",
@@ -204,7 +216,7 @@ local function register_server(team)
 		inventory_image = "computer_server_inv.png",
 		paramtype = "light",
 		paramtype2 = "facedir",
-		groups = {snappy=3,not_in_creative_inventory=1}, -- TODO, remove!
+		groups = {["protection_" .. team]=1},
 		selection_box = {
 			type = "fixed",
 			fixed = {-0.5, -0.5, -0.25, 0.5, 1.125, 0.4375}

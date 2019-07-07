@@ -37,15 +37,15 @@ npc.register_npc(npc_name, def)
 npc.register_event(npc_name, NPC_Event)
 	-- ^ 'dialogue' must be specified
 
-npc.register_event_from_idea(npc_name, dialogue, idea_name)
+npc.register_event_from_idea(npc_name, dialogue, idea_id)
 	-- Gives the team an idea if the requirements are met
 	-- 'dialogue': string/nil: Text to say
-	-- 'idea_name': From ctw_techologies (untested)
+	-- 'idea_id': From ctw_techologies (untested)
 
-npc.register_event_from_tech(npc_name, dialogue, tech_name)
+npc.register_event_from_tech(npc_name, dialogue, tech_id)
 	-- Gives the team  technology if the requirements are met
 	-- 'dialogue': string/nil: Text to say
-	-- 'tech_name': From ctw_techologies (untested)
+	-- 'tech_id': From ctw_techologies (untested)
 
 npc.get_event_by_id(id)
 	-- ^ Searchs an unique NPC_Event by ID
@@ -66,21 +66,34 @@ function npc.register_event(name, def)
 	table.insert(npc.registered_events[name], def)
 end
 
-function npc.register_event_from_idea(name, dialogue, idea_name)
-	local idea_def = ctw_resources.get_idea(idea_name)
+-- 1) Give idea (state = "undiscovered")
+-- 2) Approve (needs state = "pubished")
+function npc.register_event_from_idea(name, dialogue, idea_id)
+	local idea_def = ctw_resources.get_idea(idea_id)
 	local def = {}
 	def.dialogue = dialogue or idea_def.description
-	def.conditions = { { idea_id = idea_name } }
-	def.options = { { text = "Thank you!" } }
+	def.conditions = {{ idea_id = idea_id }}
+	def.options = {{
+		text = "Thank you!",
+		target = function(player, event)
+			ctw_resources.give_idea(idea_id, player:get_player_name(),
+				getbillboardinv(), getbillboardname())
+		end
+	}}
 	npc.register_event(name, def)
 end
 
-function npc.register_event_from_tech(name, dialogue, tech_name)
-	local tech_def = ctw_technologies.get_technology(tech_name)
+function npc.register_event_from_tech(name, dialogue, tech_id)
+	local tech_def = ctw_technologies.get_technology(tech_id)
 	local def = {}
 	def.dialogue = dialogue or tech_def.description
-	def.conditions = { { idea_id = tech_name } }
-	def.options = { { text = "Thank you!" } }
+	def.conditions = {{ tech_id = tech_id }}
+	def.options = {{
+		text = "Thank you!",
+		target = function(player, event)
+			ctw_technologies.gain_technology(tech_id, team)
+		end
+	}}
 	npc.register_event(name, def)
 end
 
