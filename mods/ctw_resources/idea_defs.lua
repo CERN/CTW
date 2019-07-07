@@ -9,8 +9,7 @@ ctw_resources.register_idea("ascii", {
 		"ascii",
 	},
 	references_required = {
-		"books:book_blue 3",
-		"books:book_red 1",
+		"books:data_formats 2"
 	},
 })
 
@@ -21,8 +20,8 @@ ctw_resources.register_idea("html", {
 		"html",
 	},
 	references_required = {
-		"books:book_green 2",
-		"books:book_red 1",
+		"books:data_formats 1",
+		"books:program_c 2",
 	}
 })
 ctw_resources.register_idea("ethernet", {
@@ -32,7 +31,8 @@ ctw_resources.register_idea("ethernet", {
 		"ethernet",
 	},
 	references_required = {
-		"books:book_red 5",
+		"books:hf_freq 2",
+		"books:hf_freq2 2",
 	},
 })
 
@@ -43,6 +43,7 @@ ctw_resources.register_idea("www", {
 		"www",
 	},
 	references_required = {
-		"books:book_red 1",
+		"books:program_c 2",
+		"books:program_objc 1",
 	},
 })
