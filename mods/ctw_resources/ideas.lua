@@ -258,13 +258,15 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
 	if istate.state ~= "undiscovered" then
 		return false, "idea_present_in_team"
 	end
-	
+
 	if try then return true end
 
-	minetest.chat_send_player(pname, "You got an idea: "..idea.name.."! Proceed to your team space and share it on the team billboard!")
+	minetest.chat_send_player(pname, "You got an idea: "..idea.name..
+			"! Proceed to your team space and share it on the team billboard!")
 	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
 	doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
-	-- Note: if another player secretly had gotten this idea before, this will be overwritten. Should not cause side-effects.
+	-- Note: if another player secretly had gotten this idea before, this will be overwritten.
+	-- Should not cause side-effects.
 	ctw_resources.set_team_idea_state(idea_id, team, "discovered", pname)
 	return true
 end
@@ -280,10 +282,13 @@ function ctw_resources.publish_idea(idea_id, team, pname, try)
 	if istate.state ~= "discovered" and istate.state ~= "undiscovered" then
 		return false, "already_published"
 	end
-	
-	if try then return true end
 
-	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name.."\". Go collect resources for it. You find the idea on the team billboard!")
+	if try then
+		return true
+	end
+
+	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name..
+			"\". Go collect resources for it. You find the idea on the team billboard!")
 	ctw_resources.set_team_idea_state(idea_id, team, "published")
 
 	return true
@@ -342,4 +347,3 @@ minetest.register_on_joinplayer(function(player)
 		ctw_resources.update_doc_reveals(team)
 	end
 end)
-

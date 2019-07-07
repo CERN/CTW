@@ -43,7 +43,6 @@ for tname, _ in pairs(teams.get_dict()) do
 				"listring[]",
 			}
 
-			print(table.concat(fs, ""))
 			minetest.show_formspec(puncher:get_player_name(), "palettes:chest", table.concat(fs, ""))
 		end,
 		allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)

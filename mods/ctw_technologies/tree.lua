@@ -62,7 +62,8 @@ function ctw_technologies.build_tech_tree()
 		table.remove(c_queue, 1)
 		local tech = technologies[techid]
 		if tech.tree_level then
-			error("Topological sorting tech tree failed at "..techid.." because it has already been placed in the tree! Check for cycles!")
+			error("Topological sorting tech tree failed at "..techid..
+					" because it has already been placed in the tree! Check for cycles!")
 		end
 		-- get level as max of levels of nodes before
 		local lvl = tech.min_tree_level or 0
@@ -215,7 +216,8 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 	for lvl, lines in pairs(render_info.levels) do
 		for line, techid in pairs(lines) do
 			local hithis = (hilit == techid)
-			table.insert(formt, tech_entry(lvl*lvl_space + lvl_init_off, line*line_space + line_init_off, techid, discovered_techs[techid], hithis, fdata))
+			table.insert(formt, tech_entry(lvl*lvl_space + lvl_init_off, line*line_space + line_init_off,
+					techid, discovered_techs[techid], hithis, fdata))
 		end
 	end
 
@@ -223,14 +225,18 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 	for lvl, conns in pairs(render_info.conns) do
 		for xdisp,conn in pairs(conns) do
 			local vlinep = lvl*lvl_space + conn_init_off + xdisp*conn_space
-			table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep, conn.sline*line_space + line_init_off + conn_ydown, fdata))
-			table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown, conn.eline*line_space + line_init_off + conn_ydown, fdata))
-			table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off, conn.eline*line_space + line_init_off + conn_ydown, fdata))
+			table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep,
+					conn.sline*line_space + line_init_off + conn_ydown, fdata))
+			table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown,
+					conn.eline*line_space + line_init_off + conn_ydown, fdata))
+			table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
+					conn.eline*line_space + line_init_off + conn_ydown, fdata))
 		end
 	end
 	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
 	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")
-	table.insert(formt, "scrollbar["..minpx..","..(minpy+wheight-0.5)..";"..wwidth..",0.5;horizontal;scrollbar;"..scrollpos.."]")
+	table.insert(formt, "scrollbar["..minpx..","..(minpy+wheight-0.5)..";"..wwidth..",0.5;horizontal;scrollbar;"..
+			scrollpos.."]")
 	return table.concat(formt, "\n")
 end
 
@@ -281,4 +287,3 @@ minetest.register_chatcommand("ctwtr", {
 				ctw_technologies.show_tech_tree(pname, tonumber(params) or 0)
         end,
 })
-

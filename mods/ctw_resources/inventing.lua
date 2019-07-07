@@ -1,8 +1,6 @@
 -- Craft The Web
 -- Globalstep and API to invent technology (prototype ideas)
 
-local c_time
-
 -- This function should be called by the team billboard once the approval letter is posted on it.
 -- istack - the item stack of the approval letter
 -- if "try" is true, will only perform a dry run and do nothing actually.
@@ -40,7 +38,8 @@ function ctw_resources.start_inventing(istack, team, pname, try)
 	local ready_score = 0
 
 	-- ready, changing the state
-	teams.chat_send_team(team.name, pname.." has gotten permission for prototyping \""..idea.name.."\". Your scientists will work hard! (you don't need to do anything)")
+	teams.chat_send_team(team.name, pname.." has gotten permission for prototyping \""..idea.name..
+			"\". Your scientists will work hard! (you don't need to do anything)")
 	ctw_resources.set_team_idea_state(idea_id, team, "inventing", ready_score)
 	return true
 end
@@ -108,4 +107,3 @@ minetest.register_globalstep(function(dtime)
 		end
 	end
 end)
-

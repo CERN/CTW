@@ -55,7 +55,7 @@ local technologies = {}
 local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
 end
-local function contains(tab, value)
+local function contains(tab, value) --luacheck: ignore
 	for _,v in ipairs(tab) do
 		if v==value then return true end
 	end
@@ -69,7 +69,7 @@ end
 local function tech_form_builder(id)
 	local tech = technologies[id]
 	if not tech then
-		error("tech_form_builder: ID "..idea_id.." is unknown!")
+		error("tech_form_builder: ID "..id.." is unknown!")
 	end
 
 	local n_tech_lines = math.max(math.max(#tech.requires, #tech.enables), #tech.benefits)
@@ -82,7 +82,8 @@ local function tech_form_builder(id)
 	local form = "label["
 					..doc.FORMSPEC.ENTRY_START_X..","..doc.FORMSPEC.ENTRY_START_Y
 					..";"..tech.name.."\n"..string.rep("=", #tech.name).."]";
-	form = form .. doc.widgets.text(tech.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1, doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
+	form = form .. doc.widgets.text(tech.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1,
+			doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
 
 	local function form_render_tech_entry(rn, what, label, xstart, img)
 		form = form .. "image_button["
@@ -99,15 +100,15 @@ local function tech_form_builder(id)
 					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
 					..";Technologies required:]";
 	for rn, techid in ipairs(tech.requires) do
-		local tech = {name= techid} --TODO
-		form_render_tech_entry(rn, "tr", tech.name, 0, "ctw_technologies_technology.png")
+		local tech2 = {name= techid} --TODO
+		form_render_tech_entry(rn, "tr", tech2.name, 0, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
 					..";Technologies enabled:]";
 	for rn, techid in ipairs(tech.enables) do
-		local tech = {name= techid} --TODO
-		form_render_tech_entry(rn, "te", tech.name, third_width, "ctw_technologies_technology.png")
+		local tech2 = {name= techid} --TODO
+		form_render_tech_entry(rn, "te", tech2.name, third_width, "ctw_technologies_technology.png")
 	end
 	form = form .. "label["
 					..(doc.FORMSPEC.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
@@ -234,12 +235,12 @@ end
 -- "already_gained" - Technology was already gained.
 function ctw_technologies.gain_technology(tech_id, team, try)
 	local tech = ctw_technologies.get_technology(tech_id)
-	local tstate = ctw_technologies.get_team_tech_state(id, team)
+	local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
 
 	if tstate.state == "gained" then
 		return false, "already_gained"
 	end
-	
+
 	if try then return true end
 
 	teams.chat_send_team(team.name, "You gained the technology \""..tech.name.."\"!")

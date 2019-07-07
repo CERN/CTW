@@ -2,9 +2,9 @@
 -- Permission letter received by the General Office NPC.
 
 --[[
-Once the General Office NPC approves an idea, it gives out an approval letter. This needs to be taken to the team billboard.
+Once the General Office NPC approves an idea, it gives out an approval letter.
+This needs to be taken to the team billboard.
 Once it arrives there, the technology starts to be developed
-
 ]]--
 
 
@@ -65,7 +65,7 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 		return false, "already_approved"
 	end
 
-	local appr_ok, m_tech, m_ref = ctw_resources.is_idea_approved(idea_id, team, inv, invlist)
+	local appr_ok, m_tech, _ = ctw_resources.is_idea_approved(idea_id, team, inv, invlist)
 
 	if not appr_ok then
 		if #m_tech > 0 then
@@ -74,7 +74,7 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 			return false, "insufficient_resources"
 		end
 	end
-	
+
 	if try then return true end
 
 	-- successful: remove references and issue permission letter
@@ -82,7 +82,8 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 		inv:remove_item(invlist, stack, false)
 	end
 
-	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
+	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! "..
+			"Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
 	local istack = ctw_resources.get_approval_letter_istack(idea_id, idea, team)
 
 	inv:add_item(invlist, istack)
@@ -105,4 +106,3 @@ minetest.register_craftitem("ctw_resources:approval", {
 	groups = {ctw_approval = 1},
 	_usage_hint = "Deliver this to your team billboard!",
 })
-

@@ -43,10 +43,10 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 		minetest.chat_send_player(pname, "-!- Team '"..tname"' does not exist!")
 		return
 	end
-	
+
 	-- create inventory if not exists
 	local inv = team_billboard.get_billboard_inventory(team, false)
-	
+
 	local form = {
 		"size[10,9]",
 		"label[0,0;== TEAM BILLBOARD ==",
@@ -59,12 +59,12 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 		"list[current_player;main;0,8;8,1;]" }
 	-- Put buttons next to the ideas with links to doc pages
 	local ilist = inv:get_list("ideas")
-	
+
 	if pers_msg then
 		table.insert(form, "label[0,2;"..pers_msg.."]")
 	end
 	table.insert(form, "button[6.5,0;3.5,1;doc;View knowledge base]")
-	
+
 	for index, item in ipairs(ilist) do
 		if minetest.get_item_group(item:get_name(), "ctw_idea") > 0 then
 			local idef = minetest.registered_items[item:get_name()]
@@ -82,13 +82,13 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 			end
 		end
 	end
-	
+
 	-- save in open_forms
 	if not open_forms[tname] then
 		open_forms[tname] = {}
 	end
 	open_forms[tname][pname] = true
-	
+
 	minetest.show_formspec(pname, "team_billboard:bb", table.concat(form, "\n"))
 end
 
