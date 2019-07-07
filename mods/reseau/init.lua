@@ -16,11 +16,15 @@ local MAX_HOP_COUNT = 50
 -- ######################
 -- #     Receivers      #
 -- ######################
-local receiver_get_formspec = function(meta)
+local receiver_get_formspec = function(meta, throughput, points)
+	throughput = throughput or 0
+	points = points or 0
+
 	return "size[8,5;]"..
 		"list[context;tapes;3.5,0;1,1;]"..
 		"label[0,1.5;The computing center processes and stores experiment data to make discoveries.]"..
-		"label[0,1.9;Place tapes here to gain discovery points!]"..
+		"label[0,1.9;Connect this rack to an experiment or feed it tapes to gain points!]"..
+		"label[0,2.3;Current network throughput: "..throughput.."MB/s, your team gains "..points.." points/s]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
@@ -61,12 +65,19 @@ minetest.register_node(":reseau:receiverscreen", {
 			},
 			rules = {vector.new(0, -1, 0)},
 			action = function(pos, packet, depth)
+				-- Process packet: throughput to points
 				reseau.bitparticles_receiver(pos, depth)
-				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
+				local throughput_limit = 8
+				local throughput = throughput_limit > packet.throughput and packet_throughput or throughput_limit
+
+				local dp = throughput * TX_INTERVAL * reseau.era.dp_multiplier
 				teams.add_points(packet.team, dp)
 
-				-- return actually received throughput
-				return 5
+				-- Update formspec
+				local meta = minetest.get_meta(pos)
+				meta:set_string("formspec", receiver_get_formspec(meta, throughput, dp / TX_INTERVAL))
+
+				return throughput
 			end
 		}
 	},
