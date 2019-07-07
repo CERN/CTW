@@ -12,7 +12,7 @@
 local wire_getconnect = function(from_pos, self_pos, wire_name)
 	local self_node = minetest.get_node(self_pos)
 	local self_nodespec = minetest.registered_nodes[self_node.name]
-	if not reseau.technologies_compatible(wire_name, self_node.name) then
+	if not reseau.technologies.node_technologies_compatible(wire_name, self_node.name) then
 		return false
 	end
 	local wire_nodespec = minetest.registered_nodes[wire_name]
@@ -300,25 +300,18 @@ local function make_wire_inv(base, color)
 	return reseau.with_overlay(base, color, "reseau_wire_overlay_inv.png")
 end
 
+-- register one wire type for each technology (e.g. copper, fiber)
+-- and each team
 for _, team in ipairs(teams.get_all()) do
-	register_wires("copper_" .. team.name, {
-		description = "Copper Transmission Line",
-		technology = "copper",
-		team_name = team.name,
-		tiles = make_wire_tiles("reseau_copper_wire.png", team.color),
-		inventory_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
-		wield_image = make_wire_inv("reseau_copper_wire_inv.png", team.color),
-		groups = { ["protection_" .. team.name] = 2 }
-	})
-
-	register_wires("fiber_" .. team.name, {
-		description = "Fiber Transmission Line",
-		technology = "fiber",
-		team_name = team.name,
-		-- TODO: per-team image
-		tiles = make_wire_tiles("reseau_fiber_wire.png", team.color),
-		inventory_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
-		wield_image = make_wire_inv("reseau_fiber_wire_inv.png", team.color),
-		groups = { ["protection_" .. team.name] = 2 }
-	})
+	for techname, techdef in pairs(reseau.technologies.getAll()) do
+		register_wires(techname.."_" .. team.name, {
+			description = techdef.name.." Transmission Line",
+			technology = techname,
+			team_name = team.name,
+			tiles = make_wire_tiles(techdef.wire_texture, team.color),
+			inventory_image = make_wire_inv(techdef.wire_inventory_image, team.color),
+			wield_image = make_wire_inv(techdef.wire_inventory_image, team.color),
+			groups = { ["protection_" .. team.name] = 2 }
+		})
+	end
 end

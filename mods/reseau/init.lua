@@ -3,15 +3,46 @@ reseau = {}
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
 dofile(minetest.get_modpath("reseau").."/rules.lua")
-dofile(minetest.get_modpath("reseau").."/wires.lua")
 dofile(minetest.get_modpath("reseau").."/particles.lua")
 dofile(minetest.get_modpath("reseau").."/transmit.lua")
 dofile(minetest.get_modpath("reseau").."/modstorage.lua")
 dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 dofile(minetest.get_modpath("reseau").."/era.lua")
 
+-- ######################
+-- #      Defines       #
+-- ######################
 local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
+
+-- ######################
+-- #   Technologies     #
+-- ######################
+reseau.technologies.register("copper", {
+	name = "Telephone (Copper)",
+	wire_texture = "reseau_copper_wire.png",
+	wire_inventory_image = "reseau_copper_wire_inv.png",
+	throughput = 10
+})
+
+reseau.technologies.register("ethernet", {
+	name = "Ethernet",
+	wire_texture = "reseau_ethernet_wire.png",
+	wire_inventory_image = "reseau_ethernet_wire_inv.png",
+	throughput = 100
+})
+
+reseau.technologies.register("fiber", {
+	name = "Fiber",
+	wire_texture = "reseau_fiber_wire.png",
+	wire_inventory_image = "reseau_fiber_wire_inv.png",
+	throughput = 10000
+})
+
+-- ######################
+-- #       Wires        #
+-- ######################
+dofile(minetest.get_modpath("reseau").."/wires.lua")
 
 -- ######################
 -- #     Receivers      #
@@ -60,14 +91,12 @@ minetest.register_node(":reseau:receiverscreen", {
 	},
 	reseau = {
 		receiver = {
-			technology = {
-				"copper", "fiber"
-			},
+			technology = reseau.technologies.all(),
 			rules = {vector.new(0, -1, 0)},
 			action = function(pos, packet, depth)
 				-- Process packet: throughput to points
 				reseau.bitparticles_receiver(pos, depth)
-				local throughput_limit = 8
+				local throughput_limit = 1000 -- TODO
 				local throughput = throughput_limit > packet.throughput and packet_throughput or throughput_limit
 
 				local dp = throughput * TX_INTERVAL * reseau.era.dp_multiplier
@@ -140,9 +169,7 @@ minetest.register_node(":reseau:receiverbase", {
 	},
 	reseau = {
 		conductor = {
-			technology = {
-				"copper", "fiber"
-			},
+			technology = reseau.technologies.all(),
 			rules = function(node)
 				--return {minetest.facedir_to_dir(node.param2)}
 				return reseau.mergetable(
@@ -201,9 +228,7 @@ for _, team in ipairs(teams.get_all()) do
 		team_name = team.name,
 		reseau = {
 			receiver = {
-				technology = {
-					"copper", "fiber"
-				},
+				technology = reseau.technologies.all(),
 				rules = function(node)
 					return reseau.mergetable(
 						reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
@@ -228,9 +253,7 @@ for _, team in ipairs(teams.get_all()) do
 				end
 			},
 			transmitter = {
-				technology = {
-					"copper", "fiber"
-				},
+				technology = reseau.technologies.all(),
 				rules = function(node)
 					return {minetest.facedir_to_dir(node.param2)}
 				end,
@@ -298,9 +321,7 @@ for _, team in ipairs(teams.get_all()) do
 		team_name = team.name,
 		reseau = {
 			receiver = {
-				technology = {
-					"copper", "fiber"
-				},
+				technology = reseau.technologies.all(),
 				rules = function(node)
 					return {vector.multiply(minetest.facedir_to_dir(node.param2), -1)}
 				end,
@@ -322,9 +343,7 @@ for _, team in ipairs(teams.get_all()) do
 				end
 			},
 			transmitter = {
-				technology = {
-					"copper", "fiber"
-				},
+				technology = reseau.technologies.all(),
 				rules = function(node)
 					return reseau.mergetable(
 						reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
@@ -463,9 +482,7 @@ for _, team in ipairs(teams.get_all()) do
 		end,
 		reseau = {
 			transmitter = {
-				technology = {
-					"copper", "fiber"
-				},
+				technology = reseau.technologies.all(),
 				rules = function(node)
 					return reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)})
 				end,
