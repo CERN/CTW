@@ -321,6 +321,7 @@ minetest.register_node(":reseau:experiment_" .. team.name, {
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
+		paramtype2 = "facedir",
 		tiles = {
 			reseau.with_overlay("reseau_experiment_top.png", team.color, "reseau_experiment_top_overlay.png"),
 			reseau.with_overlay("reseau_experiment_bottom_overlay.png", team.color, "reseau_experiment_bottom_overlay.png"),
@@ -369,7 +370,9 @@ minetest.register_node(":reseau:experiment_" .. team.name, {
 				technology = {
 					"copper", "fiber"
 				},
-				rules = {vector.new(1, 0, 0)},
+				rules = function(node)
+					return reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)})
+				end,
 				autotransmit = {
 					interval = TX_INTERVAL,
 					action = function(pos)
