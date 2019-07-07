@@ -224,6 +224,7 @@ local function spawn_entity(pos, npc_name)
 	pos.y = pos.y - 0.5
 	local obj = minetest.add_entity(pos, "npc:npc_generic")
 
+	obj:set_yaw(math.random() * math.pi * 2)
 	obj:set_properties({
 		visual_size = { x = def.size, y = def.size },
 		textures = def.textures,
