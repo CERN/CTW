@@ -250,7 +250,7 @@ end
 function ctw_technologies.update_doc_reveals(team)
 	for tech_id, tech in pairs(technologies) do
 		local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
-		for _,player in ipairs(teams.get_members(team.name)) do
+		for _,player in ipairs(teams.get_online_members(team.name)) do
 			if tstate.state ~= "undiscovered" then
 				doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
 			end
@@ -260,5 +260,7 @@ end
 
 minetest.register_on_joinplayer(function(player)
 	local team = teams.get_by_player(player:get_player_name())
-	ctw_technologies.update_doc_reveals(team)
+	if team then
+		ctw_technologies.update_doc_reveals(team)
+	end
 end)
