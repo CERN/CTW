@@ -130,12 +130,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			for rn, techid in ipairs(idea.technologies_gained) do
 				if fields["goto_tg_"..rn] then
-					doc.show_entry(pname, "ctw_technologies", techid)
+					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+						doc.show_entry(pname, "ctw_technologies", techid)
+					end
 				end
 			end
 			for rn, techid in ipairs(idea.technologies_required) do
 				if fields["goto_tr_"..rn] then
-					doc.show_entry(pname, "ctw_technologies", techid)
+					if doc.entry_revealed(pname, "ctw_technologies", techid) then
+						doc.show_entry(pname, "ctw_technologies", techid)
+					end
 				end
 			end
 			for rn, ref in ipairs(idea.references_required) do
