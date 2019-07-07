@@ -5,9 +5,19 @@ function world.get_location(name)
 	return _locations[name]
 end
 
+function world.set_location(name, pos)
+	_locations[name] = pos
+end
+
 function world.get_team_location(tname, name)
 	local teaml = _team_locations[tname] or {}
 	return teaml[name]
+end
+
+function world.set_team_location(tname, name, pos)
+	local team = _team_locations[tname] or {}
+	_team_locations[tname] = team
+	team[name] = pos
 end
 
 function world.get_area(name)
