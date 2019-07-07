@@ -34,7 +34,6 @@ reseau.transmit = function(previous, frontier, packet, startdepth)
 		elseif link_node_spec.reseau.receiver then
 			local throughput_limit = link_node_spec.reseau.receiver.action(link, packet, depth)
 			packet.throughput = throughput_limit < packet.throughput and throughput_limit or packet.throughput
-			reseau.bitparticles_receiver(link, depth)
 			return packet.throughput
 		end
 	end

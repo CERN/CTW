@@ -4,6 +4,7 @@ reseau.era = {}
 reseau.era.genspeed = 10 -- experiment data generation speed in MB/s
 reseau.era.tape_capacity = 500 -- tape capacity in MB
 reseau.era.dp_multiplier = 1 -- discovery points per delivered MB
+reseau.era.router_max_cache = 60 -- router cache in MB
 
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
@@ -110,7 +111,8 @@ minetest.register_node(":reseau:testreceiver", {
 				"copper", "fiber"
 			},
 			rules = reseau.rules.default,
-			action = function(pos, packet)
+			action = function(pos, packet, depth)
+				reseau.bitparticles_receiver(pos, depth)
 				local dp = packet.throughput * TX_INTERVAL * reseau.era.dp_multiplier
 				teams.add_points(packet.team, dp)
 
@@ -148,6 +150,7 @@ minetest.register_node(":reseau:testreceiver", {
 })
 
 local ROUTER_DELAY = 3
+local MAX_HOP_COUNT = 50
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:testrouter_" .. team.name, {
 		description = "Router (Testing)",
@@ -188,12 +191,19 @@ for _, team in ipairs(teams.get_all()) do
 					)
 				end,
 				action = function(pos, packet, depth)
-					local node = minetest.get_node(pos)
-					local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
-					reseau.transmit(pos, cablepos, message, depth + ROUTER_DELAY)
-
-					-- actually received throughput
-					return 10
+					if packet.hop_count == MAX_HOP_COUNT then
+						-- Drop packet accept it but do not do anything
+						return packet.throughput
+					end
+					local meta = minetest.get_meta(pos)
+					local cache = meta:get_int("cache") or 0
+					local hop_count = meta:get_int("hop_count") or 0
+					local max_cache = reseau.era.router_max_cache / TX_INTERVAL
+					local available = max_cache - cache
+					local used = math.min(available, packet.throughput)
+					meta:set_int("cache", cache + used)
+					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
+					return used
 				end
 			},
 			transmitter = {
@@ -202,7 +212,31 @@ for _, team in ipairs(teams.get_all()) do
 				},
 				rules = function(node)
 					return {minetest.facedir_to_dir(node.param2)}
-				end
+				end,
+				autotransmit = {
+					interval = TX_INTERVAL,
+					action = function(pos)
+						local meta = minetest.get_meta(pos)
+						local cache = meta:get_int("cache") or 0
+						local hop_count = meta:get_int("hop_count") or 0
+
+						if cache > 0 then
+							-- try to transmit as much data as possible via network
+							local node = minetest.get_node(pos)
+							local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
+							local throughput = reseau.transmit(pos, cablepos, {
+								throughput = cache,
+								team = team.name,
+								hop_count = hop_count + 1
+							})
+
+							cache = cache - throughput
+							assert (cache >= 0)
+							meta:set_int("hop_count", 0)
+							meta:set_int("cache", cache)
+						end
+					end
+				}
 			}
 		}
 	})
