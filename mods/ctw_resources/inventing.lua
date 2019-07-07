@@ -115,9 +115,6 @@ minetest.register_globalstep(function(dtime)
 	if timer > 0 then return end
 	timer = 2
 	
-	-- TODO temporary
-	teams.add_points("red", 1)
-	
 	for _,team in ipairs(teams.get_all()) do
 		if not prev_dp_by_team[team.name] then
 			prev_dp_by_team[team.name] = team.points
