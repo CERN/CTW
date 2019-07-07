@@ -263,7 +263,7 @@ for _, team in ipairs(teams.get_all()) do
 		},
 		node_box = {type = "fixed", fixed = {
 			{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}, -- x positive
-			{-2/16, -.5, 1/16, 2/16, -.5+2/16, 8/16}, -- z positive
+			{-2/16, -.5, -8/16, 2/16, -.5+2/16, -1/16}, -- z negative
 			{-8/16, -.5, -2/16, -1/16, -.5+2/16, 2/16}, -- x negative
 			{-3/16, -.5, -5/16, 3/16, -.5+3/16, 5/16},
 			{-4/16, -.5, -4/16, 4/16, -.5+3/16, 4/16},
@@ -276,7 +276,7 @@ for _, team in ipairs(teams.get_all()) do
 					"copper", "fiber"
 				},
 				rules = function(node)
-					return {minetest.facedir_to_dir(node.param2)}
+					return {vector.multiply(minetest.facedir_to_dir(node.param2), -1)}
 				end,
 				action = function(pos, packet, depth)
 					if packet.hop_count == MAX_HOP_COUNT then
