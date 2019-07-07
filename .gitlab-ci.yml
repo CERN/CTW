@@ -3,6 +3,6 @@ test:
   script:
     - luacheck ./mods
     - busted ./mods
-   only:
+  only:
     - master
-    -develop
+    - develop
