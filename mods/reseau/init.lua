@@ -5,6 +5,7 @@ reseau.era.genspeed = 10 -- experiment data generation speed in MB/s
 reseau.era.tape_capacity = 500 -- tape capacity in MB
 reseau.era.dp_multiplier = 1 -- discovery points per delivered MB
 reseau.era.router_max_cache = 60 -- router cache in MB
+reseau.era.splitter_max_cache = 60 -- splitter cache in MB
 
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
@@ -149,7 +150,6 @@ minetest.register_node(":reseau:testreceiver", {
 	end
 })
 
-local ROUTER_DELAY = 3
 local MAX_HOP_COUNT = 50
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:testrouter_" .. team.name, {
@@ -241,6 +241,112 @@ for _, team in ipairs(teams.get_all()) do
 		}
 	})
 end
+
+for _, team in ipairs(teams.get_all()) do
+	minetest.register_node(":reseau:testsplitter_" .. team.name, {
+		description = "Splitter (Testing)",
+		tiles = {
+			reseau.with_overlay("reseau_splitter_top.png", team.color, "reseau_splitter_top_overlay.png"),
+			"reseau_splitter_bottom.png",
+			"reseau_splitter_side_connection.png",
+			"reseau_splitter_side_connection.png",
+			"reseau_splitter_side_connection.png",
+			"reseau_splitter_side_noconnection.png"
+		},
+		drawtype = "nodebox",
+		paramtype = "light",
+		paramtype2 = "facedir",
+		groups = { ["protection_" .. team.name] = 1 },
+		selection_box = {
+			type = "fixed",
+			fixed = {-.5, -.5, -.5, .5, -.5+5/16, .5}
+		},
+		node_box = {type = "fixed", fixed = {
+			{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}, -- x positive
+			{-2/16, -.5, 1/16, 2/16, -.5+2/16, 8/16}, -- z positive
+			{-8/16, -.5, -2/16, -1/16, -.5+2/16, 2/16}, -- x negative
+			{-3/16, -.5, -5/16, 3/16, -.5+3/16, 5/16},
+			{-4/16, -.5, -4/16, 4/16, -.5+3/16, 4/16},
+			{-5/16, -.5, -3/16, 5/16, -.5+3/16, 3/16} -- center box
+		}},
+		team_name = team.name,
+		reseau = {
+			receiver = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = function(node)
+					return {minetest.facedir_to_dir(node.param2)}
+				end,
+				action = function(pos, packet, depth)
+					if packet.hop_count == MAX_HOP_COUNT then
+						-- Drop packet accept it but do not do anything
+						return packet.throughput
+					end
+					local meta = minetest.get_meta(pos)
+					local cache = meta:get_int("cache") or 0
+					local hop_count = meta:get_int("hop_count") or 0
+					local max_cache = reseau.era.splitter_max_cache / TX_INTERVAL
+					local available = max_cache - cache
+					local used = math.min(available, packet.throughput)
+					meta:set_int("cache", cache + used)
+					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
+					return used
+				end
+			},
+			transmitter = {
+				technology = {
+					"copper", "fiber"
+				},
+				rules = function(node)
+					return reseau.mergetable(
+						reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
+						reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
+					)
+				end,
+				autotransmit = {
+					interval = TX_INTERVAL,
+					action = function(pos)
+						local meta = minetest.get_meta(pos)
+						local cache = meta:get_int("cache") or 0
+						local hop_count = meta:get_int("hop_count") or 0
+						local first_side = meta:get_int("first_side") or 0
+						meta:set_int("first_side", 1 - first_side)
+						local node = minetest.get_node(pos)
+						local rules = reseau.mergetable(
+							reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
+							reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
+						)
+						assert (#rules == 2)
+						if first_side == 1 then
+							rules = { rules[2], rules[1] }
+						end
+
+						for _, dir in ipairs(rules) do
+							if cache > 0 then
+								-- try to transmit as much data as possible via network
+								local node = minetest.get_node(pos)
+								local cablepos = vector.add(pos, dir)
+								local throughput = reseau.transmit(pos, cablepos, {
+									throughput = cache,
+									team = team.name,
+									hop_count = hop_count + 1
+								})
+
+								cache = cache - throughput
+								assert (cache >= 0)
+							end
+						end
+
+						meta:set_int("hop_count", 0)
+						meta:set_int("cache", cache)
+					end
+				}
+			}
+		}
+	})
+end
+
 
 minetest.register_craftitem(":reseau:tape", {
 	image = "reseau_tape.png",
