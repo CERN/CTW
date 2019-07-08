@@ -1,0 +1,17 @@
+# textdomain: teams
+- @1=- @1
+DP @1=Points de découverte : @1
+Joined @1=Vous avez rejoint l'@1
+No such team '@1'=L'équipe '@1' n'existe pas
+Team blue=Équipe bleue
+Team green=Équipe verte
+Team red=Équipe rouge
+Team yellow=Équipe jaune
+Teams:@n=Équipes :@n
+There are no teams=Aucune équipe
+You are in @1=Vous êtes dans l'@1
+You are not a team=Vous n'êtes pas dans une équipe
+team blue=équipe bleue
+team green=équipe verte
+team red=équipe rouge
+team yellow=équipe jaune

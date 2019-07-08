@@ -1,3 +1,5 @@
+local S = minetest.get_translator("teams")
+
 ChatCmdBuilder.new("team", function(cmd)
 	cmd:sub("list", function(name)
 		local retval = {}
@@ -5,13 +7,13 @@ ChatCmdBuilder.new("team", function(cmd)
 		local list = teams.get_all()
 		for i=1, #list do
 			local def = list[i]
-			retval[#retval + 1] = ("- %s"):format(def.name)
+			retval[#retval + 1] = S("- @1", def.team_display_name)
 		end
 
 		if #list == 0 then
-			return false, "There are no teams"
+			return false, S("There are no teams")
 		else
-			return true, "Teams:\n" .. table.concat(retval, "\n")
+			return true, S("Teams:\n") .. table.concat(retval, "\n")
 		end
 	end)
 
@@ -28,9 +30,9 @@ ChatCmdBuilder.new("team", function(cmd)
 		local player = minetest.get_player_by_name(name)
 		local team = teams.get_by_player(player)
 		if team then
-			return true, ("You are in team %s"):format(team.name)
+			return true, S("You are in @1", team.display_name)
 		else
-			return false, "You are not a team"
+			return false, S("You are not a team")
 		end
 	end)
 end)
@@ -45,9 +47,9 @@ minetest.register_chatcommand("join", {
 		end
 
 		if teams.set_team(player, tname) then
-			return true, "Joined " .. tname
+			return true, S("Joined @1", teams.get(tname).display_name)
 		else
-			return false, "No such team '" .. tname .. "'"
+			return false, S("No such team '@1'", tname)
 		end
 	end
 })

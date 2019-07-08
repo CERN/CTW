@@ -1,3 +1,5 @@
+local S = minetest.get_translator("teams")
+
 local _team_by_name = {}
 local _tname_by_player = {}
 local _registered_on_team_changed = {}
@@ -43,6 +45,8 @@ function teams.create(def)
 
 	_team_by_name[def.name] = def
 	def.points = def.points or 0
+	def.display_name = def.display_name or S("team " .. def.name)
+	def.display_name_capitalized = def.display_name_capitalized or S("Team " .. def.name)
 
 	return def
 end
@@ -134,24 +138,32 @@ function teams.load()
 	else
 		teams.create({
 			name = "red",
+			display_name = S("team red"),
+			display_name_capitalized = S("Team red"),
 			color = "red",
 			color_hex = 0xFF0000,
 		})
 
 		teams.create({
 			name = "green",
+			display_name = S("team green"),
+			display_name_capitalized = S("Team green"),
 			color = "green",
 			color_hex = 0x00FF00,
 		})
 
 		teams.create({
 			name = "blue",
+			display_name = S("team blue"),
+			display_name_capitalized = S("Team blue"),
 			color = "blue",
 			color_hex = 0x0000FF,
 		})
 
 		teams.create({
 			name = "yellow",
+			display_name = S("team yellow"),
+			display_name_capitalized = S("Team yellow"),
 			color = "yellow",
 			color_hex = 0xFF9900,
 		})

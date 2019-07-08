@@ -1,3 +1,5 @@
+local S = minetest.get_translator("teams")
+
 teams = {}
 
 dofile(minetest.get_modpath("teams") .. "/api.lua")
@@ -28,13 +30,13 @@ local function set_tint(player, team)
 			hud_elem_type = "text",
 			position      = {x = 1, y = 0},
 			scale         = {x = 100, y = 100},
-			text          = "Team " .. team.name,
+			text          = team.display_name_capitalized,
 			number        = team.color_hex,
 			offset        = {x = -20, y = 20},
 			alignment     = {x = -1, y = 0}
 		})
 	else
-		hud:change(player, "teams:hud_team", "text", "Team " .. team.name)
+		hud:change(player, "teams:hud_team", "text", team.display_name_capitalized)
 		hud:change(player, "teams:hud_team", "number", team.color_hex)
 	end
 
@@ -63,7 +65,7 @@ local function set_dp(player, team)
 			alignment     = {x = -1, y = 0}
 		})
 	else
-		hud:change(player, "teams:hud_dp", "text", "DP " .. team.points)
+		hud:change(player, "teams:hud_dp", "text", S("DP @1", team.points))
 		-- hud:change(player, "teams:hud_dp", "number", team.color_hex)
 	end
 end
@@ -89,7 +91,7 @@ local function set_waypoint(player, team)
 			world_pos     = pos,
 		})
 	else
-		hud:change(player, "teams:hud_wp", "text", "DP " .. team.points)
+		hud:change(player, "teams:hud_wp", "text", S("DP @1", team.points))
 		hud:change(player, "teams:hud_wp", "number", team.color_hex)
 		hud:change(player, "teams:hud_wp", "world_pos", pos)
 	end
