@@ -16,11 +16,9 @@ dofile(minetest.get_modpath("reseau").."/throughput.lua")
 local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
 
--- TODO: Fix router help text units
 -- TODO: Rename era definition properties to something more structured
 -- TODO: Define reasonable values for eras!
 -- TODO: Hook in technology benefits into throughput.lua
--- TODO: Splitter circuits seem to not work correctly right now...?
 
 -- ######################
 -- #       Eras         #
@@ -149,6 +147,10 @@ minetest.register_node(":reseau:receiverscreen", {
 				local meta = minetest.get_meta(pos)
 				meta:set_string("formspec", receiver_get_formspec(meta, throughput, dp / TX_INTERVAL))
 
+				-- Automatically reset throughput formspec to 0 MB/s after timeout
+				local timer = minetest.get_node_timer(pos)
+				timer:start(TX_INTERVAL + 1)
+
 				return throughput
 			end
 		}
@@ -171,6 +173,12 @@ minetest.register_node(":reseau:receiverscreen", {
 			local inv = meta:get_inventory()
 			inv:remove_item("tapes", "reseau:tape")
 		end
+	end,
+	-- timer that expires after TX_INTERVAL + 1 is reset whenever packet is received
+	-- if no packet is received during that time, reset throughput display to show 0 MB/s
+	on_timer = function(pos, elapsed)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("formspec", receiver_get_formspec(meta, 0, 0))
 	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
