@@ -7,4 +7,5 @@ if minetest.get_modpath("teams") then
 	dofile(minetest.get_modpath("world") .. "/emerge.lua")
 else
 	minetest.chat_send_all("** WORLD BUILDER MODE **")
+	dofile(minetest.get_modpath("world") .. "/builder.lua")
 end
