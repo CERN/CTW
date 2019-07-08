@@ -147,7 +147,8 @@ minetest.register_on_placenode(function(pos, node, placer)
 
 		-- not allowed to place conductor? remove and send error message!
 		if #connections == 0 then
-			local chatmsg = "You can only place a transmission line next to an existing one. Start at one of your team's experiments!"
+			local chatmsg =
+				"You can only place a transmission line next to an existing one. Start at one of your team's experiments!"
 			minetest.chat_send_player(placer:get_player_name(), chatmsg)
 			minetest.remove_node(pos)
 			return true

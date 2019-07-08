@@ -99,7 +99,7 @@ local function advance_inv_progress(ideas, delta_dp, team)
 			end
 		end
 	end
-	
+
 	for i=1, #_register_on_inventing_progress do
 		_register_on_inventing_progress[i](team)
 	end
@@ -110,11 +110,11 @@ local prev_dp_by_team = {}
 local timer = 3
 
 minetest.register_globalstep(function(dtime)
-	
+
 	timer = timer - dtime
 	if timer > 0 then return end
 	timer = 2
-	
+
 	for _,team in ipairs(teams.get_all()) do
 		if not prev_dp_by_team[team.name] then
 			prev_dp_by_team[team.name] = team.points

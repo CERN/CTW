@@ -3,6 +3,7 @@
 	However, in normal play, it should be set to true.
 ]]--
 local enable_bookshelf_randomization = false
+local debug = false
 
 if enable_bookshelf_randomization then
 	dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/mapgen.lua")
@@ -42,7 +43,7 @@ local book_types = {
 	-- add whatever you want here. colors are key-hash-based
 }
 
-if false then -- TODO DEBUG
+if debug then
 	minetest.register_on_joinplayer(function(p)
 		local inv = p:get_inventory()
 		inv:set_list("main", {})
