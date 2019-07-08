@@ -25,12 +25,9 @@ TechDef = {
 		"html",
 		"lan",
 	} -- Technologies that need to be invented before
-	benefits = {
-		<benefit definition>
-		-- List of benefits that this technology gives the team. Implementation details are not clear yet.
-		-- At the moment for testing purposes:
-		{ image = "", label = ""}
-	}
+
+	benefits = { BenefitDef, ... }
+	-- See 'BenefitDef'
 
 	min_tree_level = <n>
 	-- Optional, if specified tells the minimum level at which this element will be
@@ -55,6 +52,34 @@ TechState = {
 	state = string,
 	-- "undiscovered" Technology is not invented
 	-- "gained"       Idea has been prototyped and technology has been gained.
+}
+
+BenefitDef = {
+	-- List of benefits that this technology gives the team.
+	-- The examples below contain a 'BenefitDef' each
+
+ 	type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180,
+	-- For palettes mod: Automatic spawning of items.
+	-- 'item': 'ItemStack' to spawn. "%t" is substituted by the team name
+	-- 'time_min': Minimal delay in seconds between spawning
+	-- 'time_max': Maximal delay between spawning
+
+	-- Integrated "multiplier" benefit types: (see reseau)
+	type = "cable_throughput_multiplier",       value = 2,
+	type = "receiver_throughput_multiplier",    value = 2,
+	type = "transmitter_throughput_multiplier", value = 2,
+
+	type="victory",
+	-- Win condition
+}
+
+BenefitCalc = {
+	accumulator = func(list)
+	-- 'list': 'BenefitDef[]', list of all technology-unlocked benefits
+	-- Return: The final output for all benefits ('number', 'string')
+	renderer = func(bene)
+	-- 'bene': 'BenefitDef', a bebefit to render (for docs)
+	-- Return: 'string', text for the formspec element
 }
 
 
@@ -91,6 +116,30 @@ ctw_technologies.update_doc_reveals(team)
 	-- Is called automatically on state changes
 	-- 'team': 'Team def'
 
+ Benefits API
+--------------
+
+Technologies can improve certain properties such as cable speed or capacity.
+
+ctw_technologies.register_benefit_type(type, def)
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'def': 'BenefitCalc'
+
+ctw_technologies.get_team_benefit(team, type, explicit_update)
+	-- 'team': 'Team def' (see "teams" documentation)
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'explicit_update': optional. If 'true': Updates the benefit cache
+	-- Returns: accumulated benefit by 'BenefitCalc.accumulator'
+
+ctw_technologies.update_team_benefits(team)
+	-- Manually updates the benefit cache
+	-- 'team': 'Team def'
+
+ctw_technologies.accumulate_benefits(type, list)
+	-- Manually updates a single benefit type's cache
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'list': 'BenefitDef[]', list of benefits to pass to the accumulator
+
 
  Graphical Tree API
 --------------------
@@ -105,3 +154,10 @@ ctw_technologies.show_tech_tree(pname, scrollpos)
 	-- Shows up the technology tree formspec
 	-- 'pname': Player name
 	-- 'scrollpos': Scrollbar position value '0' to '1000'
+
+ctw_technologies.render_benefit(bene)
+	-- Looks up the assigned benefit texture and description
+	-- 'bene': 'BenefitDef'
+	-- Returns:
+	--   texture     Texture name to display
+	--   description Text for the description
