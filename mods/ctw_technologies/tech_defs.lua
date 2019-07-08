@@ -63,6 +63,7 @@ ctw_technologies.register_technology("twisted-pair", {
 ctw_technologies.register_technology("ethernet", {
 	name = "Ethernet",
 	description = "You can send network data over a twisted-pair cable!",
+	year = 1985, -- shielded twisted pair
 	requires = {
 		"twisted-pair"
 	},
@@ -72,9 +73,40 @@ ctw_technologies.register_technology("ethernet", {
 	tree_line = 2,
 })
 
+
+-- === NETWORK LOGIC === --
+
+ctw_technologies.register_technology("tcp_ip", {
+	name = "TCP/IP Packet Transport",
+	description = "TCP/IP is a reliable protocol to transmit data over a computer network.",
+	year = 1981, -- v4
+	--year = 1992, -- timestamps added
+	requires = {
+		"coaxial" -- or better
+	},
+	benefits = {
+		{ type = "cable_throughput_multiplier", value = 2 },
+	},
+})
+
+ctw_technologies.register_technology("router", {
+	name = "Routers (split, merge)",
+	description = "Split and merge various kinds of cables to improve the wire usage.",
+	year = 1990, -- somewhen after 1989
+	requires = {
+		"tcp_ip" -- or better
+	},
+	benefits = {
+		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
+		{ type = "supply", item="reseau:merger_%t", time_min=80, time_max=180 },
+	},
+})
+
+
 ctw_technologies.register_technology("www", {
 	name = "The World Wide Web",
 	description = "With all those technologies gathered, you invented the World Wide Web! Yay!",
+	year = 1991,
 	requires = {
 		"ethernet",
 		"html"
