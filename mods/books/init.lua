@@ -4,6 +4,7 @@
 ]]--
 local enable_bookshelf_randomization = false
 local debug = false
+local S = minetest.get_translator("books")
 
 if enable_bookshelf_randomization then
 	dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/mapgen.lua")
@@ -17,28 +18,28 @@ end
 local book_types = {
 	-- white: Normal filled bookshelf
 	data_formats = {
-		"Theory of Data Encoding",
-		"Various theoretical examples and ideas regarding byte order"
+		S("Theory of Data Encoding"),
+		S("Various theoretical examples and ideas regarding byte order.")
 	},
 	hf_freq = {
-		"High Frequency Physics",
-		"Physics get a bit weird with high frequencies. This is how it works"
+		S("High Frequency Physics"),
+		S("Physics get a bit weird with high frequencies. This is how it works.")
 	},
 	hf_freq2 = {
-		"HF Physics Part 2",
-		"An advanced scientific report about electorn physics at high frequencies."
+		S("HF Physics Part 2"),
+		S("An advanced scientific report about electron physics at high frequencies.")
 	},
 	program_objc = {
-		"Objective-C How To Program",
-		"Programming explained easily. There's how you write Objctive-C programs."
+		S("Objective-C How To Program"),
+		S("Programming explained easily. There's how you write Objective-C programs.")
 	},
 	program_c = {
-		"Program in C - The Handbook",
-		"Small and compact C programming handbook. Develop applications with this book."
+		S("Program in C - The Handbook"),
+		S("Small and compact C programming handbook. Develop applications with this book.")
 	},
 	cable_crafting = {
-		"The Art Of Crafting",
-		"Metal processing and compact wire designs are part of this book."
+		S("The Art Of Crafting"),
+		S("Metal processing and compact wire designs are part of this book.")
 	},
 	-- add whatever you want here. colors are key-hash-based
 }

@@ -1,0 +1,18 @@
+# textdomain: books
+Theory of Data Encoding=
+Various theoretical examples and ideas regarding byte order.=
+
+High Frequency Physics=
+Physics get a bit weird with high frequencies. This is how it works.=
+
+HF Physics Part 2=
+An advanced scientific report about electron physics at high frequencies.=
+
+Objective-C How To Program=
+Programming explained easily. There's how you write Objective-C programs.=
+
+Program in C - The Handbook=
+Small and compact C programming handbook. Develop applications with this book.=
+
+The Art Of Crafting=
+Metal processing and compact wire designs are part of this book.=
