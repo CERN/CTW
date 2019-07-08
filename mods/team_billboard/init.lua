@@ -78,6 +78,8 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 					local have = istate.target
 					local percent = math.floor(100 * (have/total))
 					table.insert(form, "label[5,"..(1.5 + index)..";Prototyping "..percent.."% ("..have.."/"..total.." DP)]")
+				else
+					table.insert(form, "label[5,"..(1.5 + index)..";State: "..istate.state.."]")
 				end
 			end
 		end

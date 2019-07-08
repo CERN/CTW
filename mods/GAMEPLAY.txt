@@ -1,0 +1,23 @@
+Ideas (ctw_resources, 'IdeaState'):
+	undiscovered
+		Can be discovered by contacting NPCs
+	discovered
+		Has to be moved to team billboard
+    published
+		Published on the team billboard
+		Members can start to collect resources (books, technologies, ideas)
+	approved
+		NPC approved the idea (brought resources)
+	inventing
+		WIP, see billboard status
+	invented
+		Team gains new technologies
+
+Gameplay:
+	Teams start at their base
+	Each team has a shared Discovery Points (DP) value
+
+Target:
+	Get ideas
+	Build wires to the data centre (middle)
+	Transfer data to gain DPs

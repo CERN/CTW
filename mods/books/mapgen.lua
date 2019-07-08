@@ -50,7 +50,7 @@ if fixed_libraries == "" then
 	fixed_libraries = {}
 	local index = 1
 	local data = minetest.parse_json(read_file(worldpath .. "/libraries.json"))
-	print(data)
+
 	if data ~= nil then
 		for group_type, group_data in pairs(data) do
 			-- Shuffle each group
