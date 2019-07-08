@@ -5,7 +5,7 @@ local S = minetest.get_translator("ctw_resources")
 
 -- === DATA FORMATS === --
 ctw_resources.register_idea("ascii", {
-	name = "ASCII",
+	name = S("ASCII"),
 	description = S("It is necessary to create one unique standard for character encoding that every device complies to."),
 	technologies_gained = {
 		"ascii",
@@ -16,7 +16,7 @@ ctw_resources.register_idea("ascii", {
 })
 
 ctw_resources.register_idea("html", {
-	name = "Hypertext Markup Language",
+	name = S("Hypertext Markup Language"),
 	description = S("We need a standardized language to express documents with hyperlinks!"),
 	technologies_gained = {
 		"html",
@@ -30,7 +30,7 @@ ctw_resources.register_idea("html", {
 
 -- === WIRES === --
 ctw_resources.register_idea("ethernet", {
-	name = "Ethernet",
+	name = S("Ethernet"),
 	description = S("We could send network data over a twisted-pair cable!"),
 	technologies_gained = {
 		"ethernet",
@@ -47,7 +47,7 @@ ctw_resources.register_idea("ethernet", {
 -- === NETWORK LOGIC === --
 
 ctw_resources.register_idea("apollo_domain", {
-	name = "Apollo/Domain Server Remote Control",
+	name = S("Apollo/Domain Server Remote Control"),
 	description = S("This technology implements remote-controlling servers on the network." ..
 		" As a result, servers can be monitored from a single computer."),
 	technologies_gained = {
@@ -59,7 +59,7 @@ ctw_resources.register_idea("apollo_domain", {
 })
 
 ctw_resources.register_idea("tcp_ip", {
-	name = "TCP/IP Packet Transport",
+	name = S("TCP/IP Packet Transport"),
 	description = S("Network packets are often lost, corrupted or only partially available." ..
 		" How about inventing a protocol which implements those checks?"),
 	technologies_gained = {
@@ -72,7 +72,7 @@ ctw_resources.register_idea("tcp_ip", {
 })
 
 ctw_resources.register_idea("router", {
-	name = "Wire routing",
+	name = S("Wire routing"),
 	description = S("Some of our cables are only used partially. Please invent something"..
 		" so that we can merge and split cables to connect multiple servers."),
 	technologies_gained = {
@@ -86,7 +86,7 @@ ctw_resources.register_idea("router", {
 })
 
 ctw_resources.register_idea("www", {
-	name = "The World Wide Web",
+	name = S("The World Wide Web"),
 	description = S("With all those technologies gathered, we can finally create the World Wide Web!"),
 	technologies_gained = {
 		"www",

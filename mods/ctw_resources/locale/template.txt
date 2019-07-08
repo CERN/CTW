@@ -1,8 +1,15 @@
 # textdomain: ctw_resources
+ASCII=
+Apollo/Domain Server Remote Control=
+Ethernet=
+Hypertext Markup Language=
 It is necessary to create one unique standard for character encoding that every device complies to.=
 Network packets are often lost, corrupted or only partially available.=
 Some of our cables are only used partially. Please invent something=
+TCP/IP Packet Transport=
+The World Wide Web=
 This technology implements remote-controlling servers on the network.=
 We could send network data over a twisted-pair cable!=
 We need a standardized language to express documents with hyperlinks!=
+Wire routing=
 With all those technologies gathered, we can finally create the World Wide Web!=
