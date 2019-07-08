@@ -160,6 +160,7 @@ end
 -- Empties and re-constructs the contents of the team billboard inventory based on idea states of the team.
 function team_billboard.rebuild_billboard_inventory(team)
 	local inv = minetest.get_inventory({type="detached", name="team_billboard_"..team.name})
+	assert(inv, "Billboard inv for team " .. team .. " does not exist")
 
 	inv:set_lists({
 		ideas = {},
@@ -168,15 +169,20 @@ function team_billboard.rebuild_billboard_inventory(team)
 	inv:set_size("ideas", 1*6)
 	inv:set_size("approvals", 1*6)
 
+	local pos = 0
 	for idea_id, idea in pairs(ctw_resources._get_ideas()) do
 		local istate = ctw_resources.get_team_idea_state(idea_id, team)
-		if istate.state=="published" or istate.state == "approved" or istate.state == "inventing" then
+		if istate.state == "published" or
+				istate.state == "approved" or
+				istate.state == "inventing" then
 			--idea is present on team billboard
-			inv:add_item("ideas", "ctw_resources:idea_"..idea_id)
+			pos = pos + 1
+			inv:set_stack("ideas", pos, "ctw_resources:idea_"..idea_id)
 		end
 		if istate.state == "inventing" then
 			-- approval letter is on team billboard
-			inv:add_item("approvals", ctw_resources.get_approval_letter_istack(idea_id, idea, team))
+			inv:set_stack("approvals", pos,
+				ctw_resources.get_approval_letter_istack(idea_id, idea, team))
 		end
 		-- When idea is invented, it disappears from the team billboard
 	end

@@ -50,10 +50,13 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 		dp_min = def_e.dp_min,
 		item = "ctw_resources:idea_" .. idea_id,
 		func = function(player)
-			if ctw_resources.approve_idea(idea_id, player:get_player_name(),
-					player:get_inventory(), "main", true) then
+			local status, message = ctw_resources.approve_idea(
+					idea_id, player:get_player_name(),
+					player:get_inventory(), "main", true)
+			if status then
 				return #idea_def.references_required + 1
 			end
+						print(idea_id, message)
 		end
 	}}
 	def.options = {{
