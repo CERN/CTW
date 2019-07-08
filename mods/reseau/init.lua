@@ -20,6 +20,9 @@ local MAX_HOP_COUNT = 50
 -- TODO: Rename era definition properties to something more structured
 -- TODO: Define reasonable values for eras!
 -- TODO: Hook in technology benefits into throughput.lua
+-- TODO: Splitter circuits seem to not work correctly right now...?
+-- TODO: Placing transmitters / receivers doesn't call autoconnect on adjacent wires (it should: routers!)
+-- TODO: replace weird compare-and-or constructions with math.min
 
 -- ######################
 -- #       Eras         #
@@ -28,7 +31,7 @@ reseau.era.register(true, 1986, {
 	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_cache = 60,
+	router_max_throughput = 20,
 	receiver_throughput = 20
 })
 
@@ -36,7 +39,7 @@ reseau.era.register(1986, 1990, {
 	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_cache = 60,
+	router_max_throughput = 20,
 	receiver_throughput = 50
 })
 
@@ -44,7 +47,7 @@ reseau.era.register(1990, 1994, {
 	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_cache = 60,
+	router_max_throughput = 20,
 	receiver_throughput = 100
 })
 
@@ -52,7 +55,7 @@ reseau.era.register(1994, true, {
 	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_cache = 60,
+	router_max_throughput = 20,
 	receiver_throughput = 1000
 })
 
@@ -236,8 +239,8 @@ minetest.register_node(":reseau:receiverbase", {
 -- ######################
 -- #      Routers       #
 -- ######################
-local function get_merger_infotext(cache, cache_limit)
-	return "Router: (" .. cache .. " MB/" .. cache_limit .. " MB)"
+local function get_merger_infotext(throughput, throughput_limit)
+	return "Router: Current throughput " .. throughput .. " MB/s, maximum throughput " .. throughput_limit .. " MB/s"
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -282,15 +285,17 @@ for _, team in ipairs(teams.get_all()) do
 						-- Drop packet accept it but do not do anything
 						return packet.throughput
 					end
+
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
+					local cache_limit = reseau.throughput.get_router_throughput_limit() * TX_INTERVAL
 					local available = cache_limit - cache
-					local used = math.min(available, packet.throughput)
+					local used = math.min(available, packet.throughput * TX_INTERVAL)
+
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
-					meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, cache_limit))
+
 					return used
 				end
 			},
@@ -306,23 +311,28 @@ for _, team in ipairs(teams.get_all()) do
 						local cache = meta:get_int("cache") or 0
 						local hop_count = meta:get_int("hop_count") or 0
 
+						local throughput_limit = reseau.throughput.get_router_throughput_limit()
+						local actual_throughput = 0
+
 						if cache > 0 then
 							-- try to transmit as much data as possible via network
 							local node = minetest.get_node(pos)
 							local cablepos = vector.add(pos, minetest.facedir_to_dir(node.param2))
-							local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
-							local throughput = reseau.transmit(pos, cablepos, {
-								throughput = cache,
+							local attempted_throughput = math.min(cache / TX_INTERVAL, throughput_limit)
+
+							actual_throughput = reseau.transmit(pos, cablepos, {
+								throughput = attempted_throughput,
 								team = team.name,
 								hop_count = hop_count + 1
 							})
 
-							cache = cache - throughput
+							cache = cache - actual_throughput * TX_INTERVAL
 							assert (cache >= 0)
 							meta:set_int("hop_count", 0)
 							meta:set_int("cache", cache)
-							meta:set_string("infotext", get_merger_infotext(cache * TX_INTERVAL, cache_limit))
 						end
+
+						meta:set_string("infotext", get_merger_infotext(actual_throughput, throughput_limit))
 					end
 				}
 			}
@@ -330,8 +340,8 @@ for _, team in ipairs(teams.get_all()) do
 	})
 end
 
-local function get_splitter_infotext(cache, cache_limit)
-	return "Splitter: (" .. cache .. " MB/" .. cache_limit .. " MB)"
+local function get_splitter_infotext(throughput, throughput_limit)
+	return "Router: Current throughput " .. throughput .. " MB/s, maximum throughput " .. throughput_limit .. " MB/s"
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -373,15 +383,17 @@ for _, team in ipairs(teams.get_all()) do
 						-- Drop packet accept it but do not do anything
 						return packet.throughput
 					end
+
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
+					local cache_limit = reseau.throughput.get_router_throughput_limit() * TX_INTERVAL
 					local available = cache_limit - cache
-					local used = math.min(available, packet.throughput)
+					local used = math.min(available, packet.throughput * TX_INTERVAL)
+
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
-					meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, cache_limit))
+
 					return used
 				end
 			},
@@ -399,37 +411,36 @@ for _, team in ipairs(teams.get_all()) do
 						local meta = minetest.get_meta(pos)
 						local cache = meta:get_int("cache") or 0
 						local hop_count = meta:get_int("hop_count") or 0
-						local first_side = meta:get_int("first_side") or 0
-						local cache_limit = reseau.throughput.get_router_cache_limit() / TX_INTERVAL
-						meta:set_int("first_side", 1 - first_side)
+						local throughput_limit = reseau.throughput.get_router_throughput_limit()
 						local node = minetest.get_node(pos)
+
 						local rules = reseau.mergetable(
 							reseau.rotate_rules_left({minetest.facedir_to_dir(node.param2)}),
 							reseau.rotate_rules_right({minetest.facedir_to_dir(node.param2)})
 						)
-						assert (#rules == 2)
-						if first_side == 1 then
-							rules = { rules[2], rules[1] }
-						end
 
+						-- first try to output all cached data through left output,
+						-- then transmit what is left over through right output
+						local actual_throughput = 0
 						for _, dir in ipairs(rules) do
 							if cache > 0 then
-								-- try to transmit as much data as possible via network
 								local cablepos = vector.add(pos, dir)
-								local throughput = reseau.transmit(pos, cablepos, {
-									throughput = cache,
+								local attempted_throughput = math.min(throughput_limit, cache / TX_INTERVAL)
+								local packet_throughput = reseau.transmit(pos, cablepos, {
+									throughput = attempted_throughput,
 									team = team.name,
 									hop_count = hop_count + 1
 								})
 
-								cache = cache - throughput
+								cache = cache - packet_throughput * TX_INTERVAL
+								actual_throughput = actual_throughput + packet_throughput
 								assert (cache >= 0)
 							end
 						end
 
 						meta:set_int("hop_count", 0)
 						meta:set_int("cache", cache)
-						meta:set_string("infotext", get_splitter_infotext(cache * TX_INTERVAL, cache_limit))
+						meta:set_string("infotext", get_splitter_infotext(actual_throughput, throughput_limit))
 					end
 				}
 			}
