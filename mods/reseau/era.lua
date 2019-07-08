@@ -2,11 +2,11 @@ reseau.era = {}
 reseau.era.db = {}
 
 reseau.era.default = {
-	genspeed = 10, -- experiment data generation speed in MB/s
 	tape_capacity = 500, -- tape capacity in MB
 	dp_multiplier = 1, -- discovery points per delivered MB
-	router_max_throughput = 20, -- router cache in MB/s
-	receiver_throughput = 10 -- throughput limit of receiver
+	experiment_throughput_limit = 10, -- experiment data generation speed in MB/s
+	router_throughput_limit = 20, -- router cache in MB/s
+	receiver_throughput_limit = 10 -- throughput limit of receiver
 }
 
 -- set startyear / endyear to true to mean +infinity / -infinity respectively

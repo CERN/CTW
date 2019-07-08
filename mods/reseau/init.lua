@@ -16,7 +16,6 @@ dofile(minetest.get_modpath("reseau").."/throughput.lua")
 local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
 
--- TODO: Rename era definition properties to something more structured
 -- TODO: Define reasonable values for eras!
 -- TODO: Hook in technology benefits into throughput.lua
 
@@ -24,35 +23,35 @@ local MAX_HOP_COUNT = 50
 -- #       Eras         #
 -- ######################
 reseau.era.register(true, 1986, {
-	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_throughput = 20,
-	receiver_throughput = 20
+	experiment_throughput_limit = 10,
+	router_throughput_limit = 20,
+	receiver_throughput_limit = 20
 })
 
 reseau.era.register(1986, 1990, {
-	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_throughput = 20,
-	receiver_throughput = 50
+	experiment_throughput_limit = 10,
+	router_throughput_limit = 20,
+	receiver_throughput_limit = 50
 })
 
 reseau.era.register(1990, 1994, {
-	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_throughput = 20,
-	receiver_throughput = 100
+	experiment_throughput_limit = 10,
+	router_throughput_limit = 20,
+	receiver_throughput_limit = 100
 })
 
 reseau.era.register(1994, true, {
-	genspeed = 10,
 	tape_capacity = 500,
 	dp_multiplier = 1,
-	router_max_throughput = 20,
-	receiver_throughput = 1000
+	experiment_throughput_limit = 10,
+	router_throughput_limit = 20,
+	receiver_throughput_limit = 1000
 })
 
 -- ######################
