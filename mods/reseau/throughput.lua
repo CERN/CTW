@@ -18,7 +18,7 @@ reseau.throughput.get_receiver_throughput_limit = function()
 	return reseau.era.get_current().receiver_throughput
 end
 
-reseau.throughput.get_router_cache_limit = function()
+reseau.throughput.get_router_throughput_limit = function()
 	-- TODO: tech multipliers
-	return reseau.era.get_current().router_max_cache
+	return reseau.era.get_current().router_max_throughput
 end
