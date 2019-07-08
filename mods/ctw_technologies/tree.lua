@@ -163,9 +163,10 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local x = px-fdata.offx
 		local y = py-fdata.offy
 		local fwim = 1
-		local fwte = 2.5
-		local fh = 1
-		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fh)>fdata.maxy then
+		local fwte = 2
+		local fhim = 1
+		local fhte = 2
+		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
 			return ""
 		end
 
@@ -173,14 +174,13 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local img = tech.image or "ctw_technologies_technology.png"
 
 		local form = "image_button["
-						..(x)..","..(y)..";"..fwim..","..fh..";"
+						..(x)..","..(y)..";"..fwim..","..fhim..";"
 						..img..";"
 						.."goto_tech_"..techid..";"
 						.."]"
-		form = form .. "button["
-						..(x+fwim)..","..(y)..";"..fwte..","..fh..";"
-						.."goto_techt_"..techid..";"
-						..tech.name.."]"
+		form = form .. "textarea["
+						..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
+						..";;"..tech.name.."]"
 		return form
 	end
 
