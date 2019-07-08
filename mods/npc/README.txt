@@ -46,11 +46,6 @@ npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	-- Approves the specified idea
 	-- 'def_e': (optional) '{ discovery = string, dp_min = number }'
 
-npc.register_event_from_idea(npc_name, dialogue, idea_id)
-	-- Gives the team an idea if the requirements are met
-	-- 'dialogue': string/nil: Text to say
-	-- 'idea_id': From ctw_techologies (untested)
-
 npc.register_event_from_tech(npc_name, dialogue, tech_id)
 	-- Gives the team  technology if the requirements are met
 	-- 'dialogue': string/nil: Text to say

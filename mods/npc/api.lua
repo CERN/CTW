@@ -23,10 +23,13 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	def.conditions = {{
 		dp_min = def_e.dp_min,
 		func = function(player)
-			if ctw_resources.get_team_idea_state(idea_id,
-					teams.get_by_player(player)).state == "undiscovered" then
+			local status, message = ctw_resources.give_idea(
+				idea_id, player:get_player_name(),
+				player:get_inventory(), "main", true)
+			if status then
 				return #idea_def.references_required + 1
 			end
+			print("NPC discovery", idea_id, message)
 		end
 	}}
 	def.options = {{
@@ -56,7 +59,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 			if status then
 				return #idea_def.references_required + 1
 			end
-						print(idea_id, message)
+			print("NPC approve", idea_id, message)
 		end
 	}}
 	def.options = {{
