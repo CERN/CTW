@@ -24,6 +24,7 @@ local MAX_HOP_COUNT = 50
 -- #       Eras         #
 -- ######################
 reseau.era.register(true, 1986, {
+	name = "internet stone age",
 	tape_capacity = 500,
 	dp_multiplier = 1,
 	experiment_throughput_limit = 10,
@@ -32,6 +33,7 @@ reseau.era.register(true, 1986, {
 })
 
 reseau.era.register(1986, 1990, {
+	name = "after-chernobyl",
 	tape_capacity = 500,
 	dp_multiplier = 1,
 	experiment_throughput_limit = 10,
@@ -40,6 +42,7 @@ reseau.era.register(1986, 1990, {
 })
 
 reseau.era.register(1990, 1994, {
+	name = "early nineties",
 	tape_capacity = 500,
 	dp_multiplier = 1,
 	experiment_throughput_limit = 10,
@@ -48,6 +51,7 @@ reseau.era.register(1990, 1994, {
 })
 
 reseau.era.register(1994, true, {
+	name = "late nineties",
 	tape_capacity = 500,
 	dp_multiplier = 1,
 	experiment_throughput_limit = 10,
