@@ -92,8 +92,8 @@ dofile(minetest.get_modpath("reseau").."/wires.lua")
 -- #     Receivers      #
 -- ######################
 local receiver_get_formspec = function(meta, throughput, points)
-	throughput = reseau.throughput_string(throughput) or 0
-	points = reseau.throughput_string(points) or 0
+	throughput = throughput and reseau.throughput_string(throughput) or 0
+	points = points and reseau.throughput_string(points) or 0
 	local throughput_limit = reseau.throughput.get_receiver_throughput_limit()
 
 	return "size[8,5;]"..
@@ -483,7 +483,7 @@ minetest.register_entity("reseau:atom", {
 })
 
 local experiment_get_formspec = function(experiment_name, meta, throughput)
-	throughput = reseau.throughput_string(throughput) or 0
+	throughput = throughput and reseau.throughput_string(throughput) or 0
 	local cache = meta:get_int("cache")
 	local throughput_limit = reseau.throughput_string(reseau.throughput.get_experiment_throughput(experiment_name))
 
