@@ -1,3 +1,5 @@
+local S = minetest.get_translator("reseau")
+
 -- naming scheme: wire:(xp)(zp)(xm)(zm)(xpyp)(zpyp)(xmyp)(zmyp)_on/off
 -- where x= x direction, z= z direction, y= y direction, p = +1, m = -1, e.g. xpym = {x=1, y=-1, z=0}
 -- The (xp)/(zpyp)/.. statements shall be replaced by either 0 or 1
@@ -126,7 +128,7 @@ minetest.register_on_placenode(function(pos, node, placer)
 		local below = minetest.get_node(vector.add(pos, vector.new(0, -1, 0)))
 		if not below or (minetest.registered_nodes[below.name].drawtype ~= nil
 		and minetest.registered_nodes[below.name].drawtype ~= "normal") then
-			local chatmsg = "You can only place transmission lines on top of proper blocks."
+			local chatmsg = S("You can only place transmission lines on top of proper blocks.")
 			minetest.chat_send_player(placer:get_player_name(), chatmsg)
 			minetest.remove_node(pos)
 			return true
@@ -149,7 +151,7 @@ minetest.register_on_placenode(function(pos, node, placer)
 		-- not allowed to place conductor? remove and send error message!
 		if #connections == 0 then
 			local chatmsg =
-				"You can only place a transmission line next to an existing one. Start at one of your team's experiments!"
+				S("You can only place a transmission line next to an existing one. Start at one of your team's experiments!")
 			minetest.chat_send_player(placer:get_player_name(), chatmsg)
 			minetest.remove_node(pos)
 			return true
@@ -313,7 +315,7 @@ end
 for _, team in ipairs(teams.get_all()) do
 	for techname, techdef in pairs(reseau.technologies.get_all()) do
 		register_wires(techname.."_" .. team.name, {
-			description = techdef.name.." Transmission Line",
+			description = S(techdef.name .. " Transmission Line"),
 			technology = techname,
 			team_name = team.name,
 			tiles = make_wire_tiles(techdef.wire_texture, team.color),

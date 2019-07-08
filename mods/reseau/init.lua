@@ -1,4 +1,5 @@
 reseau = {}
+local S = minetest.get_translator("reseau")
 
 dofile(minetest.get_modpath("reseau").."/util.lua")
 dofile(minetest.get_modpath("reseau").."/technology.lua")
@@ -96,15 +97,15 @@ local receiver_get_formspec = function(meta, throughput, points)
 
 	return "size[8,5;]"..
 		"list[context;tapes;3.5,0;1,1;]"..
-		"label[0,1.5;The computing center processes and stores experiment data to make discoveries.]"..
-		"label[0,1.9;Connect this rack to an experiment or feed it tapes to gain points!]"..
-		"label[0,2.3;Current network throughput: "..throughput.."MB/s, your team gains "..points.." points/s]"..
-		"label[0,2.7;Processing throughput limit: "..reseau.throughput.get_receiver_throughput_limit().." MB/s]"..
+		"label[0,1.5;" .. S("The computing center processes and stores experiment data to make discoveries.") .. "]"..
+		"label[0,1.9;" .. S("Connect this rack to an experiment or feed it tapes to gain points!") .. "]"..
+		"label[0,2.3;" .. S("Current network throughput: @1MB/s, your team gains @2 points/s", throughput, points) .. "]"..
+		"label[0,2.7;" .. S("Processing throughput limit: @1MB/s", reseau.throughput.get_receiver_throughput_limit()) .. "]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
 minetest.register_node(":reseau:receiverscreen", {
-	description = "Receiver (Testing)",
+	description = S("Receiver (Testing)"),
 	tiles = {
 		"reseau_receiverscreen_top.png",
 		"reseau_receiverscreen_bottom.png",
@@ -167,8 +168,8 @@ minetest.register_node(":reseau:receiverscreen", {
 
 			if teams.get(team) then
 				teams.add_points(team, dp)
-				local chatmsg = player:get_player_name() .. " delivered "..capacity..
-					" MB to the computing center, generating "..dp.." discovery points!"
+				local chatmsg = S("@1 delivered @2 MB to the computing center, generating @3 discovery points!",
+					player:get_player_name(), capacity, dp)
 				teams.chat_send_team(team, minetest.colorize("#50ff50", chatmsg))
 			end
 
@@ -194,7 +195,7 @@ minetest.register_node(":reseau:receiverscreen", {
 
 minetest.register_node(":reseau:receiverbase", {
 	drawtype = "nodebox",
-	description = "Receiver Base",
+	description = S("Receiver Base"),
 	tiles = {
 		"reseau_receiverbase_top.png",
 		"reseau_receiverbase_bottom.png",
@@ -249,12 +250,12 @@ minetest.register_node(":reseau:receiverbase", {
 -- #      Routers       #
 -- ######################
 local function get_merger_infotext(throughput, throughput_limit)
-	return "Router: Current throughput " .. throughput .. " MB/s, maximum throughput " .. throughput_limit .. " MB/s"
+	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", throughput, throughput_limit)
 end
 
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:merger_" .. team.name, {
-		description = "Router (Merging)",
+		description = S("Router (Merging)"),
 		tiles = {
 			reseau.with_overlay("reseau_router_top.png", team.color, "reseau_router_top_overlay.png"),
 			"reseau_router_bottom.png",
@@ -350,12 +351,12 @@ for _, team in ipairs(teams.get_all()) do
 end
 
 local function get_splitter_infotext(throughput, throughput_limit)
-	return "Router: Current throughput " .. throughput .. " MB/s, maximum throughput " .. throughput_limit .. " MB/s"
+	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", throughput, throughput_limit)
 end
 
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:splitter_" .. team.name, {
-		description = "Router (Splitting)",
+		description = S("Router (Splitting)"),
 		tiles = {
 			reseau.with_overlay("reseau_splitter_top.png", team.color, "reseau_splitter_top_overlay.png"),
 			"reseau_splitter_bottom.png",
@@ -483,17 +484,18 @@ local experiment_get_formspec = function(meta, throughput)
 
 	return "size[8,5;]"..
 		"list[context;tapes;2,0;4,1;]"..
-		"label[0,1.5;Experiments generate data that has to be moved to the computing center.]"..
-		"label[0,1.9;Data can be transported manually by carrying tapes or by a network link.]"..
-		"label[0,2.3;Data generation speed: "..reseau.throughput.get_experiment_throughput().." MB/s]"..
-		"label[0,2.7;Cached data: "..cache.." MB / Tape capacity: "..reseau.era.get_current().tape_capacity.." MB]"..
-		"label[0,3.1;Network throughput: "..throughput.." MB/s]"..
+		"label[0,1.5;" .. S("Experiments generate data that has to be moved to the computing center.") .. "]"..
+		"label[0,1.9;" .. S("Data can be transported manually by carrying tapes or by a network link.") .. "]"..
+		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", reseau.throughput.get_experiment_throughput()) .. "]"..
+		"label[0,2.7;" ..
+		S("Cached data: @1 MB / Tape capacity: @2 MB", cache, reseau.era.get_current().tape_capacity) .. "]"..
+		"label[0,3.1;" .. S("Network throughput: @1 MB/s", throughput) .. "]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
 for _, team in ipairs(teams.get_all()) do
 	minetest.register_node(":reseau:experiment_" .. team.name, {
-		description = "Experiment",
+		description = S("Experiment"),
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
 		light_source = 10,
@@ -576,7 +578,7 @@ for _, team in ipairs(teams.get_all()) do
 							local tape_meta = tape_stack:get_meta()
 							tape_meta:set_int("capacity", tape_capacity)
 							tape_meta:set_string("team", team.name)
-							local desc = tape_capacity.." MB tape (team " .. team.name .. ")"
+							local desc = S("@1 MB tape (@2)", tape_capacity, S("team " .. team.name))
 							tape_meta:set_string("description", desc)
 
 							if inv:room_for_item("tapes", tape_stack) then
@@ -602,5 +604,5 @@ end
 minetest.register_craftitem(":reseau:tape", {
 	image = "reseau_tape.png",
 	stack_max = 1,
-	description="Data Tape"
+	description= S("Data Tape")
 })
