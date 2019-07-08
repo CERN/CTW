@@ -92,15 +92,16 @@ dofile(minetest.get_modpath("reseau").."/wires.lua")
 -- #     Receivers      #
 -- ######################
 local receiver_get_formspec = function(meta, throughput, points)
-	throughput = throughput or 0
-	points = points or 0
+	throughput = reseau.throughput_string(throughput) or 0
+	points = reseau.throughput_string(points) or 0
+	local throughput_limit = reseau.throughput.get_receiver_throughput_limit()
 
 	return "size[8,5;]"..
 		"list[context;tapes;3.5,0;1,1;]"..
 		"label[0,1.5;" .. S("The computing center processes and stores experiment data to make discoveries.") .. "]"..
 		"label[0,1.9;" .. S("Connect this rack to an experiment or feed it tapes to gain points!") .. "]"..
 		"label[0,2.3;" .. S("Current network throughput: @1MB/s, your team gains @2 points/s", throughput, points) .. "]"..
-		"label[0,2.7;" .. S("Processing throughput limit: @1MB/s", reseau.throughput.get_receiver_throughput_limit()) .. "]"..
+		"label[0,2.7;" .. S("Processing throughput limit: @1MB/s", reseau.throughput_string(throughput_limit)) .. "]"..
 		"list[current_player;main;0,4;8,1;]"
 end
 
@@ -251,7 +252,7 @@ minetest.register_node("reseau:receiverbase", {
 -- #      Routers       #
 -- ######################
 local function get_merger_infotext(throughput, throughput_limit)
-	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", throughput, throughput_limit)
+	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", reseau.throughput_string(throughput), reseau.throughput_string(throughput_limit))
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -353,7 +354,7 @@ for _, team in ipairs(teams.get_all()) do
 end
 
 local function get_splitter_infotext(throughput, throughput_limit)
-	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", throughput, throughput_limit)
+	return S("Router: Current throughput @1 MB/s, maximum throughput @2 MB/s", reseau.throughput_string(throughput), reseau.throughput_string(throughput_limit))
 end
 
 for _, team in ipairs(teams.get_all()) do
@@ -482,14 +483,15 @@ minetest.register_entity("reseau:atom", {
 })
 
 local experiment_get_formspec = function(experiment_name, meta, throughput)
-	throughput = throughput or 0
+	throughput = reseau.throughput_string(throughput) or 0
 	local cache = meta:get_int("cache")
+	local throughput_limit = reseau.throughput_string(reseau.throughput.get_experiment_throughput(experiment_name))
 
 	return "size[8,5;]"..
 		"list[context;tapes;2,0;4,1;]"..
 		"label[0,1.5;" .. S("Experiments generate data that has to be moved to the computing center.") .. "]"..
 		"label[0,1.9;" .. S("Data can be transported manually by carrying tapes or by a network link.") .. "]"..
-		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", reseau.throughput.get_experiment_throughput(experiment_name)) .. "]"..
+		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", throughput_limit) .. "]"..
 		"label[0,2.7;" ..
 		S("Cached data: @1 MB / Tape capacity: @2 MB", cache, reseau.era.get_current().tape_capacity) .. "]"..
 		"label[0,3.1;" .. S("Network throughput: @1 MB/s", throughput) .. "]"..

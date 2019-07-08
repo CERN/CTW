@@ -61,3 +61,7 @@ end
 function reseau.with_overlay(base, color, overlay_name)
 	return base .. "^(" .. overlay_name .. "^[multiply:" .. color .. ")"
 end
+
+function reseau.throughput_string(throughput)
+	return string.format("%.1f", throughput)
+end
