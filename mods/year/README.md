@@ -9,3 +9,5 @@
   * func() return value is ignored
 * year.bump(year, team)
   * Team `team` has bumped the year to `year`.
+* year.set(year, team)
+  * Set year of team `team` to `year`. For debugging only.
