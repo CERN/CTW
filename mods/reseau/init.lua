@@ -493,7 +493,8 @@ for _, team in ipairs(teams.get_all()) do
 		tiles = {
 			reseau.with_overlay("reseau_experiment_top.png", team.color, "reseau_experiment_top_overlay.png"),
 			reseau.with_overlay("reseau_experiment_bottom_overlay.png", team.color, "reseau_experiment_bottom_overlay.png"),
-			reseau.with_overlay("reseau_experiment_side_connection.png", team.color, "reseau_experiment_side_connection_overlay.png"),
+			reseau.with_overlay("reseau_experiment_side_connection.png", team.color,
+				"reseau_experiment_side_connection_overlay.png"),
 			reseau.with_overlay("reseau_experiment_side.png", team.color, "reseau_experiment_side_overlay.png"),
 			reseau.with_overlay("reseau_experiment_right.png", team.color, "reseau_experiment_side_overlay.png"),
 			reseau.with_overlay("reseau_experiment_left.png", team.color, "reseau_experiment_side_overlay.png")
