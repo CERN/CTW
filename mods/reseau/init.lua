@@ -302,7 +302,7 @@ for _, team in ipairs(teams.get_all()) do
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
 
-					return used
+					return used / TX_INTERVAL
 				end
 			},
 			transmitter = {
@@ -400,7 +400,7 @@ for _, team in ipairs(teams.get_all()) do
 					meta:set_int("cache", cache + used)
 					meta:set_int("hop_count", math.max(hop_count, packet.hop_count))
 
-					return used
+					return used / TX_INTERVAL
 				end
 			},
 			transmitter = {
