@@ -118,6 +118,7 @@ local function wire_update_recursive(pos)
 end
 
 minetest.register_on_placenode(function(pos, node, placer)
+	if not minetest.registered_nodes[node.name] then return end
 	-- make sure there is an existing transmission line / transmitter nearby, only then
 	-- conductor placement is allowed
 	if minetest.registered_nodes[node.name].is_reseau_wire then
@@ -157,7 +158,13 @@ minetest.register_on_placenode(function(pos, node, placer)
 		-- place conductor and update connection
 		wire_update_recursive(pos, node)
 	elseif minetest.registered_nodes[node.name].reseau then
-		wire_update_recursive(pos, node)
+		for _, r in ipairs(reseau.get_any_rules(node)) do
+			local np = vector.add(pos, r)
+			local nodespec = minetest.registered_nodes[minetest.get_node(np).name]
+			if nodespec and nodespec.is_reseau_wire then
+				wire_update_recursive(np)
+			end
+		end
 	end
 end)
 
