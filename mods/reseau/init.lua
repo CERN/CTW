@@ -19,6 +19,9 @@ local MAX_HOP_COUNT = 50
 -- TODO: Rename era definition properties to something more structured
 -- TODO: Define reasonable values for eras!
 -- TODO: Hook in technology benefits into throughput.lua
+-- TODO: Splitter circuits seem to not work correctly right now...?
+-- TODO: Placing transmitters / receivers doesn't call autoconnect on adjacent wires (it should: routers!)
+-- TODO: replace weird compare-and-or constructions with math.min
 
 -- ######################
 -- #       Eras         #
