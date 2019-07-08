@@ -44,3 +44,17 @@ set_values()
 -- 	print(team.year)
 -- 	year.bump(team.year, team.name)
 -- end
+
+minetest.register_chatcommand("year", {
+	params = "<year>",
+	description = "Set year for your team (debug)",
+	func = function(playername, v)
+		local v_number = tonumber(v)
+		if type(v_number) == "number" then
+			year.set(v_number, teams.get_by_player(playername))
+			return true
+		else
+			return false, "Invalid year"
+		end
+	end,
+})

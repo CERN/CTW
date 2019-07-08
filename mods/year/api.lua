@@ -22,14 +22,16 @@ function year.register_on_change(func)
 	table.insert(_registered_on_change, func)
 end
 
-function year.bump(v, tname)
-	if v < _year then
-		return
-	end
-
+function year.set(v, tname)
 	_year = v
 
 	for i=1, #_registered_on_change do
 		_registered_on_change[i](v, tname)
+	end
+end
+
+function year.bump(v, tname)
+	if v > _year then
+		year.set(v, tname)
 	end
 end
