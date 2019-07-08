@@ -1,8 +1,9 @@
+local S = minetest.get_translator("ctw_technologies")
 
 -- === DATA FORMATS === --
 ctw_technologies.register_technology("ascii", {
 	name = "ASCII",
-	description = "There is a standard code for character encoding!",
+	description = S("There is a standard code for character encoding!"),
 	year = 1989,
 	requires = {
 	},
@@ -12,7 +13,7 @@ ctw_technologies.register_technology("ascii", {
 
 ctw_technologies.register_technology("html", {
 	name = "Hypertext Markup Language",
-	description = "There is a standardized language to express documents with hyperlinks!",
+	description = S("There is a standardized language to express documents with hyperlinks!"),
 	year = 1991,
 	requires = {
 		"ascii"
@@ -26,7 +27,7 @@ ctw_technologies.register_technology("html", {
 -- === WIRES === --
 ctw_technologies.register_technology("phonecable", {
 	name = "Phone Cable",
-	description = "The most basic type of signal cable",
+	description = S("The most basic type of signal cable"),
 	year = 1984,
 	requires = {
 	},
@@ -38,7 +39,7 @@ ctw_technologies.register_technology("phonecable", {
 
 ctw_technologies.register_technology("coaxial", {
 	name = "Coaxial Cable",
-	description = "A cable with one conductor and a shield!",
+	description = S("A cable with one conductor and a shield!"),
 	requires = {
 		"phonecable"
 	},
@@ -51,7 +52,7 @@ ctw_technologies.register_technology("coaxial", {
 
 ctw_technologies.register_technology("twisted-pair", {
 	name = "Twisted-Pair Cable",
-	description = "A cable with twisted pairs!",
+	description = S("A cable with twisted pairs!"),
 	requires = {
 		"coaxial"
 	},
@@ -62,7 +63,7 @@ ctw_technologies.register_technology("twisted-pair", {
 })
 ctw_technologies.register_technology("ethernet", {
 	name = "Ethernet",
-	description = "You can send network data over a twisted-pair cable!",
+	description = S("You can send network data over a twisted-pair cable!"),
 	year = 1985, -- shielded twisted pair
 	requires = {
 		"twisted-pair"
@@ -78,7 +79,7 @@ ctw_technologies.register_technology("ethernet", {
 
 ctw_technologies.register_technology("tcp_ip", {
 	name = "TCP/IP Packet Transport",
-	description = "TCP/IP is a reliable protocol to transmit data over a computer network.",
+	description = S("TCP/IP is a reliable protocol to transmit data over a computer network."),
 	year = 1981, -- v4
 	--year = 1992, -- timestamps added
 	requires = {
@@ -91,7 +92,7 @@ ctw_technologies.register_technology("tcp_ip", {
 
 ctw_technologies.register_technology("router", {
 	name = "Routers (split, merge)",
-	description = "Split and merge various kinds of cables to improve the wire usage.",
+	description = S("Split and merge various kinds of cables to improve the wire usage."),
 	year = 1990, -- somewhen after 1989
 	requires = {
 		"tcp_ip" -- or better
@@ -105,7 +106,7 @@ ctw_technologies.register_technology("router", {
 
 ctw_technologies.register_technology("www", {
 	name = "The World Wide Web",
-	description = "With all those technologies gathered, you invented the World Wide Web! Yay!",
+	description = S("With all those technologies gathered, you invented the World Wide Web! Yay!"),
 	year = 1991,
 	requires = {
 		"ethernet",
