@@ -579,7 +579,7 @@ for _, team in ipairs(teams.get_all()) do
 							local tape_meta = tape_stack:get_meta()
 							tape_meta:set_int("capacity", tape_capacity)
 							tape_meta:set_string("team", team.name)
-							local desc = S("@1 MB tape (@2)", tape_capacity, S("team " .. team.name))
+							local desc = S("@1 MB tape (@2)", tape_capacity, team.display_name)
 							tape_meta:set_string("description", desc)
 
 							if inv:room_for_item("tapes", tape_stack) then
