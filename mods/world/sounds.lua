@@ -58,12 +58,12 @@ function world.register_sound(name, spec)
 		def["emits_" .. key] = value
 	end
 
-	minetest.register_node("sounds:" .. name, def)
+	minetest.register_node("world:sound_" .. name, def)
 end
 
 minetest.register_lbm({
 	label = "Detect sound",
-	name = "sounds:setup",
+	name = "world:sounds",
 	nodenames = { "group:emits_sound" },
 	action = notify_new_sound,
 	run_at_every_load = true,
