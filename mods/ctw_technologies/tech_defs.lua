@@ -44,7 +44,7 @@ ctw_technologies.register_technology("coaxial", {
 		"phonecable"
 	},
 	benefits = {
-		{ type = "cable_throughput_multiplier", value = 10 },
+		{ type = "wire_throughput_multiplier", value = 10 },
 		{ type = "supply",  item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
 	tree_line = 2,
@@ -57,7 +57,7 @@ ctw_technologies.register_technology("twisted-pair", {
 		"coaxial"
 	},
 	benefits = {
-		{ type = "cable_throughput_multiplier", value = 5 }
+		{ type = "wire_throughput_multiplier", value = 5 }
 	},
 	tree_line = 2,
 })
@@ -69,7 +69,7 @@ ctw_technologies.register_technology("ethernet", {
 		"twisted-pair"
 	},
 	benefits = {
-		{ type = "cable_throughput_multiplier", value = 10 }
+		{ type = "wire_throughput_multiplier", value = 10 }
 	},
 	tree_line = 2,
 })
@@ -86,7 +86,7 @@ ctw_technologies.register_technology("tcp_ip", {
 		"coaxial" -- or better
 	},
 	benefits = {
-		{ type = "cable_throughput_multiplier", value = 2 },
+		{ type = "wire_throughput_multiplier", value = 2 },
 	},
 })
 

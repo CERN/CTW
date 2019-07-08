@@ -2,12 +2,14 @@
 
 local tpl = ctw_technologies.benefit_templates
 
-ctw_technologies.register_benefit_type("cable_throughput_multiplier",
-	tpl.multiply("ctw_texture_missing.png", "Cable Throughput"))
+ctw_technologies.register_benefit_type("wire_throughput_multiplier",
+	tpl.multiply("ctw_texture_missing.png", "Transmission Line Throughput"))
 ctw_technologies.register_benefit_type("receiver_throughput_multiplier",
 	tpl.multiply("ctw_texture_missing.png", "Receiver Throughput"))
-ctw_technologies.register_benefit_type("transmitter_throughput_multiplier",
-	tpl.multiply("ctw_texture_missing.png", "Transmitter Throughput"))
+ctw_technologies.register_benefit_type("experiment_throughput_multiplier",
+	tpl.multiply("ctw_texture_missing.png", "Experiment Throughput"))
+ctw_technologies.register_benefit_type("router_throughput_multiplier",
+	tpl.multiply("ctw_texture_missing.png", "Router Throughput"))
 
 -- {type="supply", item="reseau:copper_cable"}
 ctw_technologies.register_benefit_type("supply", {

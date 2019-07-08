@@ -18,7 +18,7 @@ local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
 
 -- TODO: Define reasonable values for eras!
--- TODO: Hook in technology benefits into throughput.lua
+-- TODO: Throughput values: round to one decimal
 
 -- ######################
 -- #       Eras         #
@@ -28,7 +28,7 @@ reseau.era.register(true, 1986, {
 	tape_capacity = 500,
 	dp_multiplier = 1,
 	experiment_throughput_limit = 10,
-	router_throughput_limit = 20,
+	router_throughput_limit = 40,
 	receiver_throughput_limit = 20
 })
 
@@ -104,7 +104,7 @@ local receiver_get_formspec = function(meta, throughput, points)
 		"list[current_player;main;0,4;8,1;]"
 end
 
-minetest.register_node(":reseau:receiverscreen", {
+minetest.register_node("reseau:receiverscreen", {
 	description = S("Receiver (Testing)"),
 	tiles = {
 		"reseau_receiverscreen_top.png",
@@ -193,7 +193,7 @@ minetest.register_node(":reseau:receiverscreen", {
 	end
 })
 
-minetest.register_node(":reseau:receiverbase", {
+minetest.register_node("reseau:receiverbase", {
 	drawtype = "nodebox",
 	description = S("Receiver Base"),
 	tiles = {
@@ -255,7 +255,8 @@ local function get_merger_infotext(throughput, throughput_limit)
 end
 
 for _, team in ipairs(teams.get_all()) do
-	minetest.register_node(":reseau:merger_" .. team.name, {
+	local router_name = "reseau:merger_" .. team.name
+	minetest.register_node(router_name, {
 		description = S("Router (Merging)"),
 		tiles = {
 			reseau.with_overlay("reseau_router_top.png", team.color, "reseau_router_top_overlay.png"),
@@ -300,7 +301,7 @@ for _, team in ipairs(teams.get_all()) do
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local cache_limit = reseau.throughput.get_router_throughput_limit() * TX_INTERVAL
+					local cache_limit = reseau.throughput.get_router_throughput_limit(router_name) * TX_INTERVAL
 					local available = cache_limit - cache
 					local used = math.min(available, packet.throughput * TX_INTERVAL)
 
@@ -322,7 +323,7 @@ for _, team in ipairs(teams.get_all()) do
 						local cache = meta:get_int("cache") or 0
 						local hop_count = meta:get_int("hop_count") or 0
 
-						local throughput_limit = reseau.throughput.get_router_throughput_limit()
+						local throughput_limit = reseau.throughput.get_router_throughput_limit(router_name)
 						local actual_throughput = 0
 
 						if cache > 0 then
@@ -356,7 +357,8 @@ local function get_splitter_infotext(throughput, throughput_limit)
 end
 
 for _, team in ipairs(teams.get_all()) do
-	minetest.register_node(":reseau:splitter_" .. team.name, {
+	local router_name = "reseau:splitter_" .. team.name
+	minetest.register_node(router_name, {
 		description = S("Router (Splitting)"),
 		tiles = {
 			reseau.with_overlay("reseau_splitter_top.png", team.color, "reseau_splitter_top_overlay.png"),
@@ -398,7 +400,7 @@ for _, team in ipairs(teams.get_all()) do
 					local meta = minetest.get_meta(pos)
 					local cache = meta:get_int("cache") or 0
 					local hop_count = meta:get_int("hop_count") or 0
-					local cache_limit = reseau.throughput.get_router_throughput_limit() * TX_INTERVAL
+					local cache_limit = reseau.throughput.get_router_throughput_limit(router_name) * TX_INTERVAL
 					local available = cache_limit - cache
 					local used = math.min(available, packet.throughput * TX_INTERVAL)
 
@@ -422,7 +424,7 @@ for _, team in ipairs(teams.get_all()) do
 						local meta = minetest.get_meta(pos)
 						local cache = meta:get_int("cache") or 0
 						local hop_count = meta:get_int("hop_count") or 0
-						local throughput_limit = reseau.throughput.get_router_throughput_limit()
+						local throughput_limit = reseau.throughput.get_router_throughput_limit(router_name)
 						local node = minetest.get_node(pos)
 
 						local rules = reseau.mergetable(
@@ -479,7 +481,7 @@ minetest.register_entity("reseau:atom", {
 	}
 })
 
-local experiment_get_formspec = function(meta, throughput)
+local experiment_get_formspec = function(experiment_name, meta, throughput)
 	throughput = throughput or 0
 	local cache = meta:get_int("cache")
 
@@ -487,7 +489,7 @@ local experiment_get_formspec = function(meta, throughput)
 		"list[context;tapes;2,0;4,1;]"..
 		"label[0,1.5;" .. S("Experiments generate data that has to be moved to the computing center.") .. "]"..
 		"label[0,1.9;" .. S("Data can be transported manually by carrying tapes or by a network link.") .. "]"..
-		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", reseau.throughput.get_experiment_throughput()) .. "]"..
+		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", reseau.throughput.get_experiment_throughput(experiment_name)) .. "]"..
 		"label[0,2.7;" ..
 		S("Cached data: @1 MB / Tape capacity: @2 MB", cache, reseau.era.get_current().tape_capacity) .. "]"..
 		"label[0,3.1;" .. S("Network throughput: @1 MB/s", throughput) .. "]"..
@@ -495,7 +497,8 @@ local experiment_get_formspec = function(meta, throughput)
 end
 
 for _, team in ipairs(teams.get_all()) do
-	minetest.register_node(":reseau:experiment_" .. team.name, {
+	local experiment_name = "reseau:experiment_" .. team.name
+	minetest.register_node(experiment_name, {
 		description = S("Experiment"),
 		groups = { ["protection_" .. team.name] = 1 },
 		team_name = team.name,
@@ -535,7 +538,7 @@ for _, team in ipairs(teams.get_all()) do
 			local inv = meta:get_inventory()
 			inv:set_size("tapes", 4)
 
-			meta:set_string("formspec", experiment_get_formspec(meta))
+			meta:set_string("formspec", experiment_get_formspec(experiment_name, meta))
 		end,
 		on_destruct = function(pos)
 			local objs = minetest.get_objects_inside_radius(pos, 1.0)
@@ -558,7 +561,7 @@ for _, team in ipairs(teams.get_all()) do
 						-- generate data to transmit
 						local meta = minetest.get_meta(pos)
 						local cache = meta:get_int("cache") or 0
-						cache = cache + reseau.throughput.get_experiment_throughput() * TX_INTERVAL
+						cache = cache + reseau.throughput.get_experiment_throughput(experiment_name) * TX_INTERVAL
 
 						-- try to transmit as much data as possible via network
 						local throughput = reseau.transmit_first(pos, {
@@ -591,7 +594,7 @@ for _, team in ipairs(teams.get_all()) do
 
 						-- update node metadata
 						meta:set_int("cache", cache)
-						meta:set_string("formspec", experiment_get_formspec(meta, throughput))
+						meta:set_string("formspec", experiment_get_formspec(experiment_name, meta, throughput))
 					end
 				}
 			}
@@ -602,7 +605,7 @@ end
 -- ######################
 -- #        Tape        #
 -- ######################
-minetest.register_craftitem(":reseau:tape", {
+minetest.register_craftitem("reseau:tape", {
 	image = "reseau_tape.png",
 	stack_max = 1,
 	description= S("Data Tape")
