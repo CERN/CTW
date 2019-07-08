@@ -5,6 +5,6 @@ if dbstring ~= "" then
 	reseau.db = minetest.deserialize(dbstring)
 end
 
-reseau.db_commit = function(key, value)
+reseau.db_commit = function()
 	reseau.storage:set_string("db", minetest.serialize(reseau.db))
 end
