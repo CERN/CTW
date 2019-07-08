@@ -27,6 +27,7 @@ reseau.era.get = function(year)
 	end
 
 	-- This should never happen
+	minetest.log("error", "Reseau: could not get era, using default instead")
 	return reseau.era.default
 end
 
