@@ -21,8 +21,7 @@ end
 
 reseau.era.get = function(year)
 	for _, era in ipairs(reseau.era.db) do
-		if ((type(era.startyear) == "boolean" and era.startyear == true) or year >= era.startyear)
-		and ((type(era.endyear) == "boolean" and era.endyear == true) or year < era.endyear)  then
+		if year >= era.startyear and year < era.endyear then
 			return era.definition
 		end
 	end

@@ -18,12 +18,11 @@ local TX_INTERVAL = 3
 local MAX_HOP_COUNT = 50
 
 -- TODO: Define reasonable values for eras!
--- TODO: Throughput values: round to one decimal
 
 -- ######################
 -- #       Eras         #
 -- ######################
-reseau.era.register(true, 1986, {
+reseau.era.register(-math.huge, 1986, {
 	name = "internet stone age",
 	tape_capacity = 500,
 	dp_multiplier = 1,
@@ -50,7 +49,7 @@ reseau.era.register(1990, 1994, {
 	receiver_throughput_limit = 100
 })
 
-reseau.era.register(1994, true, {
+reseau.era.register(1994, math.huge, {
 	name = "late nineties",
 	tape_capacity = 500,
 	dp_multiplier = 1,
