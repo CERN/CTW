@@ -294,7 +294,7 @@ local function register_wires(name, technologyspec)
 		})
 		spec.groups = groups
 
-		minetest.register_node(":reseau:"..name.."_wire_"..nodeid, spec)
+		minetest.register_node("reseau:"..name.."_wire_"..nodeid, spec)
 
 		if (nid_inc(nid) == false) then return end
 	end
