@@ -38,7 +38,7 @@ local book_types = {
 	},
 	cable_crafting = {
 		"The Art Of Crafting",
-		"Metal processing and compact wire designs are part of this wook."
+		"Metal processing and compact wire designs are part of this book."
 	},
 	-- add whatever you want here. colors are key-hash-based
 }
