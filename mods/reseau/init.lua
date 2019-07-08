@@ -224,6 +224,7 @@ minetest.register_node(":reseau:receiverbase", {
 	},
 	reseau = {
 		conductor = {
+			infinite_speed = true,
 			technology = reseau.technologies.all(),
 			rules = function(node)
 				--return {minetest.facedir_to_dir(node.param2)}

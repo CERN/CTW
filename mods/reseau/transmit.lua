@@ -21,14 +21,12 @@ reseau.transmit = function(previous, frontier, packet, startdepth)
 		frontier = nil
 		depth = depth + 1
 
-		-- process next node: technology's throughput?
-		local technology = reseau.technologies.get_any_node_technology(minetest.get_node(link).name)
-		packet.throughput = math.min(packet.throughput, reseau.throughput.get_wire_throughput(technology))
-
-		-- process next node: conductor or receiver?
+		-- Process next node: conductor or receiver? Also update throughput!
 		local link_node_spec = minetest.registered_nodes[minetest.get_node(link).name]
 		if link_node_spec.reseau.conductor then
 			frontier = link
+			local throughput_limit = reseau.throughput.get_wire_throughput(minetest.get_node(link).name)
+			packet.throughput = math.min(packet.throughput, throughput_limit)
 			reseau.bitparticles_conductor(link, depth)
 		elseif link_node_spec.reseau.receiver then
 			local throughput_limit = link_node_spec.reseau.receiver.action(link, packet, depth)
