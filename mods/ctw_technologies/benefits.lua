@@ -58,7 +58,7 @@ function ctw_technologies.update_team_benefits(team)
 		end
 	end
 	local tb = {}
-	for t,_ in benefit_types do
+	for t,_ in pairs(benefit_types) do
 		tb[t] = ctw_technologies.accumulate_benefits(t, by_type[t] or {})
 	end
 	team_benefits_acc[team.name] = tb
@@ -91,6 +91,7 @@ local tpl = {
 			accumulator = function(list)
 				local a=1
 				for _, b in ipairs(list) do a = a * b.value end
+				return a
 			end,
 			renderer = function(bene)
 				return image, label.." x"..bene.value
@@ -104,6 +105,7 @@ local tpl = {
 			accumulator = function(list)
 				local a=0
 				for _, b in ipairs(list) do a = a + b.value end
+				return a
 			end,
 			renderer = function(bene)
 				return image, label.." +"..bene.value
