@@ -49,16 +49,3 @@ function world.load_locations(path)
 		end
 	end
 end
-
-function world.place(map)
-	world.emerge_with_callbacks(nil, map.pos1, map.pos2, function()
-		local schempath = map.schematic
-
-		local res = minetest.place_schematic(map.pos1, schempath)
-		assert(res)
-
-		minetest.after(10, function()
-			minetest.fix_light(map.pos1, map.pos2)
-		end)
-	end, nil)
-end
