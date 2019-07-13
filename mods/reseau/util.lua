@@ -1,16 +1,5 @@
-reseau.tablecopy = function(table) -- deep table copy
-	if type(table) ~= "table" then return table end -- no need to copy
-	local newtable = {}
-
-	for idx, item in pairs(table) do
-		if type(item) == "table" then
-			newtable[idx] = reseau.tablecopy(item)
-		else
-			newtable[idx] = item
-		end
-	end
-
-	return newtable
+reseau.tablecopy = function(t) -- deep table copy
+	return type(t) ~= "table" and t or table.copy(t)
 end
 
 reseau.mergetable = function(source, dest)

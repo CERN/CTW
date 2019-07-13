@@ -17,7 +17,7 @@ reseau.throughput.get_wire_throughput = function(wirename)
 	assert(nodespec.team_name)
 	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "wire_throughput_multiplier")
 	local technology = reseau.technologies.get_any_node_technology(wirename)
-	return reseau.technologies.get_technology_throughput(technology)
+	return reseau.technologies.get_technology_throughput(technology) * multiplier
 end
 
 reseau.throughput.get_experiment_throughput = function(nodename)

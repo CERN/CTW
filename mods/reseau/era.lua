@@ -43,21 +43,21 @@ minetest.register_globalstep(function(dtime)
 	local last_era = reseau.db.last_era or reseau.era.default.name
 	local current_era = reseau.era.get_current()
 
-	if last_era ~= current_era.name then
-		local eramsg1 = "All teams just entered the "..current_era.name.." era! Technological progress:"
-		local eramsg2 = "* Tapes now have a capacity of "..current_era.tape_capacity.." MB"
-		local eramsg3 = "* Experiments now generate data at a base rate of "..current_era.experiment_throughput_limit.." MB/s"
-		local eramsg4 = "* Routers now have a base throughput limit of "..current_era.router_throughput_limit.." MB/s"
-		local eramsg5 = "* Receivers now have a base processing throughput limit of "..current_era.receiver_throughput_limit.." MB/s"
-		local eramsg6 = "* Every MB of transmitted data will earn you "..current_era.dp_multiplier.." discovery point(s)!"
-
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg1))
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg2))
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg3))
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg4))
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg5))
-		minetest.chat_send_all(minetest.colorize("#0000a0", eramsg6))
-		reseau.db.last_era = current_era.name
-		reseau.db_commit()
+	if last_era == current_era.name then
+		return
 	end
+	local msgs = {
+		"All teams just entered the "..current_era.name.." era! Technological progress:",
+		"* Tapes now have a capacity of "..current_era.tape_capacity.." MB",
+		"* Experiments now generate data at a base rate of "..current_era.experiment_throughput_limit.." MB/s",
+		"* Routers now have a base throughput limit of "..current_era.router_throughput_limit.." MB/s",
+		"* Receivers now have a base processing throughput limit of "..current_era.receiver_throughput_limit.." MB/s",
+		"* Every MB of transmitted data will earn you "..current_era.dp_multiplier.." discovery point(s)!"
+	}
+
+	for i, msg in ipairs(msgs) do
+		minetest.chat_send_all(minetest.colorize("#0000a0", msg))
+	end
+	reseau.db.last_era = current_era.name
+	reseau.db_commit()
 end)
