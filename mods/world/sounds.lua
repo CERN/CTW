@@ -34,6 +34,7 @@ function world.register_sound(name, spec)
 		drawtype = "airlike",
 		groups = { oddly_breakable_by_hand=1, cracky=1, emits_sound=1 },
 		after_place_node = notify_new_sound,
+		inventory_image = "sound.png",
 		pointable = false,
 		diggable = false,
 		walkable = false,
