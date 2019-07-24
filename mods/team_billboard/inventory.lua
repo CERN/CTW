@@ -160,7 +160,10 @@ end
 -- Empties and re-constructs the contents of the team billboard inventory based on idea states of the team.
 function team_billboard.rebuild_billboard_inventory(team)
 	local inv = minetest.get_inventory({type="detached", name="team_billboard_"..team.name})
-	assert(inv, "Billboard inv for team " .. team.name .. " does not exist")
+	if not inv then
+		minetest.log("warning", "Billboard inv for team " .. team.name .. " does not exist")
+		return
+	end
 
 	inv:set_lists({
 		ideas = {},
