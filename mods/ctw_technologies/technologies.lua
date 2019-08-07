@@ -174,6 +174,7 @@ function ctw_technologies.register_technology(id, tech_def)
 		error("Tech with ID "..id.." is already registered!")
 	end
 
+	assert(type(tech_def.year) == "number", "Year value missing.")
 	init_default(tech_def, "name", id)
 	init_default(tech_def, "description", "No description")
 	init_default(tech_def, "requires", {})
