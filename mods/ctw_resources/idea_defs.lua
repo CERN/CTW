@@ -19,7 +19,7 @@ ctw_resources.register_idea("html", {
 	name = S("Hypertext Markup Language"),
 	description = S("We need a standardized language to express documents with hyperlinks!"),
 	technologies_gained = {
-		"html",
+		--"html",
 	},
 	references_required = {
 		"books:book_data_formats 1",
@@ -51,7 +51,7 @@ ctw_resources.register_idea("apollo_domain", {
 	description = S("This technology implements remote-controlling servers on the network." ..
 		" As a result, servers can be monitored from a single computer."),
 	technologies_gained = {
-		"tcp_ip"
+		"tcpip"
 	},
 	references_required = {
 		"books:book_program_objc 1",
@@ -63,7 +63,7 @@ ctw_resources.register_idea("tcp_ip", {
 	description = S("Network packets are often lost, corrupted or only partially available." ..
 		" How about inventing a protocol which implements those checks?"),
 	technologies_gained = {
-		"tcp_ip",
+		"tcpip",
 	},
 	references_required = {
 		"books:book_data_formats 2",

@@ -3,13 +3,17 @@ local S = minetest.get_translator("ctw_technologies")
 --[[
 The technologies are ordered by the timeline.
 They have prepending comments to indicate what kind of technology it is:
-	cable
+	hardware
 	protocol
 	service (web)
 	software
 ]]
 
--- cable
+
+-- "It's the viking age" (= Internet Stone Age)
+-- "Oh, that explains the laser raptors." (no worries, they're tamed)
+
+-- hardware
 ctw_technologies.register_technology("fiber", {
 	name = S("Optical Fiber"),
 	description = S("Data transfer over light. Fast but experimental and expensive."),
@@ -77,7 +81,7 @@ ctw_technologies.register_technology("enquire", {
 	tree_line = 2,
 })
 
--- cable
+-- hardware
 ctw_technologies.register_technology("e10base2", {
 	name = S("E10BASE2 / thin Ethernet"),
 	description = S("Coaxial ethernet cables to build up a network."),
@@ -86,7 +90,7 @@ ctw_technologies.register_technology("e10base2", {
 		"crc"
 	},
 	benefits = {
-		{ type = "supply",  item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
+		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
 	tree_line = 2,
 })
@@ -105,7 +109,7 @@ ctw_technologies.register_technology("tcpip", {
 	tree_line = 2,
 })
 
--- cable
+-- hardware
 ctw_technologies.register_technology("ethernet", {
 	name = S("Ethernet Standard"),
 	description = S("Standardized cables and data transfer"),
@@ -134,7 +138,7 @@ ctw_technologies.register_technology("gnu", {
 -- -- 1984 --
 -- ==========
 
--- cable
+-- hardware
 ctw_technologies.register_technology("tokenring", {
 	name = S("4Mbps Token Ring"),
 	description = S("An IBM standard to connect computers."),
@@ -172,7 +176,7 @@ ctw_technologies.register_technology("tangle", {
 -- -- 1985 --
 -- ==========
 
--- cable
+-- hardware
 ctw_technologies.register_technology("fiberproduction", {
 	name = S("Fast Optical Fiber Production"),
 	description = S("The commercial fiber industry is slowly getting started."),
@@ -228,7 +232,7 @@ ctw_technologies.register_technology("enquire2", {
 -- -- 1987 --
 -- ==========
 
--- cable
+-- hardware
 ctw_technologies.register_technology("twistethernet", {
 	name = S("Twisted Pair Ethernet"),
 	description = S("Trash your coaxial cables and prepare for reliable high-frequency cables."),
@@ -270,33 +274,366 @@ ctw_technologies.register_technology("hypertext", {
 	},
 })
 
+-- ==========
+-- -- 1988 --
+-- ==========
 
--- TODO
-
-
-ctw_technologies.register_technology("router", {
-	name = S("Routers (split, merge)"),
-	description = S("Split and merge various kinds of cables to improve the wire usage."),
-	year = 1990, -- somewhen after 1989
+-- protocol
+ctw_technologies.register_technology("dynroutingrip", {
+	name = S("Dynamic Routing: RIP"),
+	description = S("This technology provide the basics for connecting multiple network."),
+	year = 1988,
 	requires = {
-		--"tcp_ip" -- or better
+		"twistethernet",
+		"ipnet"
+	},
+})
+
+-- ==========
+-- -- 1989 --
+-- ==========
+
+-- hardware
+ctw_technologies.register_technology("merger", {
+	name = S("Merge Router"),
+	description = S("Merge various kinds of cables to improve the wire usage."),
+	year = 1989,
+	requires = {
+		"dynroutingrip" -- or better
 	},
 	benefits = {
-		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
 		{ type = "supply", item="reseau:merger_%t", time_min=80, time_max=180 },
 	},
 })
 
+-- protocol
+ctw_technologies.register_technology("dynroutingbgp", {
+	name = S("Dynamic Routing: BGP"),
+	description = S("The Border Gateway Protocol routes the packets based on paths and rules."),
+	year = 1989,
+	requires = {
+		"dynroutingrip",
+	},
+	benefits = {
+		{ type = "router_throughput_multiplier", value = 1.5 }
+	},
+})
 
-ctw_technologies.register_technology("www", {
-	name = S("The World Wide Web"),
-	description = S("With all those technologies gathered, you invented the World Wide Web! Yay!"),
+-- software
+ctw_technologies.register_technology("gpl", {
+	name = S("GNU General Public License"),
+	description = S("A license to bring cooperation along. Share and modify code freely."),
+	year = 1989,
+	requires = {
+		"gnu",
+	},
+})
+
+-- software
+ctw_technologies.register_technology("hypertextproposal", {
+	name = S("Memo about Hypertext"),
+	description = S("A memo from Tim Berners-Lee. It's a proposal for linking files in the internet."),
+	year = 1989,
+	requires = {
+		"dns",
+		"hypertext"
+	},
+})
+
+-- ==========
+-- -- 1990 --
+-- ==========
+
+-- hardware
+ctw_technologies.register_technology("fibercommunications", {
+	name = S("Fiberoptic Communications"),
+	description = S("Market-ready data communication over fiber."),
+	year = 1990,
+	requires = {
+		"twistethernet",
+		"fiberproduction"
+	},
+	benefits = {
+		{ type = "supply", item="reseau:fiber_%t_00000000 50", time_min=60, time_max=120 },
+	}
+})
+
+-- protocol
+ctw_technologies.register_technology("http", {
+	name = S("Hypertext Protocol"),
+	description = S("Standardized format to request data from servers in the internet."),
+	year = 1990,
+	requires = {
+		"hypertextproposal"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("html", {
+	name = S("Hypertext Markup Language"),
+	description = S("Standardized format to let browsers display websize contents."),
+	year = 1990,
+	requires = {
+		"hypertextproposal"
+	},
+})
+
+-- ALSO 1990 but later
+
+-- service
+ctw_technologies.register_technology("httpd", {
+	name = S("CERN Server Software"),
+	description = S("This server is written Tim Berners-Lee to provide content to the browser requests."),
+	year = 1990,
+	requires = {
+		"http"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("wwwbrowser", {
+	name = S("WorldWideWeb Browser"),
+	description = S("Tim Bernsers-Lee provides this browser as a foundation to browse on the internet."),
+	year = 1990,
+	requires = {
+		"html"
+	},
+})
+
+
+-- ==========
+-- -- 1991 --
+-- ==========
+
+-- hardware
+ctw_technologies.register_technology("cat5", {
+	name = S("Category 5 cable"),
+	description = S("Standardized twisted-pair cable that is capable to deliver up to 100 Mbps."),
 	year = 1991,
 	requires = {
-		--"ethernet",
-		--"html"
+		"twistethernet"
 	},
+	benefits = {
+		{ type = "wire_throughput_multiplier", value = 4 }
+	},
+})
+
+-- software
+ctw_technologies.register_technology("linux", {
+	name = S("Linux"),
+	description = S("To complete the GNU software, Linus Torvalds writes the first Linux kernel version."),
+	year = 1991,
+	requires = {
+		"gnu"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("cernbook", {
+	name = S("CERN Phonebook"),
+	description = S("A revolutionary dictionary to look up phone numbers from a server."),
+	year = 1991,
+	requires = {
+		"httpd"
+	},
+	benefits = {
+		{ type = "experiment_throughput_multiplier", value = 2 }
+	},
+})
+
+-- software
+ctw_technologies.register_technology("cernpage", {
+	name = S("CERN Webpage"),
+	description = S("The new official CERN webpage (info.cern.ch) presents current ongoing projects."),
+	year = 1991,
+	requires = {
+		"httpd"
+	},
+	benefits = { -- scientists are happy
+		{ type = "experiment_throughput_multiplier", value = 2 }
+	},
+})
+
+-- software
+ctw_technologies.register_technology("violawww", {
+	name = S("ViolaWWW Browser"),
+	description = S("This browser provides website styling, scripting and document embedding."),
+	year = 1991,
+	requires = {
+		"httpd"
+	},
+	benefits = { -- amazing new stuff
+		{ type = "experiment_throughput_multiplier", value = 1.5 }
+	},
+})
+
+-- ==========
+-- -- 1992 --
+-- ==========
+
+-- hardware
+ctw_technologies.register_technology("splitter", {
+	name = S("Split Router"),
+	description = S("Split various kinds of cables to improve the wire usage."),
+	year = 1992,
+	requires = {
+		"merger" -- or better
+	},
+	benefits = {
+		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
+	},
+})
+
+-- software
+ctw_technologies.register_technology("lynx", {
+	name = S("Lynx Webbrowser"),
+	description = S("This text-based browser was originally thought to share campus information. But it works to good."),
+	year = 1992,
+	requires = {
+		"violawww" -- does not really depend on this one. make it a dead-end?
+	},
+	benefits = {
+		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
+	},
+})
+
+-- ==========
+-- -- 1993 --
+-- ==========
+
+-- protocol
+ctw_technologies.register_technology("cidrrouting", {
+	name = S("Classless Inter-Domain Routing"),
+	description = S("Introduce subnets to prevent running out of addresses for your network computers."),
+	year = 1993,
+	requires = {
+		"merger"
+	},
+	benefits = {
+		{ type = "router_throughput_multiplier", value = 0.8 },
+	},
+})
+
+-- service
+ctw_technologies.register_technology("gnn", {
+	name = S("Global Network Navigator"),
+	description = S("A joy for corporations. Advertise your goods on the world wide web."),
+	year = 1993,
+	requires = {
+		"cernbook"
+	},
+	benefits = {
+		{ type = "receiver_throughput_multiplier", value = 3 },
+	},
+})
+
+-- ??
+ctw_technologies.register_technology("wwwpublic", {
+	name = S("WWW in Public Domain"),
+	-- TODO: Better description
+	description = S("Everybody may use the world wide web, it is no longer for educational use."),
+	year = 1993,
+	requires = {
+		"linux",
+		"cernpage",
+		"lynx"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("mosaic", {
+	name = S("NCSA Mosaic Browser"),
+	description = S("This brower is capable of display images within the page. Easy to install for oridianry users."),
+	year = 1993,
+	requires = {
+		"lynx"
+	},
+})
+
+-- ==========
+-- -- 1994 --
+-- ==========
+
+-- protocol
+ctw_technologies.register_technology("url", {
+	name = S("Uniform Resource Locator"),
+	description = S("This standard describes how to address files on a webpage."),
+	year = 1994,
+	requires = {
+		"dns",
+		"gnn",
+		"wwwpublic"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("netscape", {
+	name = S("Netscape"),
+	description = S("Continued development of NCSA Mosaic with an easy webpage editor built-in ('Gold' version)."),
+	year = 1994,
+	requires = {
+		"dns",
+		"gnn",
+		"wwwpublic"
+	},
+})
+
+-- ==========
+-- -- 1995 --
+-- ==========
+
+-- hardware
+ctw_technologies.register_technology("fastethernet", {
+	name = S("Fast Ethernet"),
+	description = S("Twisted-pair or optical fiber wires that are capable to deliver 100 Mbps throughput."),
+	year = 1995,
+	requires = {
+		"cat5"
+	},
+	benefits = {
+		{ type = "wire_throughput_multiplier", value = 10 }
+	},
+})
+
+-- software TODO: Maybe delete?
+ctw_technologies.register_technology("iexplore", {
+	name = S("Internet Explorer"),
+	description = S("Bad decisions were made. Your chance to repeat them."),
+	year = 1995,
+	requires = {
+		"mosaic"
+	},
+	benefits = {
+		{ type = "experiment_throughput_multiplier", value = 0.8 }
+	},
+})
+
+-- software
+ctw_technologies.register_technology("png", {
+	name = S("Portable Network Graphics"),
+	description = S("Images with more than 256 different colors become common: an alternative for GIFs."),
+	year = 1995,
+	requires = {
+		"gnn"
+	},
+})
+
+-- software
+ctw_technologies.register_technology("w3c", {
+	name = S("World Wide Web Consortium"),
+	description = S("Tim Berners-Lee's organization to define standards in the world wide web."),
+	year = 1995,
+	requires = {
+		"url",
+		"netscape"
+	},
+})
+
+
+-- TODO
+
+--[[
 	benefits = {
 		{type="victory"}
 	},
-})
+]]
