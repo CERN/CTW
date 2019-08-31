@@ -22,15 +22,8 @@ local function table_index(t, what)
 	end
 end
 
--- Ugly hack. Check with ctw_resources
-local idea_levels = {
-	"undiscovered",
-	"discovered",
-    "published",
-	"approved",
-	"inventing",
-	"invented"
-}
+-- Import possible states from ctw_resources
+local idea_levels = ctw_resources.idea_states
 
 local cmd_defs = {
 --BEGIN COMMAND DEFINITIONS

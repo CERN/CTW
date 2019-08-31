@@ -9,13 +9,29 @@ NPC_Event = {
 		dialogue = "Hello $PLAYER. Good luck on your mission!",
 		-- ^ Text to say
 		conditions = {
-			{ func = function, item = "", weight = 2/nil },
-			{ idea_id = "bar", dp_min = 10, weight = 2/nil },
+			-- Examples:
+			{ func = function, item = "default:stick", weight = 2 },
+			{ idea_id = "bar", dp_min = 1000 },
 		}
 		-- ^ Per table entry: AND-connected conditions
-		-- One condition table has to match entirely to be called
-		-- 'func': Function to check 'function(player)'
-		--   Return 'number' (weight) on success, nil on failure
+		-- Possible conditions: Each adds one weight point (except 'weight')
+		--   'func':    Function to check 'function(player)'
+		--     Return 'number' (weight) on success, nil on failure
+		--   'item':    'ItemStack' that must be present in the player's inventory
+		--   'dp_min':  minimal amount of Discovery Points
+		--   'idea':    Conditional idea checking
+		--     Example: '{ "idea_id", "<COMPARISON>", "<IdeaState>" }'
+		--     COMPARISON types: (see 'IdeaState' string states)
+		--       'eq': Equals
+		--       'lt': Less than
+		--       'gt': Greather than
+		--   'tech':    Conditional technology checking
+		--     Same as 'idea' above, see 'TechState' string state
+		--   'weight':  Overall additional weight for this condition
+		-- See also: 'npc.register_event_idea_approve'
+		--   and 'npc.register_event_idea_discover'
+		-- The dialogue with the highest weight will be displayed to the player
+		
 		options = {
 			{ text = "", target = "id"/function },
 		}

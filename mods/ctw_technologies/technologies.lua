@@ -10,45 +10,7 @@ Once permission is granted, a certain time elapses until the technology is succe
 
 There is a technology tree, which tells in which order technologies can be invented. For a technology to
 be invented, certain technologies need to be invented before.
-
-After all tech registrations are complete, some fields are auto-generated (such as children)
-
-["www"] = {
-		name = "World Wide Web",
-		description = "A network of interconnected devices where all kinds of information are easily accessible.",
-		requires = {
-			"html",
-			"lan",
-		} -- Technologies that need to be invented before
-		benefits = {
-			<benefit definition>
-			-- List of benefits that this technology gives the team. Implementation details are not clear yet.
-			-- At the moment for testing purposes:
-			{ image = "", label = ""}
-		}
-
-		min_tree_level = <n>
-		-- Optional, if specified tells the minimum level at which this element will be
-		-- positioned in the tree. Defaults to 0
-
-		tree_line = <n>
-		-- Optional, on which line to place the node
-
-		tree_conn_loc = <llvl>
-		-- optional, between which nodes to place the bend
-
-		-- Those fields are filled in after registration automatically:
-		enables = {
-			-- Technologies that are now possible
-		}
-		tree_level = <n>
-		-- Level on the technology tree where this tree element is drawn. Determined
-		-- by a topological sort. Do never specify this manually
-	}
-
-	Documentation is automatically generated out of these data
-
-]]--
+]]
 
 local technologies = {}
 local _register_on_gain = {}
@@ -207,9 +169,7 @@ function ctw_technologies._get_technologies()
 end
 
 
--- Get the state of a team technology. This returns a table
--- {state = "undiscovered"} - Technology is not invented
--- {state = "gained"} - Idea has been prototyped and technology has been gained.
+-- Returns 'TechState' for the specified team
 function ctw_technologies.get_team_tech_state(id, team)
 	if not team._ctw_technologies_tech_state then
 		team._ctw_technologies_tech_state = {}

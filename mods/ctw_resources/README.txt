@@ -40,6 +40,7 @@ IdeaDef = {
 		[technology IDs],...
 	}
 }
+Documentation (doc mod) is automatically generated from ItemDef.
 
 IdeaState = {
 	state = string,
@@ -61,6 +62,9 @@ IdeaState = {
 
  Idea API
 ----------
+
+ctw_resources.idea_states = {}
+	-- Table listing all idea state strings from 'IdeaState'
 
 ctw_resources.register_idea(idea_id, idea_def, itemdef_p)
 	-- Registers an idea and a craftitem for it
@@ -129,7 +133,7 @@ ctw_resources.set_team_idea_state(idea_id, team, state, param)
 	-- Set the state of a team idea
 	-- 'team': 'Team def'
 	-- 'state': 'state' from 'IdeaState'
-	-- 'param': 'string' or 'number' to assign to 'by' or 'target'
+	-- 'param': 'string'/'number'/nil value to assign to 'by' or 'target'
 	--    See 'IdeaState' for the correct type
 
 ctw_resources.update_doc_reveals(team)

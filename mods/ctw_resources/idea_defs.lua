@@ -4,11 +4,11 @@
 local S = minetest.get_translator("ctw_resources")
 
 -- === DATA FORMATS === --
-ctw_resources.register_idea("ascii", {
-	name = S("ASCII"),
-	description = S("It is necessary to create one unique standard for character encoding that every device complies to."),
+ctw_resources.register_idea("sgml", {
+	name = S("SGML"),
+	description = S("Enriched and formatted text that is human- and machine-readable."),
 	technologies_gained = {
-		"ascii",
+		"sgml",
 	},
 	references_required = {
 		"books:book_data_formats 2"
@@ -71,12 +71,12 @@ ctw_resources.register_idea("tcp_ip", {
 	},
 })
 
-ctw_resources.register_idea("router", {
+ctw_resources.register_idea("merge_router", {
 	name = S("Wire routing"),
 	description = S("Some of our cables are only used partially. Please invent something"..
 		" so that we can merge and split cables to connect multiple servers."),
 	technologies_gained = {
-		"router",
+		"merger",
 	},
 	references_required = {
 		"books:book_hf_freq 1",
@@ -85,11 +85,11 @@ ctw_resources.register_idea("router", {
 	},
 })
 
-ctw_resources.register_idea("www", {
-	name = S("The World Wide Web"),
-	description = S("With all those technologies gathered, we can finally create the World Wide Web!"),
+ctw_resources.register_idea("httpd", {
+	name = S("First WWW server"),
+	description = S("The time has come to write the first server for the world wide web."),
 	technologies_gained = {
-		"www",
+		"httpd",
 	},
 	references_required = {
 		"books:book_program_c 2",

@@ -1,45 +1,16 @@
 -- Craft The Web
 -- ideas.lua: API for "idea" resources.
 
---[[
-	An idea is a special item a team gets from NPCs or by other means.
-	When a player gets an idea, it is available for the whole team once
-	he returned to the team space. An Idea is an "instruction" how to get
-	to a certain technology.
-	An "idea" is referenced by a unique identifier.
-
-	[idea] = {
-		name = "ASCII",
-		description = "It is necessary to create one unique standard for
-			character encoding that every device complies to. ",
-		technologies_gained = {
-			[technology IDs],...
-			-- List of technologies (=awards) the team will gain when
-				getting permission for this idea.
-		}
-		references_required = {
-			[ItemStack],...
-			-- List of references (=books) required, as ItemStacks
-			-- Be sure not to include one item name multiple times, this will lead to incorrect behavior!
-		}
-		dp_required = 1000
-		-- Number of Discovery Points that are required to get this idea.
-		-- This is just an orientational value when NPCs should give out the idea
-		invention_dp = 1200
-		-- DP which must be gained to invent the technology
-		-- When starting invention, the current DP value is saved, technology will be finished when
-		-- the score goes over DP+invention_dp.
-
-		-- This field will be filled out automatically at registration based on technologies
-		technologies_required = {
-			[technology IDs],...
-		}
-	}
-
-	Documentation is automatically generated out of these data
-]]
-
 local ideas = {}
+
+ctw_resources.idea_states = {
+	"undiscovered",
+	"discovered",
+	"published",
+	"approved",
+	"inventing",
+	"invented"
+}
 
 local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
@@ -303,13 +274,7 @@ function ctw_resources.publish_idea(idea_id, team, pname, try)
 end
 
 
--- Get the state of a team idea. This returns a table
--- {state = "undiscovered"} - Idea is not discovered yet
--- {state = "discovered", by = "pname"} - Idea is discovered by a team member but not on team billboard
--- {state = "published"} - Idea is discovered and published on team billboard. Every team member can access it.
--- {state = "approved", by = "pname"} - Idea is approved, but prototyping has not started yet
--- {state = "inventing", target = <DP score>} - Idea is being prototyped
--- {state = "invented"} - Idea has been prototyped and technologies have been gained.
+-- Returns 'IdeaState' for the specified team
 function ctw_resources.get_team_idea_state(idea_id, team)
 	if not team._ctw_resources_idea_state then
 		team._ctw_resources_idea_state = {}
@@ -320,6 +285,7 @@ function ctw_resources.get_team_idea_state(idea_id, team)
 	end
 	return state
 end
+
 -- Set the state of a team idea. param is either "by" or "finish" depending on situation
 function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 	if not team._ctw_resources_idea_state then

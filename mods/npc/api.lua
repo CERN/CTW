@@ -5,6 +5,14 @@ npc.registered_npcs = {}
 
 math.randomseed(os.time())
 
+local function table_index(t, what)
+	for k, v in pairs(t) do
+		if v == what then
+			return k
+		end
+	end
+end
+
 function npc.register_event(npc_name, def)
 	assert(npc.registered_events[npc_name], "NPC " ..
 			npc_name .. " was yet not registered")
@@ -76,17 +84,44 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	npc.register_event(npc_name, def)
 end
 
-function npc.register_event_from_idea(npc_name, dialogue, idea_id)
-	error("Deprecated")
+local function check_lut_comparison(value_1, cmp, value_2, lut)
+	if cmp == "eq" then
+		return value_1 == value_2
+	end
+	local index_1 = table_index(lut, value_1)
+	local index_2 = table_index(lut, value_2)
+	assert(index_1, "Invalid LUT entry 1 '" .. value_1 .. "'")
+	assert(index_2, "Invalid LUT entry 2 '" .. value_2 .. "'")
+	if cmp == "lt" then
+		return index_1 < index_2
+	end
+	if cmp == "gt" then
+		return index_1 > index_2
+	end
+	error("Invalid comparison: " .. cmp)
 end
-
-local player_formspecs = {}
 
 local function check_condition(player, c)
 	local weight = 0
+	local teamdef = teams.get_by_player(player)
 	if c.dp_min then
-		local teamdef = teams.get_by_player(player)
 		if teams.get_points(teamdef.name) < c.dp_min then
+			return
+		end
+		weight = weight + 1
+	end
+	if c.idea then
+		local current = ctw_resources.get_team_idea_state(c.idea[1], teamdef).state
+		if not check_lut_comparison(current, c.idea[2], c.idea[3],
+				ctw_resources.idea_states) then
+			return
+		end
+		weight = weight + 1
+	end
+	if c.tech then
+		local current = ctw_technologies.get_team_tech_state(c.tech[1], teamdef).state
+		if not check_lut_comparison(current, c.tech[2], c.tech[3],
+				{"undiscovered", "gained"}) then
 			return
 		end
 		weight = weight + 1
@@ -169,13 +204,18 @@ function npc.get_event_by_id(id)
 	end
 end
 
+local player_formspecs = {}
+
 function npc.show_dialogue(player, npc_name, def)
 	local player_name = player:get_player_name()
 	if not def then
 		-- Pick something
 		def = find_best_matching_event(player, npc_name)
 	end
-	assert(def, "Cannot find any matching event")
+	if not def then
+		minetest.chat_send_player(player_name, "Sorry, I don't have any news for you.")
+		return
+	end
 
 	-- TODO: Translation goes here
 	local answer = def.dialogue

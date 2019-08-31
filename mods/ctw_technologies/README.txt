@@ -18,6 +18,7 @@ After all tech registrations are complete, some fields are auto-generated (such 
 -----------------------
 The provided data is used to generate the documentation.
 
+After all tech registrations are complete, some fields are auto-generated (such as children)
 TechDef = {
 	name = "World Wide Web",
 	description = "A network of interconnected devices where all kinds of information are easily accessible.",
@@ -47,6 +48,7 @@ TechDef = {
 	-- Level on the technology tree where this tree element is drawn. Determined
 	-- by a topological sort. Do never specify this manually
 }
+Documentation (doc mod) is automatically generated from TechDef.
 
 TechState = {
 	state = string,

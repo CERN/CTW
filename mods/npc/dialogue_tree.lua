@@ -10,12 +10,16 @@ npc.register_npc("programmer", {
 
 npc.register_event("programmer", {
 	id = "test1",
-	dialogue = S("$PLAYER, line1\n\n\nlineX;:/\\]"),
+	dialogue = S("$PLAYER: setting sgml to gained."),
+	conditions = {
+		{ idea = {"sgml", "gt", "undiscovered"} }
+	}, 
 	options = {
 		{
-			text = "get",
-			target = function(player, event)
-				player:get_inventory():add_item("main", "default:stick")
+			text = "Set to gained",
+			target = function(player)
+				local teamdef = teams.get_by_player(player)
+				ctw_resources.set_team_idea_state("sgml", teamdef, "gained")
 			end
 		},
 		{ text = "a", target = function() end },
@@ -25,11 +29,9 @@ npc.register_event("programmer", {
 	}
 })
 
-npc.register_event_idea_discover("programmer", "ascii", {
-	dialogue = S("What if there was a standard for character encoding?")
-})
+npc.register_event_idea_discover("programmer", "httpd", {})
+npc.register_event_idea_approve("programmer", "httpd")
 
-npc.register_event_idea_approve("programmer", "ascii")
 
 npc.register_npc("engineer", {
 	infotext = S("Engineer"),
