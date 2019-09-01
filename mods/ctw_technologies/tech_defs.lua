@@ -393,7 +393,7 @@ ctw_technologies.register_technology("httpd", {
 -- software
 ctw_technologies.register_technology("wwwbrowser", {
 	name = S("WorldWideWeb Browser"),
-	description = S("Tim Bernsers-Lee provides this browser as a foundation to browse on the internet."),
+	description = S("Tim Berners-Lee provides this browser as a foundation to browse on the internet."),
 	year = 1990,
 	requires = {
 		"html"

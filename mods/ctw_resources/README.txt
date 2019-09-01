@@ -35,7 +35,8 @@ IdeaDef = {
 	-- When starting invention, the current DP value is saved, technology will be finished when
 	-- the score goes over DP+invention_dp.
 
-	-- This field will be filled out automatically at registration based on technologies
+	-- This field will be added automatically at registration based on the
+	-- 'TechDef' reqirements of those specified in 'technologies_gained'
 	technologies_required = {
 		[technology IDs],...
 	}
