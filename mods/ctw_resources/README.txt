@@ -73,6 +73,12 @@ ctw_resources.register_idea(idea_id, idea_def, itemdef_p)
 	-- 'idea_def': 'IdeaDef'
 	-- 'itemdef_p': (optional) 'ItemDef' for custom item definition fields
 
+ctw_resources.register_idea_from_tech(tech_id, idea_def, itemdef_p)
+	-- Registers an idea based on the technology ID.
+	-- 'tech_id': string, existing technology ID
+	-- 'itemdef_p': (optional)
+	-- Values are passed to 'ctw_resources.register_idea'
+
 ctw_resources.get_idea(idea_id)
 	-- Returns: 'IdeaDef'
 

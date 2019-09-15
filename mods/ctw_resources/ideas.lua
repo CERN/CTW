@@ -190,6 +190,21 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	logs("Registered Idea: "..id)
 end
 
+function ctw_resources.register_idea_from_tech(tech_id, idea_def, itemdef_p)
+	local tech = ctw_technologies.get_technology(tech_id)
+	assert(idea_def.references_required, "Missing references table")
+	local def = {
+		name = tech.name,
+		description = "[Idea] " .. tech.description,
+		technologies_gained = { tech_id }
+	}
+	for k, v in pairs(idea_def) do
+		def[k] = v
+	end
+	ctw_resources.register_idea(tech_id, def, itemdef_p)
+end
+
+
 function ctw_resources.get_idea_raw(idea_id)
 	return ideas[idea_id]
 end

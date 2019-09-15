@@ -41,6 +41,14 @@ local book_types = {
 		S("The Art Of Crafting"),
 		S("Metal processing and compact wire designs are part of this book.")
 	},
+	design = {
+		S("Design Like A Pro Course Book"),
+		S("Detailed design recommendations including DOs and DONTs. Interfaces also need a design.")
+	},
+	notebook = {
+		S("Notebook for your ideas"),
+		S("Certain plans need long planning and re-considerations. Contains free space to note stuff.")
+	},
 	-- add whatever you want here. colors are key-hash-based
 }
 
