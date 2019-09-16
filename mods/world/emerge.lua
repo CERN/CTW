@@ -44,7 +44,8 @@ end
 -- Place schematic on mapgen
 minetest.register_on_generated(function(minp, maxp, blockseed)
 	local vm = minetest.get_mapgen_object("voxelmanip")
-	minetest.place_schematic_on_vmanip(vm, { x = 0, y = 0, z = 0 }, map_path)
+	local origin = world.get_location("world_1")
+	minetest.place_schematic_on_vmanip(vm, origin, map_path)
 	vm:write_to_map()
 end)
 
