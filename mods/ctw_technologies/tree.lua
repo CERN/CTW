@@ -172,22 +172,33 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 
 		local tech = ctw_technologies.get_technology(techid)
 		local img = tech.image or "ctw_technologies_technology.png"
+		
+		local name
+		if hithis then
+			name = minetest.colorize("#FF0000", tech.name)
+		elseif disco then
+			name = minetest.colorize("#00FF00", tech.name)
+		else
+			name = tech.name
+		end
 
 		local form = "image_button["
 						..(x)..","..(y)..";"..fwim..","..fhim..";"
 						..img..";"
 						.."goto_tech_"..techid..";"
 						.."]"
-		form = form .. "textarea["
-						..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
-						..";;"..tech.name.."]"
+		--form = form .. "textarea["
+		--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
+		--				..";;"..name.."]"
+		form = form .. "label["
+						..(x+fwim)..","..(y)..";"..name.."]"
 		return form
 	end
 
 
 -- Renders the technology tree onto a given formspec area
 --
-function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scrollpos, discovered_techs, hilit)
+function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discovered_techs, scrollpos, hilit)
 
 	local lvl_init_off = 0.5
 	local lvl_space = 4
@@ -241,9 +252,18 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scroll
 end
 
 function ctw_technologies.show_tech_tree(pname, scrollpos)
+	local team = teams.get_by_player(pname)
+	local dtech = {}
+	if team then
+		for techid,_ in pairs(ctw_technologies._get_technologies()) do
+			if ctw_technologies.is_tech_gained(techid, team) then
+				dtech[techid] = true
+			end
+		end
+	end
 	local form = "size[17,10]"
 			.."label[0.5,0.5;Technology Tree]"
-			..ctw_technologies.render_tech_tree(0, 0, 17, 10, scrollpos, {}, nil)
+			..ctw_technologies.render_tech_tree(0, 0, 17, 10, dtech, scrollpos, nil)
 	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
 end
 
