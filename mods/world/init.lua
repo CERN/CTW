@@ -9,3 +9,29 @@ else
 	minetest.chat_send_all("** WORLD BUILDER MODE **")
 	dofile(minetest.get_modpath("world") .. "/builder.lua")
 end
+
+function world.teleport_to_spawn(player)
+	local team = teams and teams.get_by_player(player)
+	local spawn
+	if team then
+		spawn = world.get_team_location(team.name, "spawn")
+	else
+		spawn = world.get_location("spawn")
+	end
+
+	if spawn then
+		player:set_pos(spawn)
+	end
+end
+
+minetest.register_on_newplayer(world.teleport_to_spawn)
+minetest.register_on_respawnplayer(world.teleport_to_spawn)
+
+minetest.register_chatcommand("spawn", {
+	func = function(name)
+		local player = minetest.get_player_by_name(name)
+		if player then
+			world.teleport_to_spawn(player)
+		end
+	end,
+})
