@@ -47,6 +47,44 @@ dp = function(name, params)
 	return true, "New points: " .. points
 end,
 
+idea = function(name, params)
+	local team = get_team_or_nil(name, params[1])
+	if not team then
+		return false, "Unknown team: " .. params[1]
+	end
+
+	params[2] = params[2] or "?nil"
+	local idea_id = params[2]:sub(2)
+	if not ctw_resources.get_idea_raw(idea_id) then
+		local text_available = {}
+		for id, def in pairs(ctw_resources._get_ideas()) do
+			table.insert(text_available, id)
+		end
+		return false, "Unknown idea: " .. params[2] ..
+				"\nAvailable ideas: " .. table.concat(text_available, ", ")
+	end
+
+	local state_str = ctw_resources.get_team_idea_state(idea_id, team).state
+	local sign = params[2]:sub(1, 1)
+	print(dump(ctw_resources.get_team_idea_state(idea_id, team)))
+	local state = table_index(idea_levels, state_str) or 0
+	if sign == "+" then
+		state = state + 1
+	elseif sign == "-" then
+		state = state - 1
+	else
+		return false, "Unknown modifier: " .. sign
+	end
+	local new_state = math.max(1, math.min(state, #idea_levels))
+	state_str = idea_levels[new_state]
+	if new_state ~= state then
+		return false, "State unmodified: " .. state_str
+	end
+	ctw_resources.set_team_idea_state(idea_id, team, state_str,
+		state_str == "inventing" and 1000 or name)
+	return true, "State set to: " .. state_str
+end,
+
 team = function(name, params)
 	local player = get_player_or_nil(name, params[1])
 	local team = get_team_or_nil(name, params[2])
@@ -97,42 +135,64 @@ tech = function(name, params)
 	return true, ret
 end,
 
-idea = function(name, params)
+wipe = function(name, params)
+	local to_wipe = {}
+	if params[1] == "all" then
+		for i, team in pairs(teams.get_all()) do
+			table.insert(to_wipe, team.name)
+		end
+	else
+		local team = get_team_or_nil(name, params[1])
+		if not team then
+			return false, "Unknown team: " .. params[1]
+		end
+		to_wipe = { team.name }
+	end
+	local keep_fields = {
+		"name", "display_name",
+		"display_name_capitalized",
+		"color", "color_hex"
+	}
+	for i, tname in ipairs(to_wipe) do
+		local team = teams.get(tname)
+		for k, v in ipairs(team) do
+			if not table_index(keep_fields, k) then
+				team[k] = nil -- Table reference
+			end
+		end
+		team.points = 0
+		teams.add_points(tname, 0) -- Trigger callbacks
+	end
+
+	return true, "Wiped data of following teams: " .. table.concat(to_wipe, ",")
+end,
+
+year = function(name, params)
 	local team = get_team_or_nil(name, params[1])
 	if not team then
 		return false, "Unknown team: " .. params[1]
 	end
+	local dst_year = tonumber(params[2]) or 1980
 
-	params[2] = params[2] or "?nil"
-	local idea_id = params[2]:sub(2)
-	if not ctw_resources.get_idea_raw(idea_id) then
-		local text_available = {}
-		for id, def in pairs(ctw_resources._get_ideas()) do
-			table.insert(text_available, id)
+	local ideas = ctw_resources._get_ideas() -- UNDOCUMENTED
+	for idea_id, idea_def in pairs(ideas) do
+		local idea_year = 0
+
+		for i, tech_id in ipairs(idea_def.technologies_gained) do
+			local tech_def = ctw_technologies.get_technology(tech_id)
+			idea_year = math.max(idea_year, tech_def.year)
 		end
-		return false, "Unknown idea: " .. params[2] ..
-				"\nAvailable ideas: " .. table.concat(text_available, ", ")
+
+		ctw_resources.set_team_idea_state(idea_id, team,
+			idea_year > dst_year and "undiscovered" or "invented")
 	end
 
-	local state_str = ctw_resources.get_team_idea_state(idea_id, team).state
-	local sign = params[2]:sub(1, 1)
-	print(dump(ctw_resources.get_team_idea_state(idea_id, team)))
-	local state = table_index(idea_levels, state_str) or 0
-	if sign == "+" then
-		state = state + 1
-	elseif sign == "-" then
-		state = state - 1
-	else
-		return false, "Unknown modifier: " .. sign
+	local techs = ctw_technologies._get_technologies() -- UNDOCUMENTED
+	for tech_id, tech_def in pairs(techs) do
+		ctw_technologies.set_team_tech_state(tech_id, team,
+			tech_def.year >= dst_year and "undiscovered" or "gained")
 	end
-	local new_state = math.max(1, math.min(state, #idea_levels))
-	state_str = idea_levels[new_state]
-	if new_state ~= state then
-		return false, "State unmodified: " .. state_str
-	end
-	ctw_resources.set_team_idea_state(idea_id, team, state_str,
-		state_str == "inventing" and 1000 or name)
-	return true, "State set to: " .. state_str
+	return true, "Changed to year " .. dst_year
 end,
 -- END COMMAND DEFINITIONS
 }
@@ -148,8 +208,8 @@ minetest.register_chatcommand("/", {
 			return func(name, params)
 		end
 		local cmds = {}
-		for func, _ in pairs(cmd_defs) do
-			table.insert(cmds, func)
+		for cfunc, _ in pairs(cmd_defs) do
+			table.insert(cmds, cfunc)
 		end
 		return false, "Possible params: " .. table.concat(cmds, ", ")
 	end

@@ -19,6 +19,14 @@ name, depending on the context
 	.      420             Set DPs to 420
 	green  0               Reset DPs of team "green"
 
+### idea (Modify idea state)
+Outputs all registered IDs if there is an invalid entry.
+
+	Team  Modifier&Idea_ID
+	.     +idea_id         Next idea state
+	.     -idea_id         Previous idea state
+	green +idea_id         Apply for team "green"
+
 ### team (Change the team)
 
 	Player  Team
@@ -34,11 +42,18 @@ Processes all given IDs. Outputs all registered IDs if there are invalid entries
 	green +tech_id         Apply for team "green"
 	red   +id1 -id2 ..     Bulk update
 
-### idea (Modify idea state)
-Outputs all registered IDs if there is an invalid entry.
+### wipe (Delete team data)
+Deletes any team data
 
-	Team  Modifier&Idea_ID
-	.     +idea_id         Next idea state
-	.     -idea_id         Previous idea state
-	green +idea_id         Apply for team "green"
+    Team
+	.    Current team
+	all  All teams
 
+
+### year (Set year number)
+Resets any technologies and idea states after this year and sets all preceding
+states to completed.
+
+    Team  Year
+	.     1980 Back to the start
+	red   1984 Ready for tokenring, cerndoc, tangle
