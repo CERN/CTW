@@ -288,7 +288,7 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
 	minetest.chat_send_player(pname, "You got an idea: "..idea.name..
 			"! Proceed to your team space and share it on the team billboard!")
 	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
-	doc.mark_entry_as_revealed(pname, "ctw_ideas", idea_id)
+	
 	-- Note: if another player secretly had gotten this idea before, this will be overwritten.
 	-- Should not cause side-effects.
 	ctw_resources.set_team_idea_state(idea_id, team, "discovered", pname)

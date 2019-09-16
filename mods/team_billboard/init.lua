@@ -63,7 +63,7 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 	if pers_msg then
 		table.insert(form, "label[0,2;"..pers_msg.."]")
 	end
-	table.insert(form, "button[6.5,0;3.5,1;doc;View knowledge base]")
+	table.insert(form, "button[6.5,0;3.5,1;tech_tree;View Technology tree]")
 
 	for index, item in ipairs(ilist) do
 		if minetest.get_item_group(item:get_name(), "ctw_idea") > 0 then
@@ -111,9 +111,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		open_forms[tname][pname] = nil
 		return
 	end
-	if fields.doc then
+	if fields.tech_tree then
 		open_forms[tname][pname] = nil
-		doc.show_doc(pname)
+		ctw_technologies.show_tech_tree(pname,0)
 		return
 	end
 

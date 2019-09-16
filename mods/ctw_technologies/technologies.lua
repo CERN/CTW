@@ -137,8 +137,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		for rn, techid in ipairs(tech.requires) do
 			if fields["goto_tr_"..rn] then
-				if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
-					doc.show_entry(pname, "ctw_technologies", techid)
+				if technologies[techid] then
+					ctw_technologies.show_technology_form(pname, techid)
 				end
 			end
 		end
