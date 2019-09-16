@@ -65,6 +65,7 @@ function ctw_resources.show_reference_form(pname, id)
 	
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:ref_"..id, form)
+	return true
 end
 
 function ctw_resources.register_reference(id, itemdef)

@@ -47,7 +47,7 @@ FORM.ENTRY_HEIGHT = FORM.ENTRY_END_Y - FORM.ENTRY_START_Y
 function ctw_technologies.show_technology_form(pname, techid)
 	local tech = technologies[techid]
 	if not tech then
-		error("tech_form_builder: ID "..techid.." is unknown!")
+		return false
 	end
 	
 	local team = teams.get_by_player(pname)
@@ -123,6 +123,7 @@ function ctw_technologies.show_technology_form(pname, techid)
 
 	-- show it
 	minetest.show_formspec(pname, "ctw_technologies:entry_"..techid, form)
+	return true
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
