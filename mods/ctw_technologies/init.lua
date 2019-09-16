@@ -16,6 +16,15 @@ dofile(mp.."delivery.lua")
 ctw_technologies.build_tech_tree()
 
 
+-- gain initial technologies
+for team_id, team in pairs(teams.get_all()) do
+	for tech_id, tech in pairs(ctw_technologies._get_technologies()) do
+		if tech.year < 1980 then
+			ctw_technologies.gain_technology(tech_id, team)
+		end
+	end
+end
+
 -- TODO only for testing
 
 minetest.register_chatcommand("ctwt", {
