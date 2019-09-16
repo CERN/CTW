@@ -21,10 +21,13 @@ function world.set_team_location(tname, name, pos)
 end
 
 function world.get_area(name)
-	return {
-		from = world.get_location(name .. "_1"),
-		to = world.get_location(name .. "_2")
-	}
+	local from = world.get_location(name .. "_1")
+	local to = world.get_location(name .. "_2")
+	if from and to then
+		return { from = from, to = to }
+	else
+		return nil
+	end
 end
 
 function world.get_team_area(tname, name)
