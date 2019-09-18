@@ -89,7 +89,7 @@ function ctw_resources.show_idea_form(pname, id)
 		text = is_visible and idea.description,
 		labeltext = "This idea is not yet discovered by your team.",
 		
-	})
+	}, pname)
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:idea_"..id, form)
 	return true
@@ -108,16 +108,27 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		for field,_ in pairs(fields) do
 			local tech_id = string.match(field, "^goto_tech_(.+)$");
 			if tech_id and ctw_technologies._get_technologies()[tech_id] then
+				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_resources.show_idea_form(pname, id) end)
 				ctw_technologies.show_technology_form(pname, tech_id)
 				return
 			end
 			
 			local ref_id = string.match(field, "^goto_ref_(.+)$");
 			if ref_id then
+				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_resources.show_idea_form(pname, id) end)
 				ctw_resources.show_reference_form(pname, ref_id)
 				return
 			end
 		end
+		
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
+		end
+		
 	end
 
 end)

@@ -113,6 +113,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	if fields.tech_tree then
 		open_forms[tname][pname] = nil
+		ctw_technologies.form_returnstack_push(pname, function(pname) team_billboard.show_billboard_form(pname, tname) end)
 		ctw_technologies.show_tech_tree(pname,0)
 		return
 	end
@@ -120,6 +121,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	for field, _ in pairs(fields) do
 		local idea_id = string.match(field, "^idea_(.+)$")
 		if idea_id then
+			open_forms[tname][pname] = nil
+			ctw_technologies.form_returnstack_push(pname, function(pname) team_billboard.show_billboard_form(pname, tname) end)
 			ctw_resources.show_idea_form(pname, idea_id)
 		end
 	end

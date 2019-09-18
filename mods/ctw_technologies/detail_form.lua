@@ -1,5 +1,34 @@
 -- Common template for the technology/idea/resource information formspec.
 -- Helps with links and backlinks
+
+--[[
+
+This file forms a common template for the Ideas, Resources and Technologies formspecs. It helps with the
+form layout and by providing a "formspec return stack" to go back to pages you visited earlier.
+
+Using the Return Stack:
+
+The Stack is acctually just composed of functions whose task is to open a form. When one form is
+going to blast the user off to another form from its receive_fields callback, it must
+push a function that re-opens the form that is currently open at the player, like:
+		if fields.tech_tree then
+			ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
+			ctw_technologies.show_tech_tree(pname, 0)
+		end
+
+Additionally, it is in the responsibility of the using formspec implementations to call the back button action
+and clear the stack on form quit, as follows:
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
+		end
+]]--
+
+
+local returnstack = {}
 	
 -- Formspec information
 FORM = {}
@@ -57,7 +86,7 @@ local function form_render_tech_entries(form, xstart, tech_start_y, bt)
 end
 
 
-function ctw_technologies.get_detail_formspec(formdef)
+function ctw_technologies.get_detail_formspec(formdef, pname)
 	local n_tech_lines = 0
 	if formdef.bt1 then n_tech_lines = math.max(n_tech_lines, #formdef.bt1.entries) end
 	if formdef.bt2 then n_tech_lines = math.max(n_tech_lines, #formdef.bt2.entries) end
@@ -96,10 +125,49 @@ function ctw_technologies.get_detail_formspec(formdef)
 	
 	if formdef.add_btn_name then
 		form = form .. "button["
-				..(FORM.ENTRY_END_X-4.5)..","..(FORM.ENTRY_START_Y)..";4,1;"
+				..(FORM.ENTRY_END_X-4.5)..","..(FORM.ENTRY_START_Y)..";3,1;"
 				..formdef.add_btn_name..";"
 				..formdef.add_btn_label.."]"
 	end
-
+	
+	if returnstack[pname] and #returnstack[pname]>0 then
+		form = form .. "button["
+				..(FORM.ENTRY_END_X-1.5)..","..(FORM.ENTRY_START_Y)..";1.5,1;"
+				.."goto_back;"
+				.."<< Back]"
+	end
+	
 	return form
 end
+
+
+-- Push a function to re-open the just left form on the return stack
+-- func(pname)
+function ctw_technologies.form_returnstack_push(pname, form_open_func)
+	if not returnstack[pname] then
+		returnstack[pname] = {}
+	end
+	table.insert(returnstack[pname], form_open_func)
+end
+
+-- Open last visited form to player
+function ctw_technologies.form_returnstack_pop(pname)
+	local rs = returnstack[pname]
+	if not rs or #rs<1 then
+		return
+	end
+	local fun = rs[#rs]
+	rs[#rs]=nil
+	fun(pname)
+end
+
+-- On form quit, clear the return stack
+function ctw_technologies.form_returnstack_clear(pname)
+	returnstack[pname] = nil
+end
+
+
+
+
+
+

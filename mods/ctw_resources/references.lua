@@ -52,12 +52,29 @@ function ctw_resources.show_reference_form(pname, id)
 		title = ref.name,
 		text = ref.description,
 		
-	})
+	}, pname)
 	
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:ref_"..id, form)
 	return true
 end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	local pname = player:get_player_name()
+	
+	local id = string.match(formname, "^ctw_resources:ref_(.+)$");
+	if id then
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
+		end
+		
+	end
+
+end)
 
 function ctw_resources.register_reference(id, itemdef)
 	if not itemdef.groups then

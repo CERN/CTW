@@ -84,7 +84,7 @@ function ctw_technologies.show_technology_form(pname, techid)
 		
 		add_btn_name = "tech_tree", -- optional, additional extra button
 		add_btn_label = "Technology tree",
-	})
+	}, pname)
 
 	-- show it
 	minetest.show_formspec(pname, "ctw_technologies:technology_"..techid, form)
@@ -111,6 +111,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		for field,_ in pairs(fields) do
 			local tech_id = string.match(field, "^goto_tech_(.+)$");
 			if technologies[tech_id] then
+				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
 				ctw_technologies.show_technology_form(pname, tech_id)
 				return
 			end
@@ -121,7 +122,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 		if fields.tech_tree then
+			ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
 			ctw_technologies.show_tech_tree(pname, 0)
+		end
+		
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
 		end
 	end
 
