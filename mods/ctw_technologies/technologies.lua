@@ -56,22 +56,15 @@ function ctw_technologies.show_technology_form(pname, techid)
 		is_gained = true
 	end
 	
-	local function techfunc(tech_id)
-		local tech = ctw_technologies.get_technology(tech_id)
-		return "goto_tech_"..tech_id,
-				tech.name,
-				"ctw_technologies_technology.png"
-	end
-	
 	local form = ctw_technologies.get_detail_formspec({
 		bt1 = {
 			catlabel = "Technologies required:",
-			func = techfunc,
+			func = ctw_technologies.detail_formspec_bt_techfunc,
 			entries = tech.requires,
 		},
 		bt2 = {
 			catlabel = "Technologies unlocked:",
-			func = techfunc,
+			func = ctw_technologies.detail_formspec_bt_techfunc,
 			entries = tech.enables,
 		},
 		bt3 = {
@@ -90,13 +83,20 @@ function ctw_technologies.show_technology_form(pname, techid)
 		labeltext = "This technology is not yet discovered by your team.",
 		
 		add_btn_name = "tech_tree", -- optional, additional extra button
-		add_btn_label = "<<< Technology tree",
+		add_btn_label = "Technology tree",
 	})
 
 	-- show it
 	minetest.show_formspec(pname, "ctw_technologies:technology_"..techid, form)
 	return true
 end
+
+function ctw_technologies.detail_formspec_bt_techfunc(tech_id)
+		local tech = ctw_technologies.get_technology(tech_id)
+		return "goto_tech_"..tech_id,
+				tech.name,
+				"ctw_technologies_technology.png"
+	end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()

@@ -28,20 +28,6 @@ end
 
 local reference_entries = {}
 
--- Formspec information
-FORM = {}
--- Width of formspec
-FORM.WIDTH = 15
-FORM.HEIGHT = 10.5
-
---[[ Recommended bounding box coordinates for widgets to be placed in entry pages. Make sure
-all entry widgets are completely inside these coordinates to avoid overlapping. ]]
-FORM.ENTRY_START_X = 1
-FORM.ENTRY_START_Y = 0.5
-FORM.ENTRY_END_X = FORM.WIDTH
-FORM.ENTRY_END_Y = FORM.HEIGHT - 0.5
-FORM.ENTRY_WIDTH = FORM.ENTRY_END_X - FORM.ENTRY_START_X
-FORM.ENTRY_HEIGHT = FORM.ENTRY_END_Y - FORM.ENTRY_START_Y
 
 function ctw_resources.show_reference_form(pname, id)
 	local ref = reference_entries[id]
@@ -49,19 +35,24 @@ function ctw_resources.show_reference_form(pname, id)
 		return false
 	end
 	
-	local form = "size["..FORM.WIDTH..","..FORM.HEIGHT.."]real_coordinates[]"
-	
-	form = form .. "vertlabel[0.15,0.5"
-					..";R E F E R E N C E]";
-	form = form .. "box[0,0;0.5,"..FORM.HEIGHT..";#00FF00]";
-	
-	
-	form = form .. "label["
-					..FORM.ENTRY_START_X..","..FORM.ENTRY_START_Y
-					..";"..ref.name.."\n"..string.rep("=", #ref.name).."]";
-	
-	form = form .. doc.widgets.text(ref.description, FORM.ENTRY_START_X, FORM.ENTRY_START_Y + 1,
-				FORM.ENTRY_WIDTH - 0.4, FORM.ENTRY_HEIGHT-1)
+	local form = ctw_technologies.get_detail_formspec({
+		bt1 = {
+			catlabel = "",
+			entries = {},
+		},
+		bt2 = {
+			catlabel = "",
+			entries = {},
+		},
+		bt3 = {
+			catlabel = "",
+			entries = {},
+		},
+		vert_text = "R E F E R E N C E",
+		title = ref.name,
+		text = ref.description,
+		
+	})
 	
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:ref_"..id, form)

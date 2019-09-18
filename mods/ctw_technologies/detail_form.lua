@@ -33,12 +33,37 @@ FORM.ENTRY_HEIGHT = FORM.ENTRY_END_Y - FORM.ENTRY_START_Y
 	add_btn_label = "My Extra Button",
 	
 } ]]--
+local tech_line_h = 1
+
+local function form_render_tech_entries(form, xstart, tech_start_y, bt)
+	if not bt then return end
+	form = form .. "label["
+					..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y+0.2)
+					..";"..bt.catlabel.."]";
+	for idx,entry in ipairs(bt.entries) do
+		local btnname,label,img = bt.func(entry, idx)
+		local itembtn = bt.use_item_image_button and "item_" or ""
+
+		form = form .. itembtn.."image_button["
+						..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y + idx*tech_line_h - 0.2)..";1,1;"
+						..img..";"
+						..btnname..";"
+						.."]"
+		form = form .. "label["
+					..(FORM.ENTRY_START_X+xstart+1)..","..(tech_start_y + idx*tech_line_h)
+					..";"..label.."]";
+	end
+	return form
+end
 
 
 function ctw_technologies.get_detail_formspec(formdef)
-	local n_tech_lines = math.max(math.max(#formdef.bt1.entries, #formdef.bt2.entries), #formdef.bt3.entries)
+	local n_tech_lines = 0
+	if formdef.bt1 then n_tech_lines = math.max(n_tech_lines, #formdef.bt1.entries) end
+	if formdef.bt2 then n_tech_lines = math.max(n_tech_lines, #formdef.bt2.entries) end
+	if formdef.bt3 then n_tech_lines = math.max(n_tech_lines, #formdef.bt3.entries) end
+	
 
-	local tech_line_h = 1
 	local desc_height = FORM.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
 	local tech_start_y = FORM.ENTRY_START_Y + desc_height
 	local third_width = FORM.ENTRY_WIDTH / 3
@@ -63,38 +88,11 @@ function ctw_technologies.get_detail_formspec(formdef)
 					..";"..formdef.labeltext.."]";
 	end
 
-	local function form_render_tech_entry(idx, btnname, label, xstart, img)
-		form = form .. "image_button["
-						..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y + idx*tech_line_h - 0.2)..";1,1;"
-						..img..";"
-						..btnname..";"
-						.."]"
-		form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart+1)..","..(tech_start_y + idx*tech_line_h)
-					..";"..label.."]";
-	end
 
-	form = form .. "label["
-					..(FORM.ENTRY_START_X)..","..(tech_start_y+0.2)
-					..";"..formdef.bt1.catlabel.."]";
-	for idx,entry in ipairs(formdef.bt1.entries) do
-		local btnname,label,img = formdef.bt1.func(entry, idx)
-		form_render_tech_entry(idx, btnname, label, 0, img)
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
-					..";"..formdef.bt2.catlabel.."]";
-	for idx,entry in ipairs(formdef.bt2.entries) do
-		local btnname,label,img = formdef.bt2.func(entry, idx)
-		form_render_tech_entry(idx, btnname, label, third_width, img)
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
-					..";"..formdef.bt3.catlabel.."]";
-	for idx,entry in ipairs(formdef.bt3.entries) do
-		local btnname,label,img = formdef.bt3.func(entry, idx)
-		form_render_tech_entry(idx, btnname, label, 2*third_width, img)
-	end
+	form = form_render_tech_entries(form, 0, tech_start_y, formdef.bt1)
+	form = form_render_tech_entries(form, third_width, tech_start_y, formdef.bt2)
+	form = form_render_tech_entries(form, 2*third_width, tech_start_y, formdef.bt3)
+	
 	
 	if formdef.add_btn_name then
 		form = form .. "button["

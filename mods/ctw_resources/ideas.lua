@@ -59,81 +59,37 @@ function ctw_resources.show_idea_form(pname, id)
 			end
 		end
 	end
-
-	local n_tech_lines = math.max(math.max(#idea.references_required, #idea.technologies_required),
-			#idea.technologies_gained)
-
-	local tech_line_h = 1
-	local desc_height = FORM.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
-	local tech_start_y = FORM.ENTRY_START_Y + desc_height
-	local third_width = FORM.ENTRY_WIDTH / 3
-
-	local form = "size["..FORM.WIDTH..","..FORM.HEIGHT.."]real_coordinates[]"
 	
-	form = form .. "vertlabel[0.15,0.5"
-					..";I D E A]";
-	form = form .. "box[0,0;0.5,"..FORM.HEIGHT..";#00FF00]";
-	
-
-	form = form .. "label["
-					..FORM.ENTRY_START_X..","..FORM.ENTRY_START_Y
-					..";"..idea.name.."\n"..string.rep("=", #idea.name).."]";
-					
-	if is_visible then
-		form = form .. doc.widgets.text(idea.description, FORM.ENTRY_START_X, FORM.ENTRY_START_Y + 1,
-				FORM.ENTRY_WIDTH - 0.4, desc_height-1)
-	else
-		form = form .. "label["
-					..FORM.ENTRY_START_X..","..(FORM.ENTRY_START_Y+2)
-					..";This idea is not yet discovered by your team.]";
-	end
-
-	local function form_render_tech_entry(rn, what, label, xstart, img, cnt)
-		form = form .. "image_button["
-						..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y + rn*tech_line_h - 0.2)..";1,1;"
-						..img..";"
-						.."goto_"..what.."_"..rn..";"
-						.."]"
-		form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart+1)..","..(tech_start_y + rn*tech_line_h)
-					..";"..label.."]";
-		if cnt then
-			form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart-0.5)..","..(tech_start_y + rn*tech_line_h)
-					..";"..cnt.."x]";
-		end
-	end
-
-	form = form .. "label["
-					..(FORM.ENTRY_START_X)..","..(tech_start_y+0.2)
-					..";Technologies gained:]";
-	for rn, techid in ipairs(idea.technologies_gained) do
-		local tech = ctw_technologies.get_technology(techid)
-		form_render_tech_entry(rn, "tg", tech.name, 0, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
-					..";Technologies required:]";
-	for rn, techid in ipairs(idea.technologies_required) do
-		local tech = ctw_technologies.get_technology(techid)
-		local tname = tech.name
-		local gained = ctw_technologies.is_tech_gained(techid,team)
-		if not gained then
-			tname = minetest.colorize("#FF0000", tech.name)
-		end
-		form_render_tech_entry(rn, "tr", tname, third_width, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
-					..";References required:]";
-	for rn, ref in ipairs(idea.references_required) do
-		local istack = ItemStack(ref)
-		local idef = minetest.registered_items[istack:get_name()]
-		local iname = idef and idef.description or "Unknown Item"
-		local itex = idef and idef.inventory_image or "ctw_texture_missing.png"
-		form_render_tech_entry(rn, "rr", iname, 2*third_width, itex, istack:get_count())
-	end
-
+	local form = ctw_technologies.get_detail_formspec({
+		bt1 = {
+			catlabel = "Technologies required:",
+			func = ctw_technologies.detail_formspec_bt_techfunc,
+			entries = idea.technologies_required,
+		},
+		bt2 = {
+			catlabel = "References required:",
+			func = function(ref, idx)
+				local istack = ItemStack(ref)
+				local idef = minetest.registered_items[istack:get_name()]
+				local iname = idef and idef.description or "Unknown Item"
+				return "goto_ref_"..idef._ctw_reference_id,
+					iname,
+					istack:get_name()
+			end,
+			use_item_image_button=true,
+			entries = idea.references_required,
+		},
+		bt3 = {
+			catlabel = "Technologies unlocked:",
+			func = ctw_technologies.detail_formspec_bt_techfunc,
+			entries = idea.technologies_gained,
+		},
+		vert_text = "I D E A",
+		title = idea.name,
+		text = is_visible and idea.description,
+		labeltext = "This idea is not yet discovered by your team.",
+		
+	})
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:idea_"..id, form)
 	return true
@@ -148,21 +104,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if not idea then
 			return
 		end
-		for rn, techid in ipairs(idea.technologies_gained) do
-			if fields["goto_tg_"..rn] then
-				ctw_technologies.show_technology_form(pname, techid)
+		-- search links
+		for field,_ in pairs(fields) do
+			local tech_id = string.match(field, "^goto_tech_(.+)$");
+			if tech_id and ctw_technologies._get_technologies()[tech_id] then
+				ctw_technologies.show_technology_form(pname, tech_id)
+				return
 			end
-		end
-		for rn, techid in ipairs(idea.technologies_required) do
-			if fields["goto_tr_"..rn] then
-				ctw_technologies.show_technology_form(pname, techid)
-			end
-		end
-		for rn, ref in ipairs(idea.references_required) do
-			if fields["goto_rr_"..rn] then
-				local istack = ItemStack(ref)
-				local iid = istack:get_name()
-				ctw_resources.show_reference_form(pname, iid)
+			
+			local ref_id = string.match(field, "^goto_ref_(.+)$");
+			if ref_id then
+				ctw_resources.show_reference_form(pname, ref_id)
+				return
 			end
 		end
 	end
