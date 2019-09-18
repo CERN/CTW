@@ -55,98 +55,64 @@ function ctw_technologies.show_technology_form(pname, techid)
 	if team and ctw_technologies.is_tech_gained(techid, team) then
 		is_gained = true
 	end
-
-	local n_tech_lines = math.max(math.max(#tech.requires, #tech.enables), #tech.benefits)
-
-	local tech_line_h = 1
-	local desc_height = FORM.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
-	local tech_start_y = FORM.ENTRY_START_Y + desc_height
-	local third_width = FORM.ENTRY_WIDTH / 3
-
-	local form = "size["..FORM.WIDTH..","..FORM.HEIGHT.."]real_coordinates[]"
 	
-	form = form .. "vertlabel[0.15,0.5"
-					..";T E C H N O L O G Y]";
-	form = form .. "box[0,0;0.5,"..FORM.HEIGHT..";#00FF00]";
+	local function techfunc(tech_id)
+		local tech = ctw_technologies.get_technology(tech_id)
+		return "goto_tech_"..tech_id,
+				tech.name,
+				"ctw_technologies_technology.png"
+	end
 	
-	
-	form = form .. "label["
-					..FORM.ENTRY_START_X..","..FORM.ENTRY_START_Y
-					..";"..tech.name.."\n"..string.rep("=", #tech.name).."]";
-	
-	if is_gained then
-		form = form .. doc.widgets.text(tech.description, FORM.ENTRY_START_X, FORM.ENTRY_START_Y + 1,
-				FORM.ENTRY_WIDTH - 0.4, desc_height-1)
-	else
-		form = form .. "label["
-					..FORM.ENTRY_START_X..","..(FORM.ENTRY_START_Y+2)
-					..";This technology is not yet discovered by your team.]";
-	end
-
-	local function form_render_tech_entry(rn, what, label, xstart, img)
-		form = form .. "image_button["
-						..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y + rn*tech_line_h - 0.2)..";1,1;"
-						..img..";"
-						.."goto_"..what.."_"..rn..";"
-						.."]"
-		form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart+1)..","..(tech_start_y + rn*tech_line_h)
-					..";"..label.."]";
-	end
-
-	form = form .. "label["
-					..(FORM.ENTRY_START_X)..","..(tech_start_y+0.2)
-					..";Technologies required:]";
-	for rn, techid in ipairs(tech.requires) do
-		local tech2 = ctw_technologies.get_technology(techid)
-		form_render_tech_entry(rn, "tr", tech2.name, 0, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
-					..";Technologies enabled:]";
-	for rn, techid in ipairs(tech.enables) do
-		local tech2 = ctw_technologies.get_technology(techid)
-		form_render_tech_entry(rn, "te", tech2.name, third_width, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
-					..";Benefits:]";
-	for rn, bene in ipairs(tech.benefits) do
-		local itex, iname = ctw_technologies.render_benefit(bene)
-		form_render_tech_entry(rn, "bf", iname, 2*third_width, itex)
-	end
-
-	form = form .. "button["
-				..(FORM.ENTRY_END_X-4.5)..","..(FORM.ENTRY_START_Y)..";4,1;"
-				.."tech_tree;"
-				.."<<< Technology tree]"
+	local form = ctw_technologies.get_detail_formspec({
+		bt1 = {
+			catlabel = "Technologies required:",
+			func = techfunc,
+			entries = tech.requires,
+		},
+		bt2 = {
+			catlabel = "Technologies unlocked:",
+			func = techfunc,
+			entries = tech.enables,
+		},
+		bt3 = {
+			catlabel = "Benefits:",
+			func = function(bene, idx)
+				local image, iname = ctw_technologies.render_benefit(bene)
+				return "goto_bf_"..idx,
+					iname,
+					image
+			end,
+			entries = tech.benefits,
+		},
+		vert_text = "T E C H N O L O G Y",
+		title = tech.name,
+		text = is_gained and tech.description,
+		labeltext = "This technology is not yet discovered by your team.",
+		
+		add_btn_name = "tech_tree", -- optional, additional extra button
+		add_btn_label = "<<< Technology tree",
+	})
 
 	-- show it
-	minetest.show_formspec(pname, "ctw_technologies:entry_"..techid, form)
+	minetest.show_formspec(pname, "ctw_technologies:technology_"..techid, form)
 	return true
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
 	
-	local techid = string.match(formname, "^ctw_technologies:entry_(.+)$");
+	local techid = string.match(formname, "^ctw_technologies:technology_(.+)$");
 	if techid then
 		local tech = technologies[techid]
 		if not tech then
 			return
 		end
-		for rn, techid in ipairs(tech.requires) do
-			if fields["goto_tr_"..rn] then
-				if technologies[techid] then
-					ctw_technologies.show_technology_form(pname, techid)
-				end
-			end
-		end
-		for rn, techid in ipairs(tech.enables) do
-			if fields["goto_te_"..rn] then
-				if technologies[techid] then
-					ctw_technologies.show_technology_form(pname, techid)
-				end
+		-- search links
+		for field,_ in pairs(fields) do
+			local tech_id = string.match(field, "^goto_tech_(.+)$");
+			if technologies[tech_id] then
+				ctw_technologies.show_technology_form(pname, tech_id)
+				return
 			end
 		end
 		for rn, ref in ipairs(tech.benefits) do
