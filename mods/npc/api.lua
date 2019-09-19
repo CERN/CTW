@@ -29,6 +29,7 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
 	def.conditions = {{
+		idea = {idea_id, "eq", "undiscovered"},
 		dp_min = def_e.dp_min,
 		func = function(player)
 			local status, message = ctw_resources.give_idea(
@@ -58,6 +59,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
 	def.conditions = {{
+		idea = {idea_id, "eq", "pubished"},
 		dp_min = def_e.dp_min,
 		item = "ctw_resources:idea_" .. idea_id,
 		func = function(player)
@@ -294,6 +296,7 @@ end
 function npc.register_npc(npc_name, def)
 	def.size = def.size or 1
 	def.infotext = def.infotext or ""
+	def.nametag = def.nametag or def.infotext
 	def.textures = def.textures or { "character.png" }
 
 	if not def.collisionbox then
