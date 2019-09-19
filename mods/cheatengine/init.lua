@@ -173,6 +173,7 @@ year = function(name, params)
 		return false, "Unknown team: " .. params[1]
 	end
 	local dst_year = tonumber(params[2]) or 1980
+	local n_found = 0
 
 	local ideas = ctw_resources._get_ideas() -- UNDOCUMENTED
 	for idea_id, idea_def in pairs(ideas) do
@@ -185,14 +186,17 @@ year = function(name, params)
 
 		ctw_resources.set_team_idea_state(idea_id, team,
 			idea_year > dst_year and "undiscovered" or "invented")
+		n_found = n_found + 1
 	end
 
 	local techs = ctw_technologies._get_technologies() -- UNDOCUMENTED
 	for tech_id, tech_def in pairs(techs) do
 		ctw_technologies.set_team_tech_state(tech_id, team,
 			tech_def.year >= dst_year and "undiscovered" or "gained")
+		n_found = n_found + 1
 	end
-	return true, "Changed to year " .. dst_year
+	return true, "Changed to year " .. dst_year .. ". Found " ..
+		n_found .. " ideas and techs."
 end,
 -- END COMMAND DEFINITIONS
 }
