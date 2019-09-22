@@ -7,7 +7,7 @@ npc.register_event("programmer", {
 	dialogue = S("$PLAYER: setting sgml undoscovered -> gained."),
 	conditions = {
 		{ idea = {"sgml", "eq", "undiscovered"} }
-	}, 
+	},
 	options = {
 		{
 			text = "Set to gained",
@@ -37,8 +37,9 @@ npc.register_npc("programmer", {
 
 register_both("programmer", "sgml")
 register_both("programmer", "enquire")
+register_both("programmer", "gnu")
 register_both("programmer", "sgml")
-register_both("programmer", "sgml")
+register_both("programmer", "cerndoc")
 
 
 -- == THE ENGINEER == --
@@ -54,10 +55,11 @@ npc.register_event("engineer", {
 })
 
 register_both("engineer", "e10base2")
-
 register_both("engineer", "tcpip")
+register_both("engineer", "ethernet")
+register_both("engineer", "tokenring")
 
-npc.register_event_idea_discover("engineer", "ethernet", {
+--[[npc.register_event_idea_discover("engineer", "ethernet", {
 	dp_min = 2000,
 	dialogue = S("Some kind of twisted cable thingy would be lovely.")
-})
+})]]
