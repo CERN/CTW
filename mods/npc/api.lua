@@ -59,17 +59,16 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
 	def.conditions = {{
-		idea = {idea_id, "eq", "pubished"},
+		idea = {idea_id, "eq", "published"},
 		dp_min = def_e.dp_min,
 		item = "ctw_resources:idea_" .. idea_id,
 		func = function(player)
-			local status, message = ctw_resources.approve_idea(
+			local status, _ = ctw_resources.approve_idea(
 					idea_id, player:get_player_name(),
 					player:get_inventory(), "main", true)
-			if status then
+			if status then -- success
 				return #idea_def.references_required + 1
 			end
-			print("NPC approve", idea_id, message)
 		end
 	}}
 	def.options = {{
@@ -83,6 +82,27 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 			end
 		end
 	}}
+	npc.register_event(npc_name, def)
+
+	-- Missing items
+	def = table.copy(def) -- drop reference
+	def.dialogue = table.concat({"I see you'd like to research the following idea:",
+		idea_def.description,
+		"But you still need a few items. Please collect the required resources."}, "\n")
+	def.conditions = {{
+		idea = {idea_id, "eq", "published"},
+		dp_min = def_e.dp_min and (def_e.dp_min * 0.9),
+		item = "ctw_resources:idea_" .. idea_id,
+		func = function(player)
+			local status, _ = ctw_resources.approve_idea(
+					idea_id, player:get_player_name(),
+					player:get_inventory(), "main", true)
+			if not status then
+				return #idea_def.references_required
+			end
+		end
+	}}
+	def.options = {{ text = "Okay", target = function() end }}
 	npc.register_event(npc_name, def)
 end
 
