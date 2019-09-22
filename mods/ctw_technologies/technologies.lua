@@ -29,107 +29,115 @@ local function logs(str)
 	minetest.log("action", "[ctw_technologies] "..str)
 end
 
-local function tech_form_builder(id)
-	local tech = technologies[id]
+-- Formspec information
+FORM = {}
+-- Width of formspec
+FORM.WIDTH = 15
+FORM.HEIGHT = 10.5
+
+--[[ Recommended bounding box coordinates for widgets to be placed in entry pages. Make sure
+all entry widgets are completely inside these coordinates to avoid overlapping. ]]
+FORM.ENTRY_START_X = 1
+FORM.ENTRY_START_Y = 0.5
+FORM.ENTRY_END_X = FORM.WIDTH
+FORM.ENTRY_END_Y = FORM.HEIGHT - 0.5
+FORM.ENTRY_WIDTH = FORM.ENTRY_END_X - FORM.ENTRY_START_X
+FORM.ENTRY_HEIGHT = FORM.ENTRY_END_Y - FORM.ENTRY_START_Y
+
+function ctw_technologies.show_technology_form(pname, techid)
+	local tech = technologies[techid]
 	if not tech then
-		error("tech_form_builder: ID "..id.." is unknown!")
+		return false
 	end
-
-	local n_tech_lines = math.max(math.max(#tech.requires, #tech.enables), #tech.benefits)
-
-	local tech_line_h = 1
-	local desc_height = doc.FORMSPEC.ENTRY_HEIGHT - tech_line_h*n_tech_lines - 0.5
-	local tech_start_y = doc.FORMSPEC.ENTRY_START_Y + desc_height
-	local third_width = doc.FORMSPEC.ENTRY_WIDTH / 3
-
-	local form = "label["
-					..doc.FORMSPEC.ENTRY_START_X..","..doc.FORMSPEC.ENTRY_START_Y
-					..";"..tech.name.."\n"..string.rep("=", #tech.name).."]";
-	form = form .. doc.widgets.text(tech.description, doc.FORMSPEC.ENTRY_START_X, doc.FORMSPEC.ENTRY_START_Y + 1,
-			doc.FORMSPEC.ENTRY_WIDTH - 0.4, desc_height-1)
-
-	local function form_render_tech_entry(rn, what, label, xstart, img)
-		form = form .. "image_button["
-						..(doc.FORMSPEC.ENTRY_START_X+xstart)..","..(tech_start_y + rn*tech_line_h - 0.2)..";1,1;"
-						..img..";"
-						.."goto_"..what.."_"..rn..";"
-						.."]"
-		form = form .. "label["
-					..(doc.FORMSPEC.ENTRY_START_X+xstart+1)..","..(tech_start_y + rn*tech_line_h)
-					..";"..label.."]";
+	
+	local team = teams.get_by_player(pname)
+	local is_gained = false
+	if team and ctw_technologies.is_tech_gained(techid, team) then
+		is_gained = true
 	end
+	
+	local form = ctw_technologies.get_detail_formspec({
+		bt1 = {
+			catlabel = "Technologies required:",
+			func = ctw_technologies.detail_formspec_bt_techfunc,
+			entries = tech.requires,
+		},
+		bt2 = {
+			catlabel = "Technologies unlocked:",
+			func = ctw_technologies.detail_formspec_bt_techfunc,
+			entries = tech.enables,
+		},
+		bt3 = {
+			catlabel = "Benefits:",
+			func = function(bene, idx)
+				local image, iname = ctw_technologies.render_benefit(bene)
+				return "goto_bf_"..idx,
+					iname,
+					image
+			end,
+			entries = tech.benefits,
+		},
+		vert_text = "T E C H N O L O G Y",
+		title = tech.name,
+		text = is_gained and tech.description,
+		labeltext = "This technology is not yet discovered by your team.",
+		
+		add_btn_name = "tech_tree", -- optional, additional extra button
+		add_btn_label = "Technology tree",
+	}, pname)
 
-	form = form .. "label["
-					..(doc.FORMSPEC.ENTRY_START_X)..","..(tech_start_y+0.2)
-					..";Technologies required:]";
-	for rn, techid in ipairs(tech.requires) do
-		local tech2 = ctw_technologies.get_technology(techid)
-		form_render_tech_entry(rn, "tr", tech2.name, 0, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(doc.FORMSPEC.ENTRY_START_X+third_width)..","..(tech_start_y+0.2)
-					..";Technologies enabled:]";
-	for rn, techid in ipairs(tech.enables) do
-		local tech2 = ctw_technologies.get_technology(techid)
-		form_render_tech_entry(rn, "te", tech2.name, third_width, "ctw_technologies_technology.png")
-	end
-	form = form .. "label["
-					..(doc.FORMSPEC.ENTRY_START_X+2*third_width)..","..(tech_start_y+0.2)
-					..";Benefits:]";
-	for rn, bene in ipairs(tech.benefits) do
-		local itex, iname = ctw_technologies.render_benefit(bene)
-		form_render_tech_entry(rn, "bf", iname, 2*third_width, itex)
-	end
-
-	form = form .. "button["
-				..(doc.FORMSPEC.ENTRY_END_X-4)..","..(doc.FORMSPEC.ENTRY_START_Y)..";4,1;"
-				.."tech_tree;"
-				.."View technology tree]"
-
-	return form
+	-- show it
+	minetest.show_formspec(pname, "ctw_technologies:technology_"..techid, form)
+	return true
 end
+
+function ctw_technologies.detail_formspec_bt_techfunc(tech_id)
+		local tech = ctw_technologies.get_technology(tech_id)
+		return "goto_tech_"..tech_id,
+				tech.name,
+				"ctw_technologies_technology.png"
+	end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
-	if formname == "doc:entry" then
-		local cid, eid = doc.get_selection(pname)
-		if cid == "ctw_technologies" then
-			local tech = technologies[eid]
-			if not tech then
+	
+	local techid = string.match(formname, "^ctw_technologies:technology_(.+)$");
+	if techid then
+		local tech = technologies[techid]
+		if not tech then
+			return
+		end
+		-- search links
+		for field,_ in pairs(fields) do
+			local tech_id = string.match(field, "^goto_tech_(.+)$");
+			if technologies[tech_id] then
+				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
+				ctw_technologies.show_technology_form(pname, tech_id)
 				return
 			end
-			for rn, techid in ipairs(tech.requires) do
-				if fields["goto_tr_"..rn] then
-					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
-						doc.show_entry(pname, "ctw_technologies", techid)
-					end
-				end
+		end
+		for rn, ref in ipairs(tech.benefits) do
+			if fields["goto_bf_"..rn] then
+				-- nothing happens
 			end
-			for rn, techid in ipairs(tech.enables) do
-				if fields["goto_te_"..rn] then
-					if doc.entry_exists("ctw_technologies", techid) and doc.entry_revealed(pname, "ctw_technologies", techid) then
-						doc.show_entry(pname, "ctw_technologies", techid)
-					end
-				end
-			end
-			for rn, ref in ipairs(tech.benefits) do
-				if fields["goto_bf_"..rn] then
-					-- nothing happens
-				end
-			end
-			if fields.tech_tree then
-				ctw_technologies.show_tech_tree(pname, 0)
-			end
+		end
+		if fields.tech_tree then
+			ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
+			ctw_technologies.show_tech_tree(pname, 0)
+		end
+		
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
 		end
 	end
 
 end)
 
-doc.add_category("ctw_technologies", {
-	name = "Technologies",
-	description = "Technologies that your team has invented",
-	build_formspec = tech_form_builder
-})
+
 
 function ctw_technologies.register_technology(id, tech_def)
 	if technologies[id] then
@@ -142,12 +150,6 @@ function ctw_technologies.register_technology(id, tech_def)
 	init_default(tech_def, "requires", {})
 	init_default(tech_def, "enables", {})
 	init_default(tech_def, "benefits", {})
-
-	doc.add_entry("ctw_technologies", id, {
-		name = tech_def.name,
-		data = id,
-		hidden = true,
-	})
 
 	technologies[id] = tech_def
 	logs("Registered Technology: "..id)
@@ -193,15 +195,13 @@ function ctw_technologies.set_team_tech_state(id, team, state)
 	end
 	local tstate = {state = state}
 	team._ctw_technologies_tech_state[id] = tstate
-
-	ctw_technologies.update_doc_reveals(team)
 end
 
 function ctw_technologies.register_on_gain(func)
 	table.insert(_register_on_gain, func)
 end
 
--- Make a team gain a technology. This notifies the team, reveals the technology doc pages
+-- Make a team gain a technology. This notifies the team,
 -- and applies the benefits.
 -- if "try" is true, will only perform a dry run and do nothing actually.
 -- returns true or false, error_reason
@@ -234,20 +234,3 @@ function ctw_technologies.gain_technology(tech_id, team, try)
 	return true
 end
 
-function ctw_technologies.update_doc_reveals(team)
-	for tech_id, tech in pairs(technologies) do
-		local tstate = ctw_technologies.get_team_tech_state(tech_id, team)
-		for _,player in ipairs(teams.get_online_members(team.name)) do
-			if tstate.state ~= "undiscovered" then
-				doc.mark_entry_as_revealed(player:get_player_name(), "ctw_technologies", tech_id)
-			end
-		end
-	end
-end
-
-minetest.register_on_joinplayer(function(player)
-	local team = teams.get_by_player(player:get_player_name())
-	if team then
-		ctw_technologies.update_doc_reveals(team)
-	end
-end)

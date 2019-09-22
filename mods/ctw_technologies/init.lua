@@ -8,6 +8,7 @@ local mp = minetest.get_modpath(minetest.get_current_modname()) .. DIR_DELIM
 dofile(mp.."technologies.lua")
 dofile(mp.."benefits.lua")
 dofile(mp.."tree.lua")
+dofile(mp.."detail_form.lua")
 dofile(mp.."benefit_defs.lua")
 dofile(mp.."tech_defs.lua")
 dofile(mp.."delivery.lua")

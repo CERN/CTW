@@ -22,15 +22,59 @@ local function ref_info(itemstack, player, pointed_thing)
 	local pname = player:get_player_name()
 	local idef = minetest.registered_items[itemstack:get_name()]
 	if idef._ctw_reference_id then
-		doc.show_entry(pname, "ctw_references", idef._ctw_reference_id)
+		ctw_resources.show_reference_form(pname, idef._ctw_reference_id)
 	end
 end
 
-doc.add_category("ctw_references", {
-	name = "References",
-	description = "References you can collect",
-	build_formspec = doc.entry_builders.text,
-})
+local reference_entries = {}
+
+
+function ctw_resources.show_reference_form(pname, id)
+	local ref = reference_entries[id]
+	if not ref then
+		return false
+	end
+	
+	local form = ctw_technologies.get_detail_formspec({
+		bt1 = {
+			catlabel = "",
+			entries = {},
+		},
+		bt2 = {
+			catlabel = "",
+			entries = {},
+		},
+		bt3 = {
+			catlabel = "",
+			entries = {},
+		},
+		vert_text = "R E F E R E N C E",
+		title = ref.name,
+		text = ref.description,
+		
+	}, pname)
+	
+	-- show it
+	minetest.show_formspec(pname, "ctw_resources:ref_"..id, form)
+	return true
+end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	local pname = player:get_player_name()
+	
+	local id = string.match(formname, "^ctw_resources:ref_(.+)$");
+	if id then
+		if fields.goto_back then
+			ctw_technologies.form_returnstack_pop(pname)
+		end
+		
+		if fields.quit then
+			ctw_technologies.form_returnstack_clear(pname)
+		end
+		
+	end
+
+end)
 
 function ctw_resources.register_reference(id, itemdef)
 	if not itemdef.groups then
@@ -41,10 +85,10 @@ function ctw_resources.register_reference(id, itemdef)
 	itemdef.on_use = ref_info
 	itemdef._usage_hint = "Left-click to show information"
 
-	doc.add_entry("ctw_references", id, {
+	reference_entries[id] = {
 		name = itemdef.description,
-		data = "\n"..itemdef.description.."\n"..string.rep("=", #itemdef.description).."\n\n"..itemdef._ctw_longdesc,
-	})
+		description = itemdef._ctw_longdesc
+	}
 
 	minetest.register_craftitem(id, itemdef)
 end
