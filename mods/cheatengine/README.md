@@ -42,6 +42,13 @@ Processes all given IDs. Outputs all registered IDs if there are invalid entries
 	green +tech_id         Apply for team "green"
 	red   +id1 -id2 ..     Bulk update
 
+### view (View team idea progress)
+Shows a formspec listing the state of each registered idea.
+
+	Team
+	.     View for current team
+	red   View for team red
+
 ### wipe (Delete team data)
 Deletes any team data
 
@@ -49,11 +56,10 @@ Deletes any team data
 	.    Current team
 	all  All teams
 
-
 ### year (Set year number)
 Resets any technologies and idea states after this year and sets all preceding
 states to completed.
 
-    Team  Year
+	Team  Year
 	.     1980 Back to the start
 	red   1984 Ready for tokenring, cerndoc, tangle
