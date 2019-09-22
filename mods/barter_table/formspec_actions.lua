@@ -10,10 +10,10 @@ function actions.join(meta, player, p, fields)
 	end
 	local pos = barter_table.positions[player:get_player_name()]
 	local parties = barter_table.get_parties(pos)
-	for k, p in pairs(parties) do
-		if p.team == team then -- same table reference
+	for k, p2 in pairs(parties) do
+		--if p2.team == team then -- same table reference
 			--return false, "Your team already opened a slot"
-		end
+		--end
 	end
 	meta:set_string("player_" .. p.id, player:get_player_name())
 	return true, "Opened slot " .. p.id
@@ -60,26 +60,26 @@ function actions.exchange(meta, player, p, fields)
 	if p.player ~= name then
 		return false, "Action denied: Player name mismatch"
 	end
-	local parties = barter_table.get_parties(pos, meta)
-	for k, p in pairs(parties) do
-		if not p.accepted then
+	local parties = barter_table.get_parties(nil, meta)
+	for k, p2 in pairs(parties) do
+		if not p2.accepted then
 			return false, "Both parties need to agree on the deal."
 		end
 	end
-	
+
 	local get_player_by_name = minetest.get_player_by_name
 	-- Find best matching person to give the stuff
 	-- Also allows trading when the initiator left
-	local function get_best_matching(p)
-		if get_player_by_name(p.player) then
-			return p.player
+	local function get_best_matching(p2)
+		if get_player_by_name(p2.player) then
+			return p2.player
 		end
-		for name, _ in pairs(barter_table.positions) do
-			if teams.get_by_player(name) == p.team then
-				return name
+		for name2, _ in pairs(barter_table.positions) do
+			if teams.get_by_player(name2) == p2.team then
+				return name2
 			end
 		end
-		local members = teams.get_online_members(p.team.name)
+		local members = teams.get_online_members(p2.team.name)
 		return members[1]
 	end
 
@@ -102,10 +102,10 @@ function actions.exchange(meta, player, p, fields)
 
 	-- Exchange inventory stuff
 	local inv = meta:get_inventory()
-	for k, p in pairs(parties) do
+	for k, _ in pairs(parties) do
 		local leftover = inv:get_list("inv_" .. k)
-		local player = get_player_by_name(dst_party[k].player)
-		local dst_inv = player:get_inventory()
+		local player2 = get_player_by_name(dst_party[k].player)
+		local dst_inv = player2:get_inventory()
 		for i, stack in ipairs(leftover) do
 			leftover[i] = dst_inv:add_item("main", stack)
 		end
@@ -113,13 +113,13 @@ function actions.exchange(meta, player, p, fields)
 	end
 
 	-- Write back to the swapped inventories
-	for k, p in pairs(parties) do
-		inv:set_list("inv_" .. k, p.leftover)
+	for k, p2 in pairs(parties) do
+		inv:set_list("inv_" .. k, p2.leftover)
 		inv:set_size("inv_" .. k, 4)
 		if inv:is_empty("inv_" .. k) then
 			barter_table.meta_reset(meta, k)
 		else
-			minetest.chat_send_player(p.player, minetest.colorize("#FF0",
+			minetest.chat_send_player(p2.player, minetest.colorize("#FF0",
 				"Warning: Not enough space in your inventory"))
 			meta:set_int("accept_" .. k, 0)
 		end
@@ -145,7 +145,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	local meta = minetest.get_meta(pos)
 	local parties = barter_table.get_parties(pos, meta)
-	
+
 	for i, p in pairs(parties) do
 		for act_name, func in pairs(actions) do
 			if fields[act_name .. "_" .. i] then

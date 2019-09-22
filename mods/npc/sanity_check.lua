@@ -8,8 +8,8 @@ minetest.register_on_mods_loaded(function()
 	-- Check dead IDs
 	for h, npc_dialogues in ipairs(list) do
 	for i, event in ipairs(npc_dialogues) do
-		for j, list in ipairs(event.conditions) do
-			for key, value in pairs(list) do
+		for j, list2 in ipairs(event.conditions) do
+			for key, value in pairs(list2) do
 				if key == "idea" then
 					assert(#value == 3, "NPC: invalid 'idea' condition" ..
 						" in '" .. event.text .. "'")
