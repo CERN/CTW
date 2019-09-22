@@ -30,12 +30,14 @@ TechDef = {
 	benefits = { BenefitDef, ... }
 	-- See 'BenefitDef'
 
-	min_tree_level = <n>
-	-- Optional, if specified tells the minimum level at which this element will be
-	-- positioned in the tree. Defaults to 0
+	year = <n>
+	-- The year of the technology. Determines where in the tree it is placed horizontally.
+
+	tree_level = <n>
+	-- On which level (column) in the tree to place the node.
 
 	tree_line = <n>
-	-- Optional, on which line to place the node
+	-- On which line (row) to place the node.
 
 	tree_conn_loc = <llvl>
 	-- optional, between which nodes to place the bend
@@ -44,9 +46,6 @@ TechDef = {
 	enables = {
 		-- Technologies that are now possible
 	}
-	tree_level = <n>
-	-- Level on the technology tree where this tree element is drawn. Determined
-	-- by a topological sort. Do never specify this manually
 }
 Documentation (doc mod) is automatically generated from TechDef.
 

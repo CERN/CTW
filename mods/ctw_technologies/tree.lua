@@ -3,6 +3,15 @@
 
 local technologies = ctw_technologies._get_technologies()
 
+local colors = {
+	"red",
+	"green",
+	"blue",
+	"yellow",
+	"brown",
+	"white",
+}
+
 --[[
 render_info = {
 	levels = {
@@ -11,9 +20,7 @@ render_info = {
 		},
 	}
 	conns = {
-		<after_lvl> = {
-			{ slvl, sline, elvl, eline}
-		},
+		{ slvl, sline, elvl, eline, clvl}
 	}
 	max_levels = <maximum number of levels>
 }
@@ -33,10 +40,16 @@ local function logs(str)
 end
 
 function ctw_technologies.build_tech_tree()
+	logs("Tree levels -> years:")
+	local i=0
+	while ctw_technologies.year_captions[i] do
+		logs(i.."\t-> '"..ctw_technologies.year_captions[i].."'")
+		i=i+1
+	end
+	
+	
 	logs("Building the technology tree...")
 	for techid, tech in pairs(technologies) do
-		-- remove level if it existed before
-		tech.tree_level = nil
 		-- scan through technologies and find which techs have this as requirement
 		for atechid, atech in pairs(technologies) do
 			if contains(atech.requires, techid) then
@@ -44,10 +57,11 @@ function ctw_technologies.build_tech_tree()
 			end
 		end
 	end
-	render_info.max_levels = 0
+	render_info.max_levels = #ctw_technologies.year_captions
 	render_info.levels = {}
 	render_info.conns = {}
-	-- find parallel topological sorting of tree elements
+	
+	-- Find dependencies between technologies and add connections
 	local c_queue = {}
 	-- find roots
 	for techid, tech in pairs(technologies) do
@@ -61,55 +75,41 @@ function ctw_technologies.build_tech_tree()
 		local techid = c_queue[1]
 		table.remove(c_queue, 1)
 		local tech = technologies[techid]
-		if tech.tree_level then
-			error("Topological sorting tech tree failed at "..techid..
-					" because it has already been placed in the tree! Check for cycles!")
-		end
-		-- get level as max of levels of nodes before
-		local lvl = tech.min_tree_level or 0
+		
 		local dep_is_at = {}
-		local try_later = false
 		for depno, atechid in ipairs(tech.requires) do
 			local atech = technologies[atechid]
-			if not atech.tree_level then
-				-- try later
-				logs("Tech Tree Sort: "..techid.." ancestors not yet sorted, try later")
-				table.insert(c_queue, techid)
-				try_later = true
-				break
+			if atech.tree_level >= tech.tree_level then
+				error("technology '"..techid.."' depends on '"..techid.."' which is on same or later level, must rearrange!")
 			end
-			lvl = math.max(lvl, atech.tree_level + 1)
-
 			-- locate dependency line
 			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level}
 		end
-		if not try_later then
-			logs("Tech Tree Sort: "..techid.." on level "..lvl)
-			tech.tree_level = lvl
 
-			-- add render info
-			render_info.max_levels = math.max(lvl, render_info.max_levels)
-			if not render_info.levels[lvl] then
-				render_info.levels[lvl] = {}
-			end
-			local my_line = tech.tree_line or (#render_info.levels[lvl] + 1)
-			render_info.levels[lvl][my_line] = techid
-			tech.tree_line = my_line
+		local lvl = tech.tree_level
+		-- add render info
+		render_info.max_levels = math.max(lvl, render_info.max_levels)
+		if not render_info.levels[lvl] then
+			render_info.levels[lvl] = {}
+		end
+		local my_line = tech.tree_line or (#render_info.levels[lvl] + 1)
+		logs(techid.." at "..lvl..":"..my_line)
+		render_info.levels[lvl][my_line] = techid
+		tech.tree_line = my_line
 
-			-- add connections
-			local conns_lvl = tech.tree_conn_loc or (lvl-1)
-			if not render_info.conns[conns_lvl] then
-				render_info.conns[conns_lvl] = {}
-			end
-			for _, e in ipairs(dep_is_at) do
-				table.insert(render_info.conns[conns_lvl], {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl})
-			end
+		-- add connections
+		local conns_lvl = tech.tree_conn_loc or (lvl-1)
+		for _, e in ipairs(dep_is_at) do
+			logs("\tdep. conn to "..e.slvl..":"..e.sline)
+			local color = colors[math.random(1,#colors)] -- select random color
+			table.insert(render_info.conns, {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl, clvl=conns_lvl, color=color})
+		end
 
-			-- add enables to the queue
-			for _, atechid in ipairs(tech.enables) do
-				if not contains(c_queue, atechid) then
-					table.insert(c_queue, atechid)
-				end
+		-- add enables to the queue
+		for _, atechid in ipairs(tech.enables) do
+			if not contains(c_queue, atechid) then
+				logs("\tenables "..atechid)
+				table.insert(c_queue, atechid)
 			end
 		end
 	end
@@ -124,6 +124,7 @@ end
 
 -- form renderer
 
+
 local function rng(x, mi, ma)
 	return math.max(math.min(x, ma), mi)
 end
@@ -134,7 +135,7 @@ local function clipy(y, fdata)
 	return rng(y-fdata.offy, fdata.miny, fdata.maxy)
 end
 
-local function hline_as_box(psx, pex, py, fdata)
+local function hline_as_box(psx, pex, py, fdata, color)
 	local sx = clipx(psx, fdata)
 	local ex = clipx(pex, fdata)
 	if sx>ex then
@@ -144,9 +145,9 @@ local function hline_as_box(psx, pex, py, fdata)
 	if y<=fdata.miny or y>=fdata.maxy or sx==ex then
 		return ""
 	end
-	return "box["..sx..","..y..";"..(ex-sx+0.1)..",0.1;red]"
+	return "box["..sx..","..y..";"..(ex-sx+0.05)..",0.05;"..color.."]"
 end
-local function vline_as_box(px, psy, pey, fdata)
+local function vline_as_box(px, psy, pey, fdata, color)
 	local sy = clipy(psy, fdata)
 	local ey = clipy(pey, fdata)
 	if sy>ey then
@@ -156,7 +157,7 @@ local function vline_as_box(px, psy, pey, fdata)
 	if x<=fdata.minx or x>=fdata.maxx or sy==ey then
 		return ""
 	end
-	return "box["..x..","..sy..";0.1,"..(ey-sy+0.1)..";red]"
+	return "box["..x..","..sy..";0.05,"..(ey-sy+0.05)..";"..color.."]"
 end
 
 local function tech_entry(px, py, techid, disco, hithis, fdata)
@@ -164,7 +165,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local y = py-fdata.offy
 		local fwim = 1
 		local fwte = 2
-		local fhim = 1
+		local fhim = 0.7
 		local fhte = 2
 		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
 			return ""
@@ -200,13 +201,13 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 --
 function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discovered_techs, scrollpos, hilit)
 
-	local lvl_init_off = 0.5
-	local lvl_space = 4
-	local conn_init_off = 3.9
-	local conn_space    = 0.1
+	local lvl_init_off  = -3.5
+	local lvl_space     =  5.0
+	local conn_init_off = -0.1
+	local conn_space    =  0.1
 	local line_init_off = -0.5
-	local line_space    = 2
-	local conn_ydown    = 0.4
+	local line_space    =  0.9
+	local conn_ydown    =  0.2
 	local scroll_w = (render_info.max_levels+1)*lvl_space
 
 	scrollpos = rng(scrollpos, 0, 1000)
@@ -233,16 +234,15 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	end
 
 	-- render conns
-	for lvl, conns in pairs(render_info.conns) do
-		for xdisp,conn in pairs(conns) do
-			local vlinep = lvl*lvl_space + conn_init_off + xdisp*conn_space
-			table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep,
-					conn.sline*line_space + line_init_off + conn_ydown, fdata))
-			table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown,
-					conn.eline*line_space + line_init_off + conn_ydown, fdata))
-			table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
-					conn.eline*line_space + line_init_off + conn_ydown, fdata))
-		end
+	for _, conn in pairs(render_info.conns) do
+		local color = conn.color
+		local vlinep = conn.clvl*lvl_space + conn_init_off -- + xdisp*conn_space
+		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep,
+				conn.sline*line_space + line_init_off + conn_ydown, fdata, color))
+		table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown,
+				conn.eline*line_space + line_init_off + conn_ydown, fdata, color))
+		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
+				conn.eline*line_space + line_init_off + conn_ydown, fdata, color))
 	end
 	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
 	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")
@@ -261,9 +261,8 @@ function ctw_technologies.show_tech_tree(pname, scrollpos)
 			end
 		end
 	end
-	local form = "size[17,10]"
-			.."label[0.5,0.5;Technology Tree]"
-			..ctw_technologies.render_tech_tree(0, 0, 17, 10, dtech, scrollpos, nil)
+	local form = "size[17,12]"
+			..ctw_technologies.render_tech_tree(0, 0, 17, 12, dtech, scrollpos, nil)
 	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
 end
 
