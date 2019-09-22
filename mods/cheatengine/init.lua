@@ -22,6 +22,15 @@ local function table_index(t, what)
 	end
 end
 
+local function get_idea_year_approx(idea_def)
+	local idea_year = 0
+	for i, tech_id in ipairs(idea_def.technologies_gained) do
+		local tech_def = ctw_technologies.get_technology(tech_id)
+		idea_year = math.max(idea_year, tech_def.year)
+	end
+	return idea_year
+end
+
 -- Import possible states from ctw_resources
 local idea_levels = ctw_resources.idea_states
 
@@ -66,7 +75,7 @@ idea = function(name, params)
 
 	local state_str = ctw_resources.get_team_idea_state(idea_id, team).state
 	local sign = params[2]:sub(1, 1)
-	print(dump(ctw_resources.get_team_idea_state(idea_id, team)))
+
 	local state = table_index(idea_levels, state_str) or 0
 	if sign == "+" then
 		state = state + 1
@@ -135,6 +144,68 @@ tech = function(name, params)
 	return true, ret
 end,
 
+view = function(name, params)
+	local team = get_team_or_nil(name, params[1])
+	if not team then
+		return false, "Unknown team: " .. params[1]
+	end
+
+	local idea_progress = {}
+	for i, state in ipairs(idea_levels) do
+		idea_progress[state] = {}
+	end
+
+	local ideas = ctw_resources._get_ideas() -- UNDOCUMENTED
+	for idea_id, idea_def in pairs(ideas) do
+		local idea_team = ctw_resources.get_team_idea_state(idea_id, team)
+		local year = get_idea_year_approx(idea_def)
+		local state = idea_team.state
+
+		table.insert(idea_progress[state], {
+			year = year,
+			title = ("%s, Y%i"):format(idea_id, year)
+		})
+	end
+
+	-- Sort
+	for state, idea_defs in pairs(idea_progress) do
+		table.sort(idea_defs, function(a, b) return a.title < b.title end)
+		if state == "discovered" then
+			-- newest first (progress)
+			table.sort(idea_defs, function(a, b) return a.year > b.year end)
+		else
+			-- oldest first (possibly most relevant)
+			table.sort(idea_defs, function(a, b) return a.year < b.year end)
+		end
+	end
+
+	-- Build formspec
+	local width = 4
+	local fs = {
+		"size[13,8]",
+		"tablecolumns[text;text]"
+	}
+	local x = 0
+	local y = 0
+	for i, state in ipairs(idea_levels) do
+		local fields = {}
+		for j, idea in ipairs(idea_progress[state]) do
+			table.insert(fields, idea.title)
+		end
+		fs[#fs + 1] = ("label[%f,%f;%s]"):format(x, y, state)
+		fs[#fs + 1] = ("table[%f,%f;%f,3.4;state_%s;%s;0]")
+			:format(x, y + 0.5, width, state, table.concat(fields, ","))
+		x = x + width + 0.2
+		if i % 3 == 0 then
+			x = 0
+			y = y + 4
+		end
+	end
+
+	minetest.show_formspec(name, "cheatengine:none", table.concat(fs))
+	return true
+end,
+
 wipe = function(name, params)
 	local to_wipe = {}
 	if params[1] == "all" then
@@ -177,12 +248,7 @@ year = function(name, params)
 
 	local ideas = ctw_resources._get_ideas() -- UNDOCUMENTED
 	for idea_id, idea_def in pairs(ideas) do
-		local idea_year = 0
-
-		for i, tech_id in ipairs(idea_def.technologies_gained) do
-			local tech_def = ctw_technologies.get_technology(tech_id)
-			idea_year = math.max(idea_year, tech_def.year)
-		end
+		local idea_year = get_idea_year_approx(idea_def)
 
 		ctw_resources.set_team_idea_state(idea_id, team,
 			idea_year > dst_year and "undiscovered" or "invented")
