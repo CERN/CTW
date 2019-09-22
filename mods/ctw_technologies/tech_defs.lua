@@ -2,7 +2,7 @@ local S = minetest.get_translator("ctw_technologies")
 
 --[[
 The technologies are ordered by the timeline.
-They have prepending comments to indicate what kind of technology it is:
+They have a "kind" field to indicate what kind of technology it is:
 	hardware
 	protocol
 	service (web)
@@ -13,39 +13,47 @@ They have prepending comments to indicate what kind of technology it is:
 -- "It's the viking age" (= Internet Stone Age)
 -- "Oh, that explains the laser raptors." (no worries, they're tamed)
 
--- hardware
-ctw_technologies.register_technology("fiber", {
-	name = S("Optical Fiber"),
-	description = S("Data transfer over light. Fast but experimental and expensive."),
-	year = 1960,
-})
+-- <year number> = <year name>
+-- The "year number" is the column in the technology tree
+-- "" means span previous column here
+ctw_technologies.year_captions = {}
+-- Table is filled in in definitions list below
 
--- protocol
-ctw_technologies.register_technology("ascii", {
-	name = S("ASCII"),
-	description = S("Standard for character encoding"),
-	year = 1966,
-})
+--{ s=<from year number>, e=<to year number>, n=<name>},
+ctw_technologies.eras = {
+	{ s=2, e=5, n=S("Internet Stone Age")},
+	{ s=6, e=7, n=S("The Early Days of Hypertext")},
+	{ s=8, e=10, n=S("HTML and HTTP")},
+	{ s=11, e=12, n=S("The Earliest Browsers")},
+	{ s=13, e=15, n=S("Standardisation and Liberation")},
+}
 
--- software
-ctw_technologies.register_technology("unix", {
-	name = S("UNIX v4"),
-	description = S("An OS to work fast and efficiently."),
-	year = 1973,
-})
+local tlev
+
+-- ===========
+-- Before 1980
+-- ===========
+tlev = 1
+ctw_technologies.year_captions[tlev] = "Before 1980"
 
 -- protocol
 ctw_technologies.register_technology("crc", {
 	name = S("Cyclic Redundancy Check"),
 	description = S("Automatic error correction to get valid data."),
 	year = 1975,
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 1,
 })
 
--- ??
-ctw_technologies.register_technology("report", {
-	name = S("??"),
-	description = S("??"),
-	year = 1977,
+-- hardware
+ctw_technologies.register_technology("fiber", {
+	name = S("Optical Fiber"),
+	description = S("Data transfer over light. Fast but experimental and expensive."),
+	year = 1960,
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 2,
 })
 
 -- protocol
@@ -53,33 +61,46 @@ ctw_technologies.register_technology("ipnet", {
 	name = S("IP Networking"),
 	description = S("Addresses for your network computers"),
 	year = 1978,
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 5,
+})
+
+-- software
+ctw_technologies.register_technology("unix", {
+	name = S("UNIX v4"),
+	description = S("An OS to work fast and efficiently."),
+	year = 1973,
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 7,
+})
+
+-- ??
+ctw_technologies.register_technology("report", {
+	name = S("??"),
+	description = S("??"),
+	year = 1977,
+	kind = "??",
+	tree_level = tlev,
+	tree_line = 8,
+})
+
+-- protocol
+ctw_technologies.register_technology("ascii", {
+	name = S("ASCII"),
+	description = S("Standard for character encoding"),
+	year = 1966,
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- ===========
 -- 1980 - 1983
 -- ===========
-
--- software
-ctw_technologies.register_technology("sgml", {
-	name = S("SGML"),
-	description = S("Enriched and formatted text that is human- and machine-readable."),
-	year = 1980,
-	requires = {
-		"ascii"
-	},
-	tree_line = 2,
-})
-
--- software
-ctw_technologies.register_technology("enquire", {
-	name = S("ENQUIRE"),
-	description = S("Easy linkable documentation pages."),
-	year = 1980,
-	requires = {
-		"ascii"
-	},
-	tree_line = 2,
-})
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1980 - 1983"
 
 -- hardware
 ctw_technologies.register_technology("e10base2", {
@@ -92,21 +113,9 @@ ctw_technologies.register_technology("e10base2", {
 	benefits = {
 		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
-	tree_line = 2,
-})
-
--- protocol
-ctw_technologies.register_technology("tcpip", {
-	name = S("TCP/IP v4"),
-	description = S("A reliable protocol to transmit data over a computer network."),
-	year = 1981,
-	requires = {
-		"ipnet"
-	},
-	benefits = {
-		{ type = "wire_throughput_multiplier", value = 2 },
-	},
-	tree_line = 2,
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 1.5,
 })
 
 -- hardware
@@ -120,7 +129,25 @@ ctw_technologies.register_technology("ethernet", {
 	benefits = {
 		{ type = "supply", item="reseau:copper_cable" }
 	},
-	tree_line = 2,
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 1,
+})
+
+-- protocol
+ctw_technologies.register_technology("tcpip", {
+	name = S("TCP/IP v4"),
+	description = S("A reliable protocol to transmit data over a computer network."),
+	year = 1981,
+	requires = {
+		"ipnet"
+	},
+	benefits = {
+		{ type = "wire_throughput_multiplier", value = 2 },
+	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 6,
 })
 
 -- software
@@ -131,12 +158,42 @@ ctw_technologies.register_technology("gnu", {
 	requires = {
 		"unix"
 	},
-	tree_line = 2,
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 7,
+})
+
+-- software
+ctw_technologies.register_technology("sgml", {
+	name = S("SGML"),
+	description = S("Enriched and formatted text that is human- and machine-readable."),
+	year = 1980,
+	requires = {
+		"ascii"
+	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 9,
+})
+
+-- software
+ctw_technologies.register_technology("enquire", {
+	name = S("ENQUIRE"),
+	description = S("Easy linkable documentation pages."),
+	year = 1980,
+	requires = {
+		"ascii"
+	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1984 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1984"
 
 -- hardware
 ctw_technologies.register_technology("tokenring", {
@@ -149,7 +206,9 @@ ctw_technologies.register_technology("tokenring", {
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 2 }
 	},
-	tree_line = 2,
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 5,
 })
 
 -- service
@@ -160,6 +219,9 @@ ctw_technologies.register_technology("cerndoc", {
 	requires = {
 		"report"
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 8,
 })
 
 -- service
@@ -170,11 +232,16 @@ ctw_technologies.register_technology("tangle", {
 	requires = {
 		"enquire"
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1985 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1985"
 
 -- hardware
 ctw_technologies.register_technology("fiberproduction", {
@@ -184,6 +251,9 @@ ctw_technologies.register_technology("fiberproduction", {
 	requires = {
 		"fiber"
 	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 2,
 })
 
 -- service
@@ -197,6 +267,9 @@ ctw_technologies.register_technology("dns", {
 	benefits = { -- more people use it now:
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 6,
 })
 
 -- software
@@ -208,6 +281,9 @@ ctw_technologies.register_technology("grif", {
 		"cerndoc",
 		"sgml"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -219,11 +295,17 @@ ctw_technologies.register_technology("enquire2", {
 		"cerndoc",
 		"sgml"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
+	tree_conn_loc = 2.9,
 })
 
 -- ==========
 -- -- 1986 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1985"
 
 -- kept for completeness
 
@@ -231,6 +313,8 @@ ctw_technologies.register_technology("enquire2", {
 -- ==========
 -- -- 1987 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1987"
 
 -- hardware
 ctw_technologies.register_technology("twistethernet", {
@@ -245,6 +329,9 @@ ctw_technologies.register_technology("twistethernet", {
 		{ type = "wire_throughput_multiplier", value = 5 },
 		{ type = "receiver_throughput_multiplier", value = 3 },
 	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 1,
 })
 
 -- service
@@ -258,6 +345,9 @@ ctw_technologies.register_technology("gif", {
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -272,11 +362,16 @@ ctw_technologies.register_technology("hypertext", {
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1988 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1988"
 
 -- protocol
 ctw_technologies.register_technology("dynroutingrip", {
@@ -287,24 +382,16 @@ ctw_technologies.register_technology("dynroutingrip", {
 		"twistethernet",
 		"ipnet"
 	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 5,
 })
 
 -- ==========
 -- -- 1989 --
 -- ==========
-
--- hardware
-ctw_technologies.register_technology("merger", {
-	name = S("Merge Router"),
-	description = S("Merge various kinds of cables to improve the wire usage."),
-	year = 1989,
-	requires = {
-		"dynroutingrip" -- or better
-	},
-	benefits = {
-		{ type = "supply", item="reseau:merger_%t", time_min=80, time_max=180 },
-	},
-})
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1989"
 
 -- protocol
 ctw_technologies.register_technology("dynroutingbgp", {
@@ -317,6 +404,25 @@ ctw_technologies.register_technology("dynroutingbgp", {
 	benefits = {
 		{ type = "router_throughput_multiplier", value = 1.5 }
 	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 4,
+})
+
+-- hardware
+ctw_technologies.register_technology("merger", {
+	name = S("Merge Router"),
+	description = S("Merge various kinds of cables to improve the wire usage."),
+	year = 1989,
+	requires = {
+		"dynroutingrip" -- or better
+	},
+	benefits = {
+		{ type = "supply", item="reseau:merger_%t", time_min=80, time_max=180 },
+	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 5,
 })
 
 -- software
@@ -327,6 +433,9 @@ ctw_technologies.register_technology("gpl", {
 	requires = {
 		"gnu",
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 7,
 })
 
 -- software
@@ -338,11 +447,16 @@ ctw_technologies.register_technology("hypertextproposal", {
 		"dns",
 		"hypertext"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
--- -- 1990 --
+-- -- 1990 -1
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1990"
 
 -- hardware
 ctw_technologies.register_technology("fibercommunications", {
@@ -355,7 +469,10 @@ ctw_technologies.register_technology("fibercommunications", {
 	},
 	benefits = {
 		{ type = "supply", item="reseau:fiber_%t_00000000 50", time_min=60, time_max=120 },
-	}
+	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 2,
 })
 
 -- protocol
@@ -366,6 +483,9 @@ ctw_technologies.register_technology("http", {
 	requires = {
 		"hypertextproposal"
 	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -376,9 +496,16 @@ ctw_technologies.register_technology("html", {
 	requires = {
 		"hypertextproposal"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
--- ALSO 1990 but later
+-- ==========
+-- -- 1990 -2
+-- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = ""
 
 -- service
 ctw_technologies.register_technology("httpd", {
@@ -388,6 +515,9 @@ ctw_technologies.register_technology("httpd", {
 	requires = {
 		"http"
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -398,12 +528,17 @@ ctw_technologies.register_technology("wwwbrowser", {
 	requires = {
 		"html"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 
 -- ==========
 -- -- 1991 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1991"
 
 -- hardware
 ctw_technologies.register_technology("cat5", {
@@ -416,6 +551,9 @@ ctw_technologies.register_technology("cat5", {
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 4 }
 	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 1,
 })
 
 -- software
@@ -426,6 +564,9 @@ ctw_technologies.register_technology("linux", {
 	requires = {
 		"gnu"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 7,
 })
 
 -- software
@@ -439,6 +580,9 @@ ctw_technologies.register_technology("cernbook", {
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 8,
 })
 
 -- software
@@ -452,6 +596,9 @@ ctw_technologies.register_technology("cernpage", {
 	benefits = { -- scientists are happy
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -465,11 +612,16 @@ ctw_technologies.register_technology("violawww", {
 	benefits = { -- amazing new stuff
 		{ type = "experiment_throughput_multiplier", value = 1.5 }
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1992 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1992"
 
 -- hardware
 ctw_technologies.register_technology("splitter", {
@@ -482,6 +634,9 @@ ctw_technologies.register_technology("splitter", {
 	benefits = {
 		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
 	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 5,
 })
 
 -- software
@@ -495,11 +650,16 @@ ctw_technologies.register_technology("lynx", {
 	benefits = {
 		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1993 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1993"
 
 -- protocol
 ctw_technologies.register_technology("cidrrouting", {
@@ -512,6 +672,9 @@ ctw_technologies.register_technology("cidrrouting", {
 	benefits = {
 		{ type = "router_throughput_multiplier", value = 0.8 },
 	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 5,
 })
 
 -- service
@@ -525,6 +688,9 @@ ctw_technologies.register_technology("gnn", {
 	benefits = {
 		{ type = "receiver_throughput_multiplier", value = 3 },
 	},
+	kind = "service",
+	tree_level = tlev,
+	tree_line = 8,
 })
 
 -- ??
@@ -538,6 +704,9 @@ ctw_technologies.register_technology("wwwpublic", {
 		"cernpage",
 		"lynx"
 	},
+	kind = "??",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -548,11 +717,16 @@ ctw_technologies.register_technology("mosaic", {
 	requires = {
 		"lynx"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1994 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1994"
 
 -- protocol
 ctw_technologies.register_technology("url", {
@@ -564,6 +738,9 @@ ctw_technologies.register_technology("url", {
 		"gnn",
 		"wwwpublic"
 	},
+	kind = "protocol",
+	tree_level = tlev,
+	tree_line = 9,
 })
 
 -- software
@@ -576,11 +753,16 @@ ctw_technologies.register_technology("netscape", {
 		"gnn",
 		"wwwpublic"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 -- ==========
 -- -- 1995 --
 -- ==========
+tlev = tlev + 1
+ctw_technologies.year_captions[tlev] = "1995"
 
 -- hardware
 ctw_technologies.register_technology("fastethernet", {
@@ -593,6 +775,9 @@ ctw_technologies.register_technology("fastethernet", {
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 10 }
 	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 2,
 })
 
 -- software TODO: Maybe delete?
@@ -606,6 +791,9 @@ ctw_technologies.register_technology("iexplore", {
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 0.8 }
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 11,
 })
 
 -- software
@@ -616,6 +804,9 @@ ctw_technologies.register_technology("png", {
 	requires = {
 		"gnn"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 8,
 })
 
 -- software
@@ -627,6 +818,9 @@ ctw_technologies.register_technology("w3c", {
 		"url",
 		"netscape"
 	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 10,
 })
 
 
