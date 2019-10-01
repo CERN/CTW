@@ -110,7 +110,7 @@ ctw_resources.register_idea("html", {
 	name = S("Hypertext Markup Language"),
 	description = S("We need a standardized language to express documents with hyperlinks!"),
 	technologies_gained = {
-		--"html",
+		"html",
 	},
 	references_required = {
 		"books:book_data_formats 1",

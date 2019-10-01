@@ -74,7 +74,8 @@ function ctw_resources.show_idea_form(pname, id)
 				local iname = idef and idef.description or "Unknown Item"
 				return "goto_ref_"..idef._ctw_reference_id,
 					iname,
-					istack:get_name()
+					istack:get_name(),
+					istack:get_count()
 			end,
 			use_item_image_button=true,
 			entries = idea.references_required,
@@ -245,6 +246,24 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
 
 	if istate.state ~= "undiscovered" then
 		return false, "idea_present_in_team"
+	end
+
+	local n_gained = 0
+	local idea_year = 0
+	for i, tech_id in ipairs(idea.technologies_required) do
+		local tech_def = ctw_technologies.get_technology(tech_id)
+		tech_state = ctw_technologies.get_team_tech_state(tech_id, team)
+		if tech_state.state == "gained" then
+			n_gained = n_gained + 1
+		end
+		idea_year = math.max(idea_year, tech_def.year)
+	end
+	if #idea.technologies_required - n_gained > 1 then
+		return false, "not_enough_gained"
+	end
+	-- TODO: implement eras
+	if idea_year > year.get(team) then
+		return false, "era_not_reached"
 	end
 
 	if try then return true end

@@ -66,21 +66,24 @@ local tech_line_h = 1
 
 local function form_render_tech_entries(form, xstart, tech_start_y, bt)
 	if not bt then return end
-	form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y+0.2)
-					..";"..bt.catlabel.."]";
+
+	local x = FORM.ENTRY_START_X + xstart
+
+	form = form .. ("label[%f,%f;%s]"):format(x, tech_start_y + 0.2, bt.catlabel)
+
 	for idx,entry in ipairs(bt.entries) do
-		local btnname,label,img = bt.func(entry, idx)
+		local y = tech_start_y + idx*tech_line_h
+		local btnname,label,img,imgtext = bt.func(entry, idx)
 		local itembtn = bt.use_item_image_button and "item_" or ""
 
-		form = form .. itembtn.."image_button["
-						..(FORM.ENTRY_START_X+xstart)..","..(tech_start_y + idx*tech_line_h - 0.2)..";1,1;"
-						..img..";"
-						..btnname..";"
-						.."]"
-		form = form .. "label["
-					..(FORM.ENTRY_START_X+xstart+1)..","..(tech_start_y + idx*tech_line_h)
-					..";"..label.."]";
+		form = form .. ("%simage_button[%f,%f;1,1;%s;%s;]"):format(
+			itembtn, x, y - 0.2, img, btnname)
+
+		form = form .. ("label[%f,%f;%s]"):format(x + 1, y, label)
+
+		if imgtext then
+			form = form .. ("label[%f,%f;%s]"):format(x + 0.6, y + 0.25, imgtext)
+		end
 	end
 	return form
 end
