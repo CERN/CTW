@@ -28,13 +28,39 @@ ctw_technologies.eras = {
 	{ s=13, e=15, n=S("Standardisation and Liberation")},
 }
 
-local tlev
+ctw_technologies.tech_tree_positions = {
+	origin = {
+		x = -530 + 10,
+		y = -210 + 10
+	}, -- top left origin
+	bottom = {
+		x = 2680,
+		y = 440
+	}, -- bottom right corner
+
+	earlier = -460,
+	-- -460
+	[1980] = -240,
+	[1981] = -240,
+	-- none
+	[1983] = -240,
+	[1984] = -20,
+	[1985] = 220,
+	-- none
+	[1987] = 560,
+	[1988] = 820,
+	[1989] = 1020,
+	[1990] = 1260, -- 2nd: 1440
+	[1991] = 1640,
+	[1992] = 1860,
+	[1993] = 2080,
+	[1994] = 2300,
+	[1995] = 2540,
+}
 
 -- ===========
 -- Before 1980
 -- ===========
-tlev = 1
-ctw_technologies.year_captions[tlev] = "Before 1980"
 
 -- protocol
 ctw_technologies.register_technology("crc", {
@@ -42,8 +68,7 @@ ctw_technologies.register_technology("crc", {
 	description = S("Automatic error correction to get valid data."),
 	year = 1975,
 	kind = "protocol",
-	tree_level = tlev,
-	tree_line = 1,
+	tree_y = -140,
 })
 
 -- hardware
@@ -52,8 +77,7 @@ ctw_technologies.register_technology("fiber", {
 	description = S("Data transfer over light. Fast but experimental and expensive."),
 	year = 1960,
 	kind = "hardware",
-	tree_level = tlev,
-	tree_line = 2,
+	tree_y = -80,
 })
 
 -- protocol
@@ -62,8 +86,7 @@ ctw_technologies.register_technology("ipnet", {
 	description = S("Addresses for your network computers"),
 	year = 1978,
 	kind = "protocol",
-	tree_level = tlev,
-	tree_line = 5,
+	tree_y = 40,
 })
 
 -- software
@@ -72,8 +95,7 @@ ctw_technologies.register_technology("unix", {
 	description = S("An OS to work fast and efficiently."),
 	year = 1973,
 	kind = "software",
-	tree_level = tlev,
-	tree_line = 7,
+	tree_y = 160,
 })
 
 -- ??
@@ -82,8 +104,7 @@ ctw_technologies.register_technology("report", {
 	description = S("??"),
 	year = 1977,
 	kind = "??",
-	tree_level = tlev,
-	tree_line = 8,
+	tree_y = 220,
 })
 
 -- protocol
@@ -92,15 +113,13 @@ ctw_technologies.register_technology("ascii", {
 	description = S("Standard for character encoding"),
 	year = 1966,
 	kind = "protocol",
-	tree_level = tlev,
-	tree_line = 9,
+	tree_y = 280,
 })
 
 -- ===========
 -- 1980 - 1983
 -- ===========
-tlev = tlev + 1
-ctw_technologies.year_captions[tlev] = "1980 - 1983"
+tlev = 1
 
 -- hardware
 ctw_technologies.register_technology("e10base2", {
@@ -114,8 +133,7 @@ ctw_technologies.register_technology("e10base2", {
 		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
 	kind = "hardware",
-	tree_level = tlev,
-	tree_line = 1.5,
+	tree_y = -180,
 })
 
 -- hardware
@@ -130,8 +148,7 @@ ctw_technologies.register_technology("ethernet", {
 		{ type = "supply", item="reseau:copper_cable" }
 	},
 	kind = "hardware",
-	tree_level = tlev,
-	tree_line = 1,
+	tree_y = -140,
 })
 
 -- protocol
@@ -146,8 +163,7 @@ ctw_technologies.register_technology("tcpip", {
 		{ type = "wire_throughput_multiplier", value = 2 },
 	},
 	kind = "protocol",
-	tree_level = tlev,
-	tree_line = 6,
+	tree_y = 90,
 })
 
 -- software
@@ -159,8 +175,7 @@ ctw_technologies.register_technology("gnu", {
 		"unix"
 	},
 	kind = "software",
-	tree_level = tlev,
-	tree_line = 7,
+	tree_y = 160,
 })
 
 -- software
@@ -172,8 +187,7 @@ ctw_technologies.register_technology("sgml", {
 		"ascii"
 	},
 	kind = "software",
-	tree_level = tlev,
-	tree_line = 9,
+	tree_y = 250,
 })
 
 -- software
@@ -185,8 +199,7 @@ ctw_technologies.register_technology("enquire", {
 		"ascii"
 	},
 	kind = "software",
-	tree_level = tlev,
-	tree_line = 10,
+	tree_y = 300,
 })
 
 -- ==========

@@ -13,9 +13,6 @@ dofile(mp.."benefit_defs.lua")
 dofile(mp.."tech_defs.lua")
 dofile(mp.."delivery.lua")
 
--- construct tree
-ctw_technologies.build_tech_tree()
-
 
 -- gain initial technologies
 for team_id, team in pairs(teams.get_all()) do
