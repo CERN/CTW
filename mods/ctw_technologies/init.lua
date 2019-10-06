@@ -25,14 +25,3 @@ for team_id, team in pairs(teams.get_all()) do
 		end
 	end
 end
-
--- TODO only for testing
-
-minetest.register_chatcommand("ctwt", {
-         param = "tech",
-         description = "Gain a technology",
-         privs = {},
-         func = function(pname, params)
-				return ctw_technologies.gain_technology(params, teams.get_by_player(pname))
-        end,
-})

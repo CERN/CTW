@@ -110,6 +110,9 @@ ctw_technologies.register_technology("e10base2", {
 	requires = {
 		"crc"
 	},
+	conn_info = {
+		crc = {start_shift=0.5,end_shift=0},
+	},
 	benefits = {
 		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
@@ -125,6 +128,9 @@ ctw_technologies.register_technology("ethernet", {
 	year = 1983,
 	requires = {
 		"crc"
+	},
+	conn_info = {
+		crc = {start_shift=-0.5,end_shift=-0.5},
 	},
 	benefits = {
 		{ type = "supply", item="reseau:copper_cable" }
@@ -171,6 +177,7 @@ ctw_technologies.register_technology("sgml", {
 	requires = {
 		"ascii"
 	},
+	conn_info = {ascii = {start_shift=0},},
 	kind = "software",
 	tree_level = tlev,
 	tree_line = 9,
@@ -184,6 +191,7 @@ ctw_technologies.register_technology("enquire", {
 	requires = {
 		"ascii"
 	},
+	conn_info = {ascii = {start_shift=1},},
 	kind = "software",
 	tree_level = tlev,
 	tree_line = 10,
@@ -208,7 +216,7 @@ ctw_technologies.register_technology("tokenring", {
 	},
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 5,
+	tree_line = 4,
 })
 
 -- service
@@ -281,6 +289,10 @@ ctw_technologies.register_technology("grif", {
 		"cerndoc",
 		"sgml"
 	},
+	conn_info = {
+		sgml = {start_shift=0,end_shift=0},
+		cerndoc = {start_shift=-0.5,end_shift=-1},
+	},
 	kind = "software",
 	tree_level = tlev,
 	tree_line = 9,
@@ -294,6 +306,10 @@ ctw_technologies.register_technology("enquire2", {
 	requires = {
 		"cerndoc",
 		"sgml"
+	},
+	conn_info = {
+		sgml = {vertline_offset=0.2,start_shift=1},
+		cerndoc = {vertline_offset=0.1,start_shift=0.5,end_shift=0},
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -325,6 +341,9 @@ ctw_technologies.register_technology("twistethernet", {
 		"ethernet",
 		"e10base2"
 	},
+	conn_info = {
+		ethernet = {start_shift=-0.5,end_shift=-0.5},
+	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 5 },
 		{ type = "receiver_throughput_multiplier", value = 3 },
@@ -342,6 +361,9 @@ ctw_technologies.register_technology("gif", {
 	requires = {
 		"grif"
 	},
+	conn_info = {
+		grif = {start_shift=-0.5,end_shift=-0.5},
+	},
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
@@ -358,6 +380,9 @@ ctw_technologies.register_technology("hypertext", {
 	requires = {
 		"grif",
 		"enquire2"
+	},
+	conn_info = {
+		enquire2 = {start_shift=0.5,end_shift=0.5},
 	},
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
@@ -417,6 +442,9 @@ ctw_technologies.register_technology("merger", {
 	requires = {
 		"dynroutingrip" -- or better
 	},
+	conn_info = {
+		dynroutingrip = {start_shift=0.5,end_shift=0.5},
+	},
 	benefits = {
 		{ type = "supply", item="reseau:merger_%t", time_min=80, time_max=180 },
 	},
@@ -435,7 +463,7 @@ ctw_technologies.register_technology("gpl", {
 	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 7,
+	tree_line = 8,
 })
 
 -- software
@@ -446,6 +474,10 @@ ctw_technologies.register_technology("hypertextproposal", {
 	requires = {
 		"dns",
 		"hypertext"
+	},
+	conn_info = {
+		dns = {vertline_offset=1},
+		hypertext = {start_shift=0.5,end_shift=0.5},
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -467,6 +499,9 @@ ctw_technologies.register_technology("fibercommunications", {
 		"twistethernet",
 		"fiberproduction"
 	},
+	conn_info = {
+		fiberproduction = {start_shift=0.5,end_shift=0.5},
+	}
 	benefits = {
 		{ type = "supply", item="reseau:fiber_%t_00000000 50", time_min=60, time_max=120 },
 	},
@@ -495,6 +530,9 @@ ctw_technologies.register_technology("html", {
 	year = 1990,
 	requires = {
 		"hypertextproposal"
+	},
+	conn_info = {
+		hypertextproposal = {start_shift=0.5,end_shift=0.5},
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -636,7 +674,7 @@ ctw_technologies.register_technology("splitter", {
 	},
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 5,
+	tree_line = 4,
 })
 
 -- software

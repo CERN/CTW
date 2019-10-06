@@ -234,3 +234,18 @@ function ctw_technologies.gain_technology(tech_id, team, try)
 	return true
 end
 
+
+-- TODO only for testing
+
+minetest.register_chatcommand("retech", {
+         param = "tech",
+         description = "Reload technologies",
+         privs = {},
+         func = function(pname, params)
+				local mp = minetest.get_modpath("ctw_technologies") .. DIR_DELIM
+				technologies={}
+				dofile(mp.."tech_defs.lua")
+				ctw_technologies.build_tech_tree()
+				ctw_technologies.show_tech_tree(pname, 0)
+        end,
+})
