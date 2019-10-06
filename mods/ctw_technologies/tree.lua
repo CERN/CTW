@@ -200,8 +200,10 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local x = px-fdata.offx
 		local y = py-fdata.offy
 		local fwim = 1
-		local fwte = 3.5
+		local fwbo = 3.7
+		local fwte = 3.0
 		local fhim = 0.7
+		local fhbo = 0.55
 		local fhte = 2
 		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
 			return ""
@@ -210,13 +212,12 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local tech = ctw_technologies.get_technology(techid)
 		local img = tech.image or "ctw_technologies_technology.png"
 		
-		local name
+		local name = tech.name
+		local color = "blue"
 		if hithis then
-			name = minetest.colorize("#FF0000", tech.name)
+			color = "red"
 		elseif disco then
-			name = minetest.colorize("#00FF00", tech.name)
-		else
-			name = tech.name
+			color = "green"
 		end
 
 		local form = "image_button["
@@ -224,11 +225,26 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 						..img..";"
 						.."goto_tech_"..techid..";"
 						.."]"
-		--form = form .. "textarea["
-		--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
-		--				..";;"..name.."]"
-		form = form .. "label["
-						..(x+fwim)..","..(y)..";"..name.."]"
+		
+		local box_x = x
+		local box_width = fwbo
+		if box_x < fdata.minx then
+			box_width = box_width - (fdata.minx-box_x)
+			box_x = fdata.minx
+		end
+		if box_x + box_width > fdata.maxx then
+			box_width = fdata.maxx - box_x
+		end
+		
+		form = form .. "box["
+						..(box_x)..","..(y)..";"..box_width..","..fhbo..";"
+						..color.."]"
+		form = form .. "textarea["
+						..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
+						..";;"..name.."]"
+		
+		--form = form .. "label["
+		--				..(x+fwim)..","..(y)..";"..name.."]"
 		return form
 	end
 
@@ -299,7 +315,7 @@ function ctw_technologies.show_tech_tree(pname, scrollpos)
 			end
 		end
 	end
-	local form = "size[17,12]"
+	local form = "size[17,12]real_coordinates[true]"
 			..ctw_technologies.render_tech_tree(0, 0, 17, 12, dtech, scrollpos, nil)
 	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
 end
