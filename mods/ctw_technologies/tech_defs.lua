@@ -304,12 +304,7 @@ ctw_technologies.register_technology("enquire2", {
 	description = S("?? what's changed?"),
 	year = 1985,
 	requires = {
-		"cerndoc",
-		"sgml"
-	},
-	conn_info = {
-		sgml = {vertline_offset=0.2,start_shift=1},
-		cerndoc = {vertline_offset=0.1,start_shift=0.5,end_shift=0},
+		"tangle",
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -501,7 +496,7 @@ ctw_technologies.register_technology("fibercommunications", {
 	},
 	conn_info = {
 		fiberproduction = {start_shift=0.5,end_shift=0.5},
-	}
+	},
 	benefits = {
 		{ type = "supply", item="reseau:fiber_%t_00000000 50", time_min=60, time_max=120 },
 	},
@@ -615,6 +610,9 @@ ctw_technologies.register_technology("cernbook", {
 	requires = {
 		"httpd"
 	},
+	conn_info = {
+		httpd = {start_shift=-0.5,end_shift=0},
+	},
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
@@ -631,6 +629,9 @@ ctw_technologies.register_technology("cernpage", {
 	requires = {
 		"httpd"
 	},
+	conn_info = {
+		httpd = {start_shift=0.5,end_shift=0.5},
+	},
 	benefits = { -- scientists are happy
 		{ type = "experiment_throughput_multiplier", value = 2 }
 	},
@@ -645,7 +646,7 @@ ctw_technologies.register_technology("violawww", {
 	description = S("This browser provides website styling, scripting and document embedding."),
 	year = 1991,
 	requires = {
-		"httpd"
+		"wwwbrowser"
 	},
 	benefits = { -- amazing new stuff
 		{ type = "experiment_throughput_multiplier", value = 1.5 }
@@ -667,7 +668,14 @@ ctw_technologies.register_technology("splitter", {
 	description = S("Split various kinds of cables to improve the wire usage."),
 	year = 1992,
 	requires = {
-		"merger" -- or better
+		"merger", -- or better
+		"linux",
+		"dynroutingbgp",
+	},
+	conn_info = {
+		dynroutingbgp = {start_shift=-1,end_shift=-1,vertline_offset=0.3},
+		merger = {vertline_offset=0.2,end_shift=0},
+		linux = {start_shift=-0.5,end_shift=1},
 	},
 	benefits = {
 		{ type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180 },
@@ -705,7 +713,7 @@ ctw_technologies.register_technology("cidrrouting", {
 	description = S("Introduce subnets to prevent running out of addresses for your network computers."),
 	year = 1993,
 	requires = {
-		"merger"
+		"splitter"
 	},
 	benefits = {
 		{ type = "router_throughput_multiplier", value = 0.8 },
@@ -755,6 +763,9 @@ ctw_technologies.register_technology("mosaic", {
 	requires = {
 		"lynx"
 	},
+	conn_info = {
+		lynx = {start_shift=0.5,end_shift=0.5},
+	},
 	kind = "software",
 	tree_level = tlev,
 	tree_line = 10,
@@ -776,9 +787,13 @@ ctw_technologies.register_technology("url", {
 		"gnn",
 		"wwwpublic"
 	},
+	conn_info = {
+		gnn = {vertline_offset=0.1},
+		wwwpublic = {start_shift=-0.5},
+	},
 	kind = "protocol",
 	tree_level = tlev,
-	tree_line = 9,
+	tree_line = 8.5,
 })
 
 -- software
@@ -787,9 +802,12 @@ ctw_technologies.register_technology("netscape", {
 	description = S("Continued development of NCSA Mosaic with an easy webpage editor built-in ('Gold' version)."),
 	year = 1994,
 	requires = {
-		"dns",
-		"gnn",
-		"wwwpublic"
+		"wwwpublic",
+		"mosaic",
+	},
+	conn_info = {
+		mosaic = {start_shift=0,end_shift=0},
+		wwwpublic = {start_shift=0.5,end_shift=-1},
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -826,6 +844,9 @@ ctw_technologies.register_technology("iexplore", {
 	requires = {
 		"mosaic"
 	},
+	conn_info = {
+		mosaic = {vertline_offset=1.05, start_shift=1},
+	},
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 0.8 }
 	},
@@ -841,6 +862,9 @@ ctw_technologies.register_technology("png", {
 	year = 1995,
 	requires = {
 		"gnn"
+	},
+	conn_info = {
+		gnn = {start_shift=-0.5,end_shift=-0.5},
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -858,7 +882,7 @@ ctw_technologies.register_technology("w3c", {
 	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 10,
+	tree_line = 9.5,
 })
 
 
