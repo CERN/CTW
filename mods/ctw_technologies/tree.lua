@@ -20,7 +20,15 @@ render_info = {
 		},
 	}
 	conns = {
-		{ slvl, sline, elvl, eline, clvl}
+		{ slvl,  Level(horizontal) where conn starts
+		sline,   Line (vertical) where conn starts
+		soff,    Vertical offset of line start
+		elvl, 
+		eline,   same for end
+		eoff, 
+		clvl,    level of vertical line
+		color    line color
+		}    
 	}
 	max_levels = <maximum number of levels>
 }
@@ -37,6 +45,10 @@ end
 
 local function logs(str)
 	minetest.log("action", "[ctw_technologies] "..str)
+end
+
+local function calc_offset(this, total)
+	return this - (total/2) - 0.5
 end
 
 function ctw_technologies.build_tech_tree()
@@ -83,7 +95,14 @@ function ctw_technologies.build_tech_tree()
 				error("technology '"..techid.."' depends on '"..techid.."' which is on same or later level, must rearrange!")
 			end
 			-- locate dependency line
-			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level}
+			local soff = 0
+			for sindex,stechid in ipairs(atech.enables) do
+				if stechid == techid then
+					soff = sindex
+				end
+			end
+			
+			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level, soff = calc_offset(soff,#atech.enables)}
 		end
 
 		local lvl = tech.tree_level
@@ -98,11 +117,28 @@ function ctw_technologies.build_tech_tree()
 		tech.tree_line = my_line
 
 		-- add connections
-		local conns_lvl = tech.tree_conn_loc or (lvl-1)
-		for _, e in ipairs(dep_is_at) do
+		for eindex, e in ipairs(dep_is_at) do
 			logs("\tdep. conn to "..e.slvl..":"..e.sline)
-			local color = colors[math.random(1,#colors)] -- select random color
-			table.insert(render_info.conns, {sline=e.sline, slvl=e.slvl, eline=my_line, elvl=lvl, clvl=conns_lvl, color=color})
+			local dep_techid = tech.requires[eindex]
+			local conn_info = {}
+			if tech.conn_info and tech.conn_info[dep_techid] then
+				conn_info = tech.conn_info[dep_techid]
+			end
+			local color = conn_info.color or colors[math.random(1,#colors)] -- select random color
+			local conns_lvl = lvl - (conn_info.vertline_offset or 0)
+			local conn = {
+				sline=e.sline, 
+				slvl=e.slvl,
+				soff= conn_info.start_shift or e.soff,
+				eline=my_line, 
+				elvl=lvl,
+				eoff= conn_info.end_shift or calc_offset(eindex,#dep_is_at),
+				clvl=conns_lvl, 
+				color=color
+			}
+			
+			table.insert(render_info.conns, conn)
+			logs("\t\tDrawing connection:"..conn.slvl..":"..conn.sline.."o"..conn.soff.." -| "..conn.clvl.." "..conn.color.." |- "..conn.elvl..":"..conn.eline.."o"..conn.eoff)
 		end
 
 		-- add enables to the queue
@@ -164,7 +200,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local x = px-fdata.offx
 		local y = py-fdata.offy
 		local fwim = 1
-		local fwte = 2
+		local fwte = 3.5
 		local fhim = 0.7
 		local fhte = 2
 		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
@@ -203,11 +239,13 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 
 	local lvl_init_off  = -3.5
 	local lvl_space     =  5.0
-	local conn_init_off = -0.1
+	local conn_init_off = -4.0
 	local conn_space    =  0.1
+	local conn_linestart=  3.7
 	local line_init_off = -0.5
 	local line_space    =  0.9
 	local conn_ydown    =  0.2
+	local conn_offset_factor = 0.1
 	local scroll_w = (render_info.max_levels+1)*lvl_space
 
 	scrollpos = rng(scrollpos, 0, 1000)
@@ -237,12 +275,12 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	for _, conn in pairs(render_info.conns) do
 		local color = conn.color
 		local vlinep = conn.clvl*lvl_space + conn_init_off -- + xdisp*conn_space
-		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + 2.5, vlinep,
-				conn.sline*line_space + line_init_off + conn_ydown, fdata, color))
-		table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown,
-				conn.eline*line_space + line_init_off + conn_ydown, fdata, color))
+		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + conn_linestart, vlinep,
+				conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor, fdata, color))
+		table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor,
+				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
 		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
-				conn.eline*line_space + line_init_off + conn_ydown, fdata, color))
+				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
 	end
 	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
 	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")

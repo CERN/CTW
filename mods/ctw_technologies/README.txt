@@ -39,8 +39,24 @@ TechDef = {
 	tree_line = <n>
 	-- On which line (row) to place the node.
 
-	tree_conn_loc = <llvl>
-	-- optional, between which nodes to place the bend
+	conn_info = {
+	-- Optional: Table to individually override certain properties of the connection line
+	-- between a required technology and this technology.
+	-- If table or individual entries are missing, defaults are applied
+		"lan" = {
+			vertline_offset = 2,
+			-- how many Level units the vertical line is moved left, starting from the current node
+			-- Defaults to 0
+			color = "blue",
+			-- The line color as formspec color string
+			start_shift = -0.5
+			-- Shift the beginning of the line up/down by small units
+			end_shift = 1
+			-- Shift the end of the line up/down by small units
+			-- start_shift and end_shift are automatically determined by the entry locations in
+			-- tech.requires and tech.enables if not given this way, but may not be optimal.
+		}
+	}
 
 	-- Those fields are filled in after registration automatically:
 	enables = {
