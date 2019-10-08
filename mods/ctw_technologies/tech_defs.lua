@@ -453,7 +453,7 @@ ctw_technologies.register_technology("hypertextproposal", {
 })
 
 -- ==========
--- -- 1990 -1
+-- -- 1990 -- v1
 -- ==========
 tlev = tlev + 1
 ctw_technologies.year_captions[tlev] = "1990"
@@ -502,7 +502,7 @@ ctw_technologies.register_technology("html", {
 })
 
 -- ==========
--- -- 1990 -2
+-- -- 1990 -- v2
 -- ==========
 tlev = tlev + 1
 ctw_technologies.year_captions[tlev] = ""

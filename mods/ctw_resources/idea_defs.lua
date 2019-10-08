@@ -106,21 +106,61 @@ ctw_resources.register_idea_from_tech("fiberproduction", {
 	},
 })
 
-ctw_resources.register_idea("html", {
-	name = S("Hypertext Markup Language"),
-	description = S("We need a standardized language to express documents with hyperlinks!"),
-	technologies_gained = {
-		"html",
-	},
-	references_required = {
-		"books:book_data_formats 1",
-		"books:book_program_c 2",
-	}
+ctw_resources.register_idea_from_tech("dns", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("grif", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("enquire2", {
+	references_required = {},
 })
 
 
+-- ==========
+-- -- 1986 --
+-- ==========
 
-ctw_resources.register_idea("merge_router", {
+-- gap
+
+
+-- ==========
+-- -- 1987 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("twistethernet", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("gif", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("hypertext", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1988 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("dynroutingrip", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1989 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("dynroutingbgp", {
+	references_required = {},
+})
+
+ctw_resources.register_idea("merger", {
 	name = S("Wire routing"),
 	description = S("Some of our cables are only used partially. Please invent something"..
 		" so that we can merge and split cables to connect multiple servers."),
@@ -134,6 +174,39 @@ ctw_resources.register_idea("merge_router", {
 	},
 })
 
+ctw_resources.register_idea_from_tech("gpl", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("hypertextproposal", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1990 -- v1 + v2
+-- ==========
+
+ctw_resources.register_idea_from_tech("fibercommunications", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("http", {
+	references_required = {},
+})
+
+ctw_resources.register_idea("html", {
+	name = S("Hypertext Markup Language"),
+	description = S("We need a standardized language to express documents with hyperlinks!"),
+	technologies_gained = {
+		"html",
+	},
+	references_required = {
+		"books:book_data_formats 1",
+		"books:book_program_c 2",
+	}
+})
+
 ctw_resources.register_idea("httpd", {
 	name = S("First WWW server"),
 	description = S("The time has come to write the first server for the world wide web."),
@@ -144,4 +217,97 @@ ctw_resources.register_idea("httpd", {
 		"books:book_program_c 2",
 		"books:book_program_objc 1",
 	},
+})
+
+ctw_resources.register_idea_from_tech("wwwbrowser", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1991 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("cat5", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("linux", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("cernbook", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("cernpage", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("violawww", {
+	references_required = {},
+})
+
+-- ==========
+-- -- 1992 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("splitter", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("lynx", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1993 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("cidrrouting", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("gnn", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("wwwpublic", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("mosaic", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1994 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("url", {
+	references_required = {},
+})
+
+ctw_resources.register_idea_from_tech("netscape", {
+	references_required = {},
+})
+
+
+-- ==========
+-- -- 1995 --
+-- ==========
+
+ctw_resources.register_idea_from_tech("fastethernet", {
+	references_required = {},
+})
+ctw_resources.register_idea_from_tech("iexplore", {
+	references_required = {},
+})
+ctw_resources.register_idea_from_tech("png", {
+	references_required = {},
+})
+ctw_resources.register_idea_from_tech("w3c", {
+	references_required = {},
 })
