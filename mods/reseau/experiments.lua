@@ -33,7 +33,7 @@ local experiment_get_formspec = function(experiment_name, meta, throughput)
 		"label[0,1.9;" .. S("Data can be transported manually by carrying tapes or by a network link.") .. "]"..
 		"label[0,2.3;" .. S("Data generation speed: @1 MB/s", throughput_limit) .. "]"..
 		"label[0,2.7;" ..
-		S("Cached data: @1 MB / Tape capacity: @2 MB", cache, reseau.era.get_current().tape_capacity) .. "]"..
+		S("Cached data: @1 MB / Tape capacity: @2 MB", cache, era.get_current().tape_capacity) .. "]"..
 		"label[0,3.1;" .. S("Network throughput: @1 MB/s", throughput) .. "]"..
 		"list[current_player;main;0,4;8,1;]"
 end
@@ -137,9 +137,9 @@ for _, team in ipairs(teams.get_all()) do
 						-- if there is enough cached data to put on a tape, just
 						-- write a tape
 						cache = cache - throughput * TX_INTERVAL
-						local tape_capacity = reseau.era.get_current().tape_capacity
+						local tape_capacity = era.get_current().tape_capacity
 						if cache > tape_capacity then
-							cache = cache - reseau.era.get_current().tape_capacity
+							cache = cache - era.get_current().tape_capacity
 
 							local inv = meta:get_inventory()
 							local tape_stack = ItemStack("reseau:tape 1")

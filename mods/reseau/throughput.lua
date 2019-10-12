@@ -25,11 +25,11 @@ reseau.throughput.get_experiment_throughput = function(nodename)
 	assert(nodespec.team_name)
 	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "experiment_throughput_multiplier")
 
-	return reseau.era.get_current().experiment_throughput_limit * multiplier
+	return era.get_current().experiment_throughput_limit * multiplier
 end
 
 reseau.throughput.get_receiver_throughput_limit = function()
-	return reseau.era.get_current().receiver_throughput_limit
+	return era.get_current().receiver_throughput_limit
 end
 
 reseau.throughput.get_router_throughput_limit = function(nodename)
@@ -37,5 +37,5 @@ reseau.throughput.get_router_throughput_limit = function(nodename)
 	assert(nodespec.team_name)
 	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "router_throughput_multiplier")
 
-	return reseau.era.get_current().router_throughput_limit * multiplier
+	return era.get_current().router_throughput_limit * multiplier
 end
