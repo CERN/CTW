@@ -60,7 +60,7 @@ minetest.register_node("reseau:receiverscreen", {
 				local throughput_limit = reseau.throughput.get_receiver_throughput_limit()
 				local throughput = math.min(throughput_limit, packet.throughput)
 
-				local dp = throughput * TX_INTERVAL * reseau.era.get_current().dp_multiplier
+				local dp = throughput * TX_INTERVAL * era.get_current().dp_multiplier
 				teams.add_points(packet.team, dp)
 
 				-- Update formspec
@@ -80,7 +80,7 @@ minetest.register_node("reseau:receiverscreen", {
 			local tape_meta = stack:get_meta()
 			local capacity = tape_meta:get_int("capacity")
 			local team = tape_meta:get_string("team")
-			local dp = capacity * reseau.era.get_current().dp_multiplier
+			local dp = capacity * era.get_current().dp_multiplier
 
 			if teams.get(team) then
 				teams.add_points(team, dp)
