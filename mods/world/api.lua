@@ -1,8 +1,11 @@
 local _locations = {}
-local _team_locations = {}
 
 function world.get_location(name)
 	return _locations[name]
+end
+
+function world.get_all_locations()
+	return _locations
 end
 
 function world.set_location(name, pos)
@@ -10,14 +13,11 @@ function world.set_location(name, pos)
 end
 
 function world.get_team_location(tname, name)
-	local teaml = _team_locations[tname] or {}
-	return teaml[name]
+	return _locations[tname .. "." .. name]
 end
 
 function world.set_team_location(tname, name, pos)
-	local team = _team_locations[tname] or {}
-	_team_locations[tname] = team
-	team[name] = pos
+	_locations[tname .. "." .. name] = pos
 end
 
 function world.get_area(name)
@@ -39,16 +39,15 @@ end
 
 function world.load_locations(path)
 	local locs = Settings(path):to_table()
-	print(dump(locs))
 	for key, value in pairs(locs) do
-		local pos = minetest.string_to_pos(value)
-
-		local tname, name = key:match("(%w+)%.(%w+)")
-		if tname then
-			_team_locations[tname] = _team_locations[tname] or {}
-			_team_locations[tname][name] = pos
-		else
-			_locations[key] = pos
-		end
+		_locations[key] = minetest.string_to_pos(value)	
 	end
+end
+
+function world.save_locations(path)
+	local file = io.open(path, "w")
+	for key, pos in pairs(_locations) do
+		file:write(("%s = %s\n"):format(key, minetest.pos_to_string(pos)))
+	end
+	file:close()
 end

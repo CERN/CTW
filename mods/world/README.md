@@ -14,6 +14,7 @@ area:
 ```
 
 * world.get_location(name) -> pos
+* world.get_all_locations() -> table
 * world.set_location(name, pos)
 * world.get_team_location(team_name, name) -> pos
   * Team-dependent position on map.
