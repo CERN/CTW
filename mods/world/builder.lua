@@ -5,6 +5,10 @@ else
 	minetest.log("error", "Map configuration for this world not found")
 end
 
+minetest.register_on_shutdown(function()
+	world.save_locations(conf_path)
+end)
+
 local teamnames = { "red", "blue", "green", "yellow" }
 for _, tname in pairs(teamnames) do
 	minetest.register_node(":palettes:palette_" .. tname, {
@@ -53,10 +57,40 @@ Areas are defined using locations x_1 and x_, where x is the area name.
 Click 'export' to create world.conf and world.mts at world/exports/.
 ]]):trim()
 
+
+local function buildLocationList()
+	local location_list = {}
+	for key, value in pairs(world.get_all_locations()) do
+		location_list[#location_list + 1] = { name = key, pos = value }
+	end
+	table.sort(location_list, function(a, b)
+		return a.name < b.name
+	end)
+	return location_list
+end
+
+local function formatList(list)
+	for i=1, #list do
+		list[i] = minetest.formspec_escape(("%s = %s"):format(list[i].name,  pos_to_string(list[i].pos)))
+	end
+	return table.concat(list, ",")
+end
+
+
 sfinv.register_page("world:builder", {
 	title = "World Meta",
 	get = function(self, player, context)
 		local area = world.get_area("world") or { from = vector.new(), to = vector.new() }
+		context.location_name = context.location_name or "world_1"
+
+		local location_list = buildLocationList()
+		local location_selection = ""
+		for i=1, #location_list do
+			if location_list[i].name == context.location_name then
+				location_selection = tostring(i)
+				break
+			end
+		end
 
 		local fs = {
 			"real_coordinates[true]",
@@ -70,9 +104,9 @@ sfinv.register_page("world:builder", {
 			"container[0.375,2.225]",
 			"box[-0.375,-0.375;10.375,6;#666666cc]",
 			"vertlabel[-0.2,1.2;LOCATIONS]",
-			"textlist[0,0;9.625,4;locations;;]",
+			"textlist[0,0;9.625,4;locations;", formatList(location_list), ";", location_selection, "]",
 			"container[0,4.5]",
-			"field[0,0;3.25,0.8;location_name;Name;", context.location_name or "world_1", "]",
+			"field[0,0;3.25,0.8;location_name;Name;", context.location_name, "]",
 			"field[3.5,0;2.75,0.8;location_pos;Position;", pos_to_string(context.location_pos or vector.new()), "]",
 			"button[6.25,0;1,0.8;location_set;Set]",
 			"button[7.5,0;2,0.8;location_update;Update]",
@@ -90,5 +124,47 @@ sfinv.register_page("world:builder", {
 
 		return sfinv.make_formspec(player, context,
 				table.concat(fs, ""), false)
+	end,
+
+	on_player_receive_fields = function(self, player, context, fields)
+		if fields.from then
+			local pos = minetest.string_to_pos(fields.from)
+			world.set_location("world_1", pos)
+		end
+
+		if fields.to then
+			local pos = minetest.string_to_pos(fields.to)
+			world.set_location("world_2", pos)
+		end
+
+		if fields.set_from then
+			world.set_location("world_1", player:get_pos())
+		elseif fields.set_to then
+			world.set_location("world_2", player:get_pos())
+		end
+
+		context.location_name = fields.location_name or context.location_name
+
+		if fields.location_pos then
+			context.location_pos = minetest.string_to_pos(fields.location_pos)
+		end
+
+		if fields.locations then
+			local evt = minetest.explode_textlist_event(fields.locations)
+			if evt.type == "CHG" then
+				local list = buildLocationList()
+				if evt.index > 0 and evt.index <= #list then
+					context.location_name = list[evt.index].name
+					context.location_pos = list[evt.index].pos
+				end
+			end
+		elseif fields.location_set then
+			context.location_pos = player:get_pos()
+		elseif fields.location_update then
+			world.set_location(context.location_name, context.location_pos)
+		end
+
+		sfinv.set_player_inventory_formspec(player, context)
+		world.save_locations(conf_path)
 	end,
 })
