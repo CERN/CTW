@@ -1,3 +1,0 @@
-doc
-ctw_technologies
-teams

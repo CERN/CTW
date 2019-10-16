@@ -1,2 +1,0 @@
-homedecor_common
-default
