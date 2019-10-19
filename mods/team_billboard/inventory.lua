@@ -68,7 +68,11 @@ local inv_callbacks = {
 
 			allow_take = function(tname, inv, listname, index, stack, player)
 				if not check_team(player, tname) then return 0 end
-				if listname == "ideas" then
+				if listname ~= "ideas" then
+					return 0
+				end
+
+				if inv:get_stack("approvals", index):is_empty() then
 					return -1
 				end
 				return 0
@@ -132,20 +136,17 @@ function team_billboard.get_billboard_inventory(team, explicit_rebuild)
 		-- create inventory
 		local tname = team.name
 		minetest.create_detached_inventory("team_billboard_"..team.name, {
-			allow_move = function(inv2, from_list, from_index, to_list, to_index, count, player)
-				return inv_callbacks.allow_move(tname, inv2, from_list, from_index, to_list, to_index, count, player)
+			allow_move = function(...)
+				return inv_callbacks.allow_move(tname, ...)
 			end,
-
-			allow_put = function(inv2, listname, index, stack, player)
-				return inv_callbacks.allow_put(tname, inv2, listname, index, stack, player)
+			allow_put = function(...)
+				return inv_callbacks.allow_put(tname, ...)
 			end,
-
-			allow_take = function(inv2, listname, index, stack, player)
-				return inv_callbacks.allow_take(tname, inv2, listname, index, stack, player)
+			allow_take = function(...)
+				return inv_callbacks.allow_take(tname, ...)
 			end,
-
-			on_put = function(inv2, listname, index, stack, player)
-				return inv_callbacks.on_put(tname, inv2, listname, index, stack, player)
+			on_put = function(...)
+				return inv_callbacks.on_put(tname, ...)
 			end,
 		})
 	end
@@ -169,8 +170,8 @@ function team_billboard.rebuild_billboard_inventory(team)
 		ideas = {},
 		approvals = {},
 	})
-	inv:set_size("ideas", 1*6)
-	inv:set_size("approvals", 1*6)
+	inv:set_size("ideas", 5)
+	inv:set_size("approvals", 5)
 
 	local pos = 0
 	for idea_id, idea in pairs(ctw_resources._get_ideas()) do

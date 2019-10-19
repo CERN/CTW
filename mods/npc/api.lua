@@ -133,9 +133,7 @@ local function check_condition(player, c)
 		weight = weight + 1
 	end
 	if c.idea then
-		local current = ctw_resources.get_team_idea_state(c.idea[1], teamdef).state
-		if not check_lut_comparison(current, c.idea[2], c.idea[3],
-				ctw_resources.idea_states) then
+		if not ctw_resources.compare_idea(c.idea[1], teamdef, c.idea[2], c.idea[3]) then
 			return
 		end
 		weight = weight + 1

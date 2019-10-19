@@ -60,6 +60,13 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 	-- Put buttons next to the ideas with links to doc pages
 	local ilist = inv:get_list("ideas")
 
+	local y = 2.5
+	for _ in ipairs(ilist) do
+		form[#form + 1] = "image[0," .. y .. ";1,1;team_billboard_idea.png]"
+		form[#form + 1] = "image[4," .. y .. ";1,1;team_billboard_letter.png]"
+		y = y + 1
+	end
+
 	if pers_msg then
 		table.insert(form, "label[0,2;"..pers_msg.."]")
 	end

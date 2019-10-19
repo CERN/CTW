@@ -95,7 +95,15 @@ ctw_resources.give_idea(idea_id, pname, inventory, invlist)
 	--   false, error_reason: failure
 	--     "idea_present_in_player" Player already has this idea in inventory
 	--     "idea_present_in_team"   Idea is already posted on the team billboard
+	--     "no_space"               No free space in inventory
 	--     "no_team"                Player has no team
+
+ctw_resources.compare_idea(idea_id, team, cmp, value)
+	-- Compare an idea state with the given value
+	-- 'team': Team def'
+	-- 'cmp': string, one of 'eq', 'lt' or 'gt'
+	-- 'value: string, 'state' from 'IdeaState'
+	-- Returns whether the comparison applies.
 
 
  Approving API

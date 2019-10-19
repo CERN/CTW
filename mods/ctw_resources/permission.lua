@@ -77,6 +77,9 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 
 	if try then return true end
 
+	-- Remove old idea
+	inv:remove_item(invlist, "ctw_resources:idea_"..idea_id)
+
 	-- successful: remove references and issue permission letter
 	for _,stack in ipairs(idea.references_required) do
 		inv:remove_item(invlist, stack, false)
@@ -84,9 +87,14 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 
 	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! "..
 			"Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
-	local istack = ctw_resources.get_approval_letter_istack(idea_id, idea, team)
 
-	inv:add_item(invlist, istack)
+	local leftover = inv:add_item(invlist, istack)
+	if not leftover:is_empty() then
+		-- No free inventory space. Drop it.
+		local player = minetest.get_player_by_name(pname)
+		minetest.add_item(player:get_pos(), leftover)
+	end
+
 	ctw_resources.set_team_idea_state(idea_id, team, "approved", pname)
 	return true
 end

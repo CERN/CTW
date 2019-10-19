@@ -32,7 +32,7 @@ end
 
 npc.register_npc("network_guru", {
 	infotext = S("Mr. McNetworking Guru"),
-	textures = { "npc_skin_geopbyte.png" }
+	textures = { "npc_skin_doctor_sam.png" }
 })
 
 register_both("network_guru", "e10base2")
@@ -50,7 +50,7 @@ register_both("network_guru", "fastethernet")
 
 npc.register_npc("engineer", {
 	infotext = S("Dr. Jeff from ThinkCorporation"),
-	textures = { "npc_skin_doctor_sam.png" }
+	textures = { "npc_skin_lovehart.png" }
 })
 
 -- Fallback

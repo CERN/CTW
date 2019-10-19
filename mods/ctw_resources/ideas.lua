@@ -15,11 +15,12 @@ ctw_resources.idea_states = {
 local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
 end
-local function contains(tab, value)
-	for _,v in ipairs(tab) do
-		if v==value then return true end
+local function table_index(tab, value)
+	for _, v in ipairs(tab) do
+		if v == value then
+			return v
+		end
 	end
-	return false
 end
 
 local function logs(str)
@@ -160,7 +161,7 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	for _, techid in ipairs(idea_def.technologies_gained) do
 		local tech = ctw_technologies.get_technology(techid)
 		for _, atechid in ipairs(tech.requires) do
-			if not contains(techreq, atechid) then
+			if not table_index(techreq, atechid) then
 				table.insert(techreq, atechid)
 			end
 		end
@@ -227,24 +228,19 @@ end
 -- To be called from an NPC.
 -- Returns true on success and false, error_reason on failure
 -- if "try" is true, will only perform a dry run and do nothing actually.
--- error reasons:
-	-- idea_present_in_player - Player already has this idea in inventory
-	-- idea_present_in_team - Idea is already posted on the team billboard
-	-- no_team - Player has no team
-function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
+-- error reasons: See README.txt
+function ctw_resources.give_idea(idea_id, pname, inv, invlist, try)
 	local idea = ctw_resources.get_idea(idea_id)
 
 	--check if the player or the team already had the idea
-	if inventory:contains_item(invlist, "ctw_resources:idea_"..idea_id) then
+	if inv:contains_item(invlist, "ctw_resources:idea_"..idea_id) then
 		return false, "idea_present_in_player"
 	end
 
 	local team = teams.get_by_player(pname)
 	if not team then return false, "no_team" end
 
-	local istate = ctw_resources.get_team_idea_state(idea_id, team)
-
-	if istate.state ~= "undiscovered" then
+	if ctw_resources.compare_idea(idea_id, team, "gt", "undiscovered") then
 		return false, "idea_present_in_team"
 	end
 
@@ -266,12 +262,23 @@ function ctw_resources.give_idea(idea_id, pname, inventory, invlist, try)
 		return false, "era_not_reached"
 	end
 
+	local item = "ctw_resources:idea_"..idea_id
+	if not inv:room_for_item(invlist, item) then
+		return false, "no_space"
+	end
+
 	if try then return true end
 
 	minetest.chat_send_player(pname, "You got an idea: "..idea.name..
 			"! Proceed to your team space and share it on the team billboard!")
-	inventory:add_item(invlist, "ctw_resources:idea_"..idea_id)
-	
+
+	local leftover = inv:add_item(invlist, item)
+	if not leftover:is_empty() then
+		-- No free inventory space. Drop it.
+		local player = minetest.get_player_by_name(pname)
+		minetest.add_item(player:get_pos(), leftover)
+	end
+
 	-- Note: if another player secretly had gotten this idea before, this will be overwritten.
 	-- Should not cause side-effects.
 	ctw_resources.set_team_idea_state(idea_id, team, "discovered", pname)
@@ -284,9 +291,8 @@ end
 -- "already_published" - Idea is published or in a later stage
 function ctw_resources.publish_idea(idea_id, team, pname, try)
 	local idea = ctw_resources.get_idea(idea_id)
-	local istate = ctw_resources.get_team_idea_state(idea_id, team)
 
-	if istate.state ~= "discovered" and istate.state ~= "undiscovered" then
+	if ctw_resources.compare_idea(idea_id, team, "gt", "discovered") then
 		return false, "already_published"
 	end
 
@@ -327,4 +333,24 @@ function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 	end
 	team._ctw_resources_idea_state[idea_id] = istate
 
+end
+
+-- compare_idea(team, "eq", "discovered")
+function ctw_resources.compare_idea(idea_id, team, cmp, value)
+	local idea_state = ctw_resources.get_team_idea_state(idea_id, team).state
+	if cmp == "eq" then
+		return idea_state == value
+	end
+
+	local index_1 = table_index(ctw_resources.idea_states, idea_state)
+	local index_2 = table_index(ctw_resources.idea_states, value)
+	assert(index_1, "Invalid idea state 1 '" .. tostring(idea_state) .. "'")
+	assert(index_2, "Invalid idea state 2 '" .. tostring(value) .. "'")
+	if cmp == "lt" then
+		return index_1 < index_2
+	end
+	if cmp == "gt" then
+		return index_1 > index_2
+	end
+	error("Invalid comparison: " .. cmp)
 end
