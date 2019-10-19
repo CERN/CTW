@@ -5,6 +5,8 @@ else
 	minetest.log("error", "Map configuration for this world not found")
 end
 
+local mts_path = minetest.get_worldpath() .. "/world.mts"
+
 minetest.register_on_shutdown(function()
 	world.save_locations(conf_path)
 end)
@@ -118,8 +120,6 @@ sfinv.register_page("world:builder", {
 			"container_end[]",
 
 			"button[3.75,9.6;3,0.8;export;Export]",
-
-			-- 8,5.6   10.75,8.25
 		}
 
 		return sfinv.make_formspec(player, context,
@@ -162,6 +162,31 @@ sfinv.register_page("world:builder", {
 			context.location_pos = player:get_pos()
 		elseif fields.location_update then
 			world.set_location(context.location_name, context.location_pos)
+		elseif fields.export then
+			local area = world.get_area("world")
+			if area then
+				if file_exists(mts_path) then
+					os.remove(mts_path)
+				end
+
+				area.from, area.to = vector.sort(area.from, area.to)
+				world.set_location("world_1", area.from)
+				world.set_location("world_2", area.to)
+				world.save_locations(conf_path)
+
+				player:set_inventory_formspec("size[3,2]label[0.1,0.1;Exporting, please wait...]")
+				local pname = player:get_player_name()
+
+				world.emerge_with_callbacks(area.from, area.to, function()
+					minetest.create_schematic(area.from, area.to, nil, mts_path, nil)
+					local player = minetest.get_player_by_name(pname)
+					if player then
+						sfinv.set_player_inventory_formspec(player, context)
+					end
+					minetest.chat_send_all("Export done!")
+				end)
+				return
+			end
 		end
 
 		sfinv.set_player_inventory_formspec(player, context)
