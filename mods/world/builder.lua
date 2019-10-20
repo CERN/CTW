@@ -55,7 +55,7 @@ end
 local HELP = ([[
 Click 'set' to set positions to the current position.
 Click 'update' to create or update a location with the given location name.
-Areas are defined using locations x_1 and x_, where x is the area name.
+Areas are defined using locations x_1 < x_2, where x is the area name.
 Click 'export' to create world.conf and world.mts at world/exports/.
 ]]):trim()
 
