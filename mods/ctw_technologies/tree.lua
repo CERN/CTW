@@ -277,6 +277,19 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	}
 
 	local formt = {}
+	
+	-- render years and eras
+	for lvl, capt in ipairs(ctw_technologies.year_captions) do
+		if capt~="" then
+			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off - 0.2 - fdata.offx)..",10;|]")
+			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off + 1   - fdata.offx)..",10;"..capt.."]")
+		end
+	end
+	for _, era in ipairs(ctw_technologies.eras) do
+		local lvl = (era.s+era.e)/2
+		table.insert(formt, "label["..(era.s*lvl_space + lvl_init_off - 0.2 - fdata.offx)..",10.3;|]")
+		table.insert(formt, "label["..(lvl  *lvl_space + lvl_init_off + 1   - fdata.offx)..",10.3;"..era.n.."]")
+	end
 
 	-- render technology elements
 	for lvl, lines in pairs(render_info.levels) do
