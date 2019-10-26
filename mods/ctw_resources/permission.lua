@@ -88,6 +88,7 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 	minetest.chat_send_player(pname, "The idea \""..idea.name.."\" was approved! "..
 			"Proceed to your team space and post the approval letter on the team billboard to start inventing the technology!")
 
+	local istack = ctw_resources.get_approval_letter_istack(idea_id, idea, team)
 	local leftover = inv:add_item(invlist, istack)
 	if not leftover:is_empty() then
 		-- No free inventory space. Drop it.
