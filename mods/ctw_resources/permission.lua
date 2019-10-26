@@ -59,9 +59,14 @@ function ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
 	local team = teams.get_by_player(pname)
 	if not team then return false, "no_team" end
 
-	local istate = ctw_resources.get_team_idea_state(idea_id, team)
+	if ctw_resources.compare_idea(idea_id, team, "gt", "approved") then
+		return false, "already_approved"
+	end
 
-	if istate.state=="approved" or istate.state=="inventing" or istate.state=="invented" then
+	-- For the case someone lost the idea item:
+	local idea_team = ctw_resources.get_team_idea_state(idea_id, team)
+	if idea_team.last_action and minetest.get_gametime() <
+			idea_team.last_action + ctw_resources.LAST_ACTION_COOLDOWN then
 		return false, "already_approved"
 	end
 

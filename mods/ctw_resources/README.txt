@@ -52,6 +52,10 @@ IdeaState = {
 	-- "inventing"    Idea is being prototyped
 	-- "invented"     Protoyping completed and technologies have been gained
 
+	last_action = 0,
+	-- Game timestamp (world), in seconds of the last idea interaction
+	-- Ideas and approval letters will only be given out in a certain interval
+
 	by = "playername",
 	-- 'string' triggering player name
 	-- Included in states "discovered", "approved" and "inventing"

@@ -16,9 +16,9 @@ local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
 end
 local function table_index(tab, value)
-	for _, v in ipairs(tab) do
+	for k, v in ipairs(tab) do
 		if v == value then
-			return v
+			return k
 		end
 	end
 end
@@ -240,7 +240,14 @@ function ctw_resources.give_idea(idea_id, pname, inv, invlist, try)
 	local team = teams.get_by_player(pname)
 	if not team then return false, "no_team" end
 
-	if ctw_resources.compare_idea(idea_id, team, "gt", "undiscovered") then
+	if ctw_resources.compare_idea(idea_id, team, "gt", "discovered") then
+		return false, "idea_present_in_team"
+	end
+
+	-- For the case someone lost the idea item:
+	local idea_team = ctw_resources.get_team_idea_state(idea_id, team)
+	if idea_team.last_action and minetest.get_gametime() <
+			idea_team.last_action + ctw_resources.LAST_ACTION_COOLDOWN then
 		return false, "idea_present_in_team"
 	end
 
@@ -248,7 +255,7 @@ function ctw_resources.give_idea(idea_id, pname, inv, invlist, try)
 	local idea_year = 0
 	for i, tech_id in ipairs(idea.technologies_required) do
 		local tech_def = ctw_technologies.get_technology(tech_id)
-		tech_state = ctw_technologies.get_team_tech_state(tech_id, team)
+		local tech_state = ctw_technologies.get_team_tech_state(tech_id, team)
 		if tech_state.state == "gained" then
 			n_gained = n_gained + 1
 		end
@@ -328,6 +335,8 @@ function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 	local istate = {state = state}
 	if state=="discovered" or state=="approved" then
 		istate.by = param
+		-- Add cooldown timestamp
+		istate.last_action = minetest.get_gametime()
 	elseif state=="inventing" then
 		istate.target = param
 	end
@@ -338,6 +347,7 @@ end
 -- compare_idea(team, "eq", "discovered")
 function ctw_resources.compare_idea(idea_id, team, cmp, value)
 	local idea_state = ctw_resources.get_team_idea_state(idea_id, team).state
+
 	if cmp == "eq" then
 		return idea_state == value
 	end

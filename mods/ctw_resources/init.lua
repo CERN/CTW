@@ -6,6 +6,7 @@
 
 
 ctw_resources = {}
+ctw_resources.LAST_ACTION_COOLDOWN = 60 -- 1 minute
 
 local mp = minetest.get_modpath(minetest.get_current_modname()) .. DIR_DELIM
 
