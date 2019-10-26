@@ -316,7 +316,7 @@ ctw_technologies.register_technology("enquire2", {
 -- -- 1986 --
 -- ==========
 tlev = tlev + 1
-ctw_technologies.year_captions[tlev] = "1985"
+ctw_technologies.year_captions[tlev] = "1986"
 
 -- kept for completeness
 
