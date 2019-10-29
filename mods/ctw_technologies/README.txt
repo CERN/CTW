@@ -42,18 +42,21 @@ TechDef = {
 	conn_info = {
 	-- Optional: Table to individually override certain properties of the connection line
 	-- between a required technology and this technology.
-	-- If table or individual entries are missing, defaults are applied
-		"lan" = {
+	-- Definitions done here do only affect technology tree drawing, they do not influence other relations
+	-- in any way.
+	-- If the whole conn_info table or individual entries are missing, defaults are applied
+		lan = {
+		-- the ID of a required technology.
 			vertline_offset = 2,
 			-- how many Level units the vertical line is moved left, starting from the current node
 			-- Defaults to 0
 			color = "blue",
 			-- The line color as formspec color string
 			start_shift = -0.5
-			-- Shift the beginning of the line up/down by small units
+			-- Shift the beginning of the line up/down by units of 2*line_width
 			end_shift = 1
-			-- Shift the end of the line up/down by small units
-			-- start_shift and end_shift are automatically determined by the entry locations in
+			-- Shift the end of the line up/down by units of 2*line_width
+			-- start_shift and end_shift are automatically determined by the entry indices in
 			-- tech.requires and tech.enables if not given this way, but may not be optimal.
 		}
 	}
