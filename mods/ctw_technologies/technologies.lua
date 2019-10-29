@@ -227,25 +227,7 @@ function ctw_technologies.gain_technology(tech_id, team, try)
 		if benefit.type == "supply" then
 			ctw_technologies.queue_delivery(team.name, benefit.item:gsub("%%t", team.name),
 					math.random(benefit.time_min or 30, benefit.time_max or 200))
-		else
-			logs("-!- Benefits not implemented (in gain_technology)")
 		end
 	end
 	return true
 end
-
-
--- TODO only for testing
-
-minetest.register_chatcommand("retech", {
-         param = "tech",
-         description = "Reload technologies",
-         privs = {},
-         func = function(pname, params)
-				local mp = minetest.get_modpath("ctw_technologies") .. DIR_DELIM
-				technologies={}
-				dofile(mp.."tech_defs.lua")
-				ctw_technologies.build_tech_tree()
-				ctw_technologies.show_tech_tree(pname, 0)
-        end,
-})

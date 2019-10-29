@@ -92,7 +92,8 @@ function ctw_technologies.build_tech_tree()
 		for depno, atechid in ipairs(tech.requires) do
 			local atech = technologies[atechid]
 			if atech.tree_level >= tech.tree_level then
-				error("technology '"..techid.."' depends on '"..techid.."' which is on same or later level, must rearrange!")
+				error("technology '"..techid.."' depends on '"..techid
+					.."' which is on same or later level, must rearrange!")
 			end
 			-- locate dependency line
 			local soff = 0
@@ -102,7 +103,11 @@ function ctw_technologies.build_tech_tree()
 				end
 			end
 			
-			dep_is_at[depno]={sline = atech.tree_line, slvl = atech.tree_level, soff = calc_offset(soff,#atech.enables)}
+			dep_is_at[depno]={
+				sline = atech.tree_line,
+				slvl = atech.tree_level,
+				soff = calc_offset(soff,#atech.enables)
+			}
 		end
 
 		local lvl = tech.tree_level
@@ -138,7 +143,10 @@ function ctw_technologies.build_tech_tree()
 			}
 			
 			table.insert(render_info.conns, conn)
-			logs("\t\tDrawing connection:"..conn.slvl..":"..conn.sline.."o"..conn.soff.." -| "..conn.clvl.." "..conn.color.." |- "..conn.elvl..":"..conn.eline.."o"..conn.eoff)
+			logs("\t\tDrawing connection:"
+				..conn.slvl..":"..conn.sline.."o"..conn.soff.." -| "
+				..conn.clvl.." "..conn.color.." |- "
+				..conn.elvl..":"..conn.eline.."o"..conn.eoff)
 		end
 
 		-- add enables to the queue
@@ -153,7 +161,8 @@ function ctw_technologies.build_tech_tree()
 	for techid, tech in pairs(technologies) do
 		-- scan through technologies and find which techs have this as requirement
 		if not tech.tree_level then
-			minetest.log("warning", "[ctw_technologies] Technology "..techid.." is not included in the tree, is this a cycle?")
+			minetest.log("warning", "[ctw_technologies] Technology "..techid
+				.." is not included in the tree, is this a cycle?")
 		end
 	end
 end
