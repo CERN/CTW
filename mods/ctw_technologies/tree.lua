@@ -320,6 +320,8 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
 				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
 	end
+
+	table.insert(formt, "button_exit["..(minpx+wwidth/2-1.5)..","..(minpy+wheight-1.5)..";4,1;quit;Close]")
 	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
 	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")
 	table.insert(formt, "scrollbar["..minpx..","..(minpy+wheight-0.5)..";"..wwidth..",0.5;horizontal;scrollbar;"..

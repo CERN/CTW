@@ -13,13 +13,13 @@ end
 
 
 local pub_msgs = {
-already_published = "This idea has already been published. It could even be invented by now!"
+	already_published = "This idea has already been published. It could even be invented by now!"
 }
 local inv_msgs = {
-no_approval_letter = "This is not an approval letter",
-wrong_team = "This letter was issued for another team! Give it back to them!",
-not_approved = "This letter is a fake!",
-already_invented = "This technology has already been invented!"
+	no_approval_letter = "This is not an approval letter",
+	wrong_team = "This letter was issued for another team! Give it back to them!",
+	not_approved = "This letter is a fake!",
+	already_invented = "This technology has already been invented!"
 }
 
 

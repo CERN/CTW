@@ -128,14 +128,14 @@ function ctw_technologies.get_detail_formspec(formdef, pname)
 	
 	if formdef.add_btn_name then
 		form = form .. "button["
-				..(FORM.ENTRY_END_X-4.5)..","..(FORM.ENTRY_START_Y)..";3,1;"
+				..(FORM.ENTRY_END_X-5)..","..(FORM.ENTRY_START_Y)..";3,1;"
 				..formdef.add_btn_name..";"
 				..formdef.add_btn_label.."]"
 	end
 	
 	if returnstack[pname] and #returnstack[pname]>0 then
 		form = form .. "button["
-				..(FORM.ENTRY_END_X-1.5)..","..(FORM.ENTRY_START_Y)..";1.5,1;"
+				..(FORM.ENTRY_END_X-2)..","..(FORM.ENTRY_START_Y)..";1.75,1;"
 				.."goto_back;"
 				.."<< Back]"
 	end

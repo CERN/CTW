@@ -47,47 +47,55 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 	-- create inventory if not exists
 	local inv = team_billboard.get_billboard_inventory(team, false)
 
-	local form = {
-		"size[10,9]",
-		"label[0,0;== TEAM BILLBOARD ==",
+	local tlocation = "detached:team_billboard_" .. tname
+	local infotext = {
 		"Put any ideas here to share them with your team!",
 		"Once you have collected references and gotten",
 		"permission from the management, put the",
-		"approval letter here to start prototyping the idea!]",
-		"list[detached:team_billboard_" .. tname .. ";ideas;0,2.5;1,5;]",
-		"list[detached:team_billboard_" .. tname .. ";approvals;4,2.5;1,5;]",
-		"list[current_player;main;0,8;8,1;]" }
+		"approval letter here to start prototyping the idea!",
+	}
+	local form = {
+		"size[10,9]",
+		("textarea[0.2,0.2;6,2;;%s;%s]"):format(
+			minetest.colorize(team.color, "== TEAM BILLBOARD =="),
+			table.concat(infotext, " ")),
+		"list[" .. tlocation .. ";ideas;1,2.5;1,5;]",
+		"list[" .. tlocation .. ";approvals;6,2.5;1,5;]",
+		"list[current_player;main;1,8;8,1;]",
+		"listring[" .. tlocation .. ";approvals]",
+		"listring[current_player;main]",
+		"listring[" .. tlocation .. ";ideas]",
+		"listring[current_player;main]",
+	}
 	-- Put buttons next to the ideas with links to doc pages
 	local ilist = inv:get_list("ideas")
 
 	local y = 2.5
 	for _ in ipairs(ilist) do
-		form[#form + 1] = "image[0," .. y .. ";1,1;team_billboard_idea.png]"
-		form[#form + 1] = "image[4," .. y .. ";1,1;team_billboard_letter.png]"
+		form[#form + 1] = "image[1," .. y .. ";1,1;team_billboard_idea.png]"
+		form[#form + 1] = "image[6," .. y .. ";1,1;team_billboard_letter.png]"
 		y = y + 1
 	end
 
 	if pers_msg then
 		table.insert(form, "label[0,2;"..pers_msg.."]")
 	end
-	table.insert(form, "button[6.5,0;3.5,1;tech_tree;View Technology tree]")
+	table.insert(form, "button[6.5,0.75;3.5,1;tech_tree;View Technology Tree]")
 
 	for index, item in ipairs(ilist) do
-		if minetest.get_item_group(item:get_name(), "ctw_idea") > 0 then
-			local idef = minetest.registered_items[item:get_name()]
-			local idea_id = idef._ctw_idea_id
-			if idea_id then
-				local idea = ctw_resources.get_idea(idea_id)
-				local istate = ctw_resources.get_team_idea_state(idea_id, team)
-				table.insert(form, "button[1,"..(1.5 + index)..";3,1;idea_"..idea_id..";"..idea.name.."]")
-				if istate.state == "inventing" then
-					local total = idea.invention_dp
-					local have = istate.target
-					local percent = math.floor(100 * (have/total))
-					table.insert(form, "label[5,"..(1.5 + index)..";Prototyping "..percent.."% ("..have.."/"..total.." DP)]")
-				else
-					table.insert(form, "label[5,"..(1.5 + index)..";State: "..istate.state.."]")
-				end
+		local idef = minetest.registered_items[item:get_name()]
+		local idea_id = idef and idef._ctw_idea_id
+		if idea_id then
+			local idea = ctw_resources.get_idea(idea_id)
+			local istate = ctw_resources.get_team_idea_state(idea_id, team)
+			table.insert(form, "button[2,"..(1.5 + index)..";4,1;idea_"..idea_id..";"..idea.name.."]")
+			if istate.state == "inventing" then
+				local total = idea.invention_dp
+				local have = istate.target
+				local percent = math.floor(100 * (have/total))
+				table.insert(form, "label[7,"..(1.5 + index)..";Prototyping "..percent.."% ("..have.."/"..total.." DP)]")
+			else
+				table.insert(form, "label[7,"..(1.5 + index)..";State: "..istate.state.."]")
 			end
 		end
 	end
