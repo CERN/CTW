@@ -28,6 +28,7 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	def_e = def_e or {}
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
+	def.formspec = "background[2,1;6,4.5;ctw_tech_new.png^\\[multiply:#AAA]"
 	def.conditions = {{
 		idea = {idea_id, "eq", "undiscovered"},
 		dp_min = def_e.dp_min,
@@ -38,7 +39,6 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 			if status then
 				return #idea_def.references_required + 1
 			end
-			print("NPC discovery", idea_id, message)
 		end
 	}}
 	def.options = {{
@@ -58,6 +58,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	def_e = def_e or {}
 	local def = {}
 	def.dialogue = def_e.dialogue or idea_def.description
+	def.formspec = "background[2,1;6,4.5;ctw_tech_approved.png^\\[multiply:#AAA]"
 	def.conditions = {{
 		idea = {idea_id, "eq", "published"},
 		dp_min = def_e.dp_min,
@@ -86,9 +87,10 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 
 	-- Missing items
 	def = table.copy(def) -- drop reference
-	def.dialogue = table.concat({"I see you'd like to research the following idea:",
+	def.dialogue = table.concat({"I see you'd like to research the following idea:\n",
 		idea_def.description,
 		"But you still need a few items. Please collect the required resources."}, "\n")
+	def.formspec = "background[2,1;6,4.5;ctw_tech_missing_resources.png^\\[multiply:#AAA]"
 	def.conditions = {{
 		idea = {idea_id, "eq", "published"},
 		dp_min = def_e.dp_min and (def_e.dp_min * 0.9),
@@ -246,6 +248,7 @@ function npc.show_dialogue(player, npc_name, def)
 	local fs = {
 		"size[10,%f]",
 		--"real_coordinates[true]",
+		def.formspec or "",
 		("textarea[0.5,1;9,3;;%s;%s]"):format(
 			minetest.formspec_escape(npc.registered_npcs[npc_name].infotext),
 			minetest.formspec_escape(answer)

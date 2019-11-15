@@ -8,6 +8,8 @@ NPC_Event = {
 		-- ^ Unique NPC_Event ID for linking answers
 		dialogue = "Hello $PLAYER. Good luck on your mission!",
 		-- ^ Text to say
+		formspec = "bgcolor[#F00]",
+		-- ^ Optional formspec elements to show
 		conditions = {
 			-- Examples:
 			{ func = function, item = "default:stick", weight = 2 },
@@ -31,7 +33,7 @@ NPC_Event = {
 		-- See also: 'npc.register_event_idea_approve'
 		--   and 'npc.register_event_idea_discover'
 		-- The dialogue with the highest weight will be displayed to the player
-		
+
 		options = {
 			{ text = "", target = "id"/function },
 		}
