@@ -1,0 +1,8 @@
+test:
+  stage: test
+  script:
+    - luacheck ./mods
+    - busted ./mods
+  only:
+    - master
+    - develop

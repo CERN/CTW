@@ -1,0 +1,19 @@
+# textdomain: ctw_technologies
+A cable with one conductor and a shield!=
+A cable with twisted pairs!=
+ASCII=
+Coaxial Cable=
+Ethernet=
+Hypertext Markup Language=
+Phone Cable=
+Routers (split, merge)=
+Split and merge various kinds of cables to improve the wire usage.=
+TCP/IP Packet Transport=
+TCP/IP is a reliable protocol to transmit data over a computer network.=
+The World Wide Web=
+The most basic type of signal cable=
+There is a standard code for character encoding!=
+There is a standardized language to express documents with hyperlinks!=
+Twisted-Pair Cable=
+With all those technologies gathered, you invented the World Wide Web! Yay!=
+You can send network data over a twisted-pair cable!=

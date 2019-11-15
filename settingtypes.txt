@@ -1,0 +1,8 @@
+# This file contains settings of minetest_game that can be changed in
+# minetest.conf
+
+#    In creative mode players are able to dig all kind of blocks nearly
+#    instantly, and have access to unlimited resources.
+#    Some of the functionality is only available if this setting is present
+#    at startup.
+creative_mode (Creative mode) bool false

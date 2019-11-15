@@ -1,0 +1,7 @@
+# textdomain: npc
+$PLAYER, line1@n@n@nlineX;:/\\]=
+Computer specialist=
+Engineer=
+Hello $PLAYER. Good luck on your mission! Move tapes to gain DPs.=
+Some kind of twisted cable thingy would be lovely.=
+What if there was a standard for character encoding?=

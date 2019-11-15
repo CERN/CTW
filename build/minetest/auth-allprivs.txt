@@ -1,0 +1,9 @@
+player2::fast,noclip,privs,creative,teleport,fly:
+player3::fast,noclip,privs,creative,teleport,fly:
+player4::fast,noclip,privs,creative,teleport,fly:
+player5::fast,noclip,privs,creative,teleport,fly:
+player6::fast,noclip,privs,creative,teleport,fly:
+player7::fast,noclip,privs,creative,teleport,fly:
+player8::fast,noclip,privs,creative,teleport,fly:
+admin::fast,noclip,privs,creative,teleport,fly:1549370209
+player1::fast,noclip,privs,creative,teleport,fly:

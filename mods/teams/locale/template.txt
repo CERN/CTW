@@ -1,0 +1,17 @@
+# textdomain: teams
+- @1=
+DP @1=
+Joined @1=
+No such team '@1'=
+Team blue=
+Team green=
+Team red=
+Team yellow=
+Teams:@n=
+There are no teams=
+You are in @1=
+You are not a team=
+team blue=
+team green=
+team red=
+team yellow=

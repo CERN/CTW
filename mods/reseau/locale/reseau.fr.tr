@@ -1,0 +1,24 @@
+# textdomain: reseau
+@1 MB tape (@2)=Bande magnétique de @1 MB (@2)
+@1 delivered @2 MB to the computing center, generating @3 discovery points!=@1 a apporté @2 MB au centre de calcul et généré @3 points de découverte!
+Cached data: @1 MB / Tape capacity: @2 MB=Données en cache: @1 MB / Taille de la bande magnétique : @2 MB
+Connect this rack to an experiment or feed it tapes to gain points!=Connectez ce serveur à une expérience ou apportez-lui des bandes magnétiques pour gagner des points!
+Current network throughput: @1MB/s, your team gains @2 points/s=Débit actuel du réseau : @1 MB/s, votre équipe gagne @2 points/s
+Data Tape=Bande magnétique
+Data can be transported manually by carrying tapes or by a network link.=Les données peuvent être transférées manuellement en transportant des bandes magnétiques, ou par un lien réseau.
+Data generation speed: @1 MB/s=Vitesse de génération des données: @1 MB/s
+Experiment=Expérience
+Experiments generate data that has to be moved to the computing center.=Les expériences génèrent des données qui doivent être envoyées au centre de calcul.
+Network throughput: @1 MB/s=Débit du réseau: @1 MB/s
+Processing throughput limit: @1MB/s=Limite de traitement des données : @1 MB/s
+Receiver (Testing)=Récepteur (Test)
+Receiver Base=Base de récepteur
+Router (Merging)=Routeur (Fusion)
+Router (Splitting)=Router (Séparation)
+Router: Current throughput @1 MB/s, maximum throughput @2 MB/s=Routeur : débit actuel @1 MB/s, débit maximum @2 MB/s
+The computing center processes and stores experiment data to make discoveries.=Le centre de calcul traite et stocke les données des expériences pour faire des découvertes.
+You can only place a transmission line next to an existing one. Start at one of your team's experiments!=Vous pouvez uniquement placer une ligne de transmission à côté d'une ligne existante. Commencez à une expérience de votre équipe !
+You can only place transmission lines on top of proper blocks.=Vous pouvez uniquement placer des lignes de transmissions sur des blocs complets.
+Telephone (Copper) Transmission Line=Ligne de transmission téléphonique (cuivre)
+Ethernet Transmission Line=Ligne de transmission Ethernet
+Fiber Transmission Line=Ligne de transmission par fibre

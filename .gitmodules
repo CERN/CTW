@@ -1,0 +1,12 @@
+[submodule "build/mcimport"]
+	path = build/mcimport
+	url = https://github.com/CERN/CTW-mcimport
+[submodule "mods/libs/doc"]
+	path = mods/libs/doc
+	url = https://repo.or.cz/minetest_doc.git
+[submodule "mods/libs/worldedit"]
+	path = mods/libs/worldedit
+	url = https://github.com/Uberi/Minetest-WorldEdit
+[submodule "mods/libs/lib_chatcmdbuilder"]
+	path = mods/libs/lib_chatcmdbuilder
+	url = https://github.com/rubenwardy/ChatCmdBuilder
