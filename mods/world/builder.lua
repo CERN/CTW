@@ -48,6 +48,40 @@ minetest.register_node(":team_billboard:bb", {
 	legacy_wallmounted = true,
 })
 
+minetest.register_node(":computer:server", {
+	drawtype = "nodebox",
+	description = "Rack Server",
+	tiles = {
+		'computer_server_t.png',
+		'computer_server_bt.png',
+		'computer_server_l.png',
+		'computer_server_r.png',
+		'computer_server_bt.png',
+		'computer_server_f_off.png'
+	},
+	inventory_image = "computer_server_inv.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
+	},
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
+	},
+	on_place = function(itemstack, placer, pointed_thing)
+		local pos = pointed_thing.above
+		if minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name ~= "air" then
+			minetest.chat_send_player( placer:get_player_name(),
+					"Not enough vertical space to place a server!")
+			return itemstack
+		end
+		return minetest.item_place(itemstack, placer, pointed_thing)
+	end
+})
+
 local function pos_to_string(pos)
 	return ("%d,%d,%d"):format(pos.x, pos.y, pos.z)
 end

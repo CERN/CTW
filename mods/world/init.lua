@@ -35,3 +35,6 @@ minetest.register_chatcommand("spawn", {
 		end
 	end,
 })
+
+minetest.register_alias("lapis:lapisblock", "default:dirt_with_grass")
+minetest.register_alias("ferns:tree_fern_leaves", "air")
