@@ -27,7 +27,7 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 	local idea_def = ctw_resources.get_idea(idea_id)
 	def_e = def_e or {}
 	local def = {}
-	def.dialogue = def_e.dialogue or idea_def.description
+	def.dialogue = "I have a new idea for you:\n\n" .. (def_e.dialogue or idea_def.description)
 	def.formspec = "background[2,1;6,4.5;ctw_tech_new.png^\\[multiply:#AAA]"
 	def.conditions = {{
 		idea = {idea_id, "eq", "undiscovered"},

@@ -31,11 +31,11 @@ local book_types = {
 	},
 	program_objc = {
 		S("Objective-C How To Program"),
-		S("Programming explained easily. There's how you write Objective-C programs.")
+		S("Programming explained easily.\nThere's how you write Objective-C programs.")
 	},
 	program_c = {
 		S("Program in C - The Handbook"),
-		S("Small and compact C programming handbook. Develop applications with this book.")
+		S("Small and compact C programming handbook.\nDevelop applications with this book.")
 	},
 	cable_crafting = {
 		S("The Art Of Crafting"),
@@ -43,11 +43,26 @@ local book_types = {
 	},
 	design = {
 		S("Design Like A Pro Course Book"),
-		S("Detailed design recommendations including DOs and DONTs. Interfaces also need a design.")
+		S("Detailed design recommendations including DOs and DONTs.\nInterfaces also need a design.")
 	},
 	notebook = {
 		S("Notebook for your ideas"),
-		S("Certain plans need long planning and re-considerations. Contains free space to note stuff.")
+		S("Certain plans need long planning and re-considerations.\nContains free space to note stuff.")
+	},
+	network = {
+		S("Networking basics"),
+		S("On paper it looks easy to get a working data communication,\n"..
+			"but reality is different. Among latency problems, also have a look at this illustration...")
+	},
+	layout = {
+		S("Application Layout Templates"),
+		S("Whatever you would like to design, avoid some of the common pitfalls.\n"..
+			"User friendly designs are the way to make people happy.")
+	},
+	presentations = {
+		S("Presentations And How To Face Them"),
+		S("This book guides you from A-Z how to ease public presentations.\n"..
+			"'Do not be nervous' is said easily but here you can find helpful tips.")
 	},
 	-- add whatever you want here. colors are key-hash-based
 }

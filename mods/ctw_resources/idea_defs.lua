@@ -45,7 +45,7 @@ ctw_resources.register_idea_from_tech("tcpip", {
 	description = S("Network packets are often lost, corrupted or only partially available." ..
 		" How about inventing a protocol which implements those checks?"),
 	references_required = {
-		"books:book_notebook 3",
+		"books:book_notebook 2",
 		"books:book_data_formats 1"
 	},
 })
@@ -55,7 +55,7 @@ ctw_resources.register_idea_from_tech("ethernet", {
 	references_required = {
 		"books:book_hf_freq 1",
 		"books:book_cable_crafting 2",
-		"books:book_hf_freq2 2",
+		"books:book_hf_freq2 1",
 	},
 })
 
@@ -63,6 +63,7 @@ ctw_resources.register_idea_from_tech("ethernet", {
 ctw_resources.register_idea_from_tech("gnu", {
 	references_required = {
 		"books:book_program_c 2",
+		"books:book_presentations 1",
 	},
 })
 
@@ -101,21 +102,31 @@ ctw_resources.register_idea_from_tech("tangle", {
 -- hardware
 ctw_resources.register_idea_from_tech("fiberproduction", {
 	references_required = {
-		"books:book_cable_crafting 3",
+		"books:book_cable_crafting 2",
 		"books:book_hf_freq2 1",
 	},
 })
 
+-- service
 ctw_resources.register_idea_from_tech("dns", {
-	references_required = {},
+	references_required = {
+		"books:book_network 1",
+		"books:book_data_formats 1",
+	},
 })
 
+-- software
 ctw_resources.register_idea_from_tech("grif", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 1",
+	},
 })
 
+-- software
 ctw_resources.register_idea_from_tech("enquire2", {
-	references_required = {},
+	references_required = {
+		"books:book_design 2"
+	},
 })
 
 
@@ -130,16 +141,29 @@ ctw_resources.register_idea_from_tech("enquire2", {
 -- -- 1987 --
 -- ==========
 
+-- hardware
 ctw_resources.register_idea_from_tech("twistethernet", {
-	references_required = {},
+	references_required = {
+		"books:book_cable_crafting 2",
+		"books:book_hf_freq2 1",
+	},
 })
 
+-- software
 ctw_resources.register_idea_from_tech("gif", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:data_formats 1"
+	},
 })
 
+-- software
 ctw_resources.register_idea_from_tech("hypertext", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:book_design 1",
+		"books:data_layout 2"
+	},
 })
 
 
@@ -147,8 +171,12 @@ ctw_resources.register_idea_from_tech("hypertext", {
 -- -- 1988 --
 -- ==========
 
+-- protocol
 ctw_resources.register_idea_from_tech("dynroutingrip", {
-	references_required = {},
+	references_required = {
+		"books:book_data_formats 1",
+		"books:book_network 2"
+	},
 })
 
 
@@ -157,7 +185,11 @@ ctw_resources.register_idea_from_tech("dynroutingrip", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("dynroutingbgp", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:book_data_formats 1",
+		"books:book_network 1"
+	},
 })
 
 ctw_resources.register_idea("merger", {
@@ -170,16 +202,21 @@ ctw_resources.register_idea("merger", {
 	references_required = {
 		"books:book_hf_freq 1",
 		"books:book_data_formats 1",
-		"books:book_cable_crafting 3",
 	},
 })
 
 ctw_resources.register_idea_from_tech("gpl", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 2",
+		"books:book_presentations 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("hypertextproposal", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:book_presentations 2",
+	},
 })
 
 
@@ -188,11 +225,18 @@ ctw_resources.register_idea_from_tech("hypertextproposal", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("fibercommunications", {
-	references_required = {},
+	references_required = {
+		"books:book_data_formats 1",
+		"books:book_presentations 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("http", {
-	references_required = {},
+	references_required = {
+		"books:book_data_formats 1",
+		"books:book_network 1",
+		"books:book_program_c 1",
+	},
 })
 
 ctw_resources.register_idea("html", {
@@ -220,7 +264,10 @@ ctw_resources.register_idea("httpd", {
 })
 
 ctw_resources.register_idea_from_tech("wwwbrowser", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 2",
+		"books:book_presentations 1",
+	},
 })
 
 
@@ -229,23 +276,35 @@ ctw_resources.register_idea_from_tech("wwwbrowser", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("cat5", {
-	references_required = {},
+	references_required = {
+		"books:book_network 1",
+		"books:book_hf_freq2 2",
+	},
 })
 
 ctw_resources.register_idea_from_tech("linux", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 2",
+	},
 })
 
 ctw_resources.register_idea_from_tech("cernbook", {
-	references_required = {},
+	references_required = {
+		"books:book_layout 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("cernpage", {
-	references_required = {},
+	references_required = {
+		"books:book_layout 2",
+	},
 })
 
 ctw_resources.register_idea_from_tech("violawww", {
-	references_required = {},
+	references_required = {
+		"books:book_program_objc 1",
+		"books:book_layout 1",
+	},
 })
 
 -- ==========
@@ -253,11 +312,16 @@ ctw_resources.register_idea_from_tech("violawww", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("splitter", {
-	references_required = {},
+	references_required = {
+		"books:book_hf_freq 1",
+		"books:book_data_formats 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("lynx", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 1",
+	},
 })
 
 
@@ -266,19 +330,29 @@ ctw_resources.register_idea_from_tech("lynx", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("cidrrouting", {
-	references_required = {},
+	references_required = {
+		"books:book_network 1",
+		"books:book_notebook 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("gnn", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("wwwpublic", {
-	references_required = {},
+	references_required = {
+		"books:book_presentations 2",
+	},
 })
 
 ctw_resources.register_idea_from_tech("mosaic", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 2",
+		"books:book_layout 1",
+	},
 })
 
 
@@ -287,11 +361,16 @@ ctw_resources.register_idea_from_tech("mosaic", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("url", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:book_presentations 1",
+	},
 })
 
 ctw_resources.register_idea_from_tech("netscape", {
-	references_required = {},
+	references_required = {
+		"books:book_program_c 1",
+	},
 })
 
 
@@ -300,14 +379,22 @@ ctw_resources.register_idea_from_tech("netscape", {
 -- ==========
 
 ctw_resources.register_idea_from_tech("fastethernet", {
-	references_required = {},
+	references_required = {
+		"books:book_cable_crafting 2",
+		"books:book_hf_freq2 1",
+	},
 })
 ctw_resources.register_idea_from_tech("iexplore", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+	},
 })
 ctw_resources.register_idea_from_tech("png", {
 	references_required = {},
 })
 ctw_resources.register_idea_from_tech("w3c", {
-	references_required = {},
+	references_required = {
+		"books:book_notebook 1",
+		"books:book_presentations 1",
+	},
 })

@@ -47,6 +47,7 @@ local inv_callbacks = {
 						if idea_id then
 							-- You can always put ideas in. if they are already present,
 							-- this simply means that the additional item is removed.
+							player:get_inventory():add_item("main", stack:get_name())
 							return 1
 						end
 					end

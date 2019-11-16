@@ -47,7 +47,7 @@ function ctw_resources.show_idea_form(pname, id)
 	if not idea then
 		return true
 	end
-	
+
 	local team = teams.get_by_player(pname)
 	local is_visible = false
 	if team then
@@ -60,7 +60,7 @@ function ctw_resources.show_idea_form(pname, id)
 			end
 		end
 	end
-	
+
 	local form = ctw_technologies.get_detail_formspec({
 		bt1 = {
 			catlabel = "Technologies required:",
@@ -90,7 +90,6 @@ function ctw_resources.show_idea_form(pname, id)
 		title = idea.name,
 		text = is_visible and idea.description,
 		labeltext = "This idea is not yet discovered by your team.",
-		
 	}, pname)
 	-- show it
 	minetest.show_formspec(pname, "ctw_resources:idea_"..id, form)
@@ -99,7 +98,7 @@ end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
-	
+
 	local id = string.match(formname, "^ctw_resources:idea_(.+)$");
 	if id then
 		local idea = ideas[id]
@@ -114,7 +113,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				ctw_technologies.show_technology_form(pname, tech_id)
 				return
 			end
-			
+
 			local ref_id = string.match(field, "^goto_ref_(.+)$");
 			if ref_id then
 				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_resources.show_idea_form(pname, id) end)
@@ -122,15 +121,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				return
 			end
 		end
-		
+
 		if fields.goto_back then
 			ctw_technologies.form_returnstack_pop(pname)
 		end
-		
+
 		if fields.quit then
 			ctw_technologies.form_returnstack_clear(pname)
 		end
-		
+
 	end
 
 end)
@@ -191,7 +190,7 @@ function ctw_resources.register_idea_from_tech(tech_id, idea_def, itemdef_p)
 	assert(idea_def.references_required, "Missing references table")
 	local def = {
 		name = tech.name,
-		description = "[Idea] " .. tech.description,
+		description = tech.description,
 		technologies_gained = { tech_id }
 	}
 	for k, v in pairs(idea_def) do
