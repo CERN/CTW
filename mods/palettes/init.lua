@@ -49,12 +49,12 @@ for tname, _ in pairs(teams.get_dict()) do
 			return 0
 		end,
 		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-			return -1
+			return 0
 		end,
 		allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 			local team = teams.get_by_player(player)
 			if not team or team.name ~= tname then
-				return -1
+				return 0
 			else
 				return stack:get_count()
 			end
