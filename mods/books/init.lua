@@ -173,3 +173,16 @@ minetest.register_node("books:bookshelf_white", {
 	paramtype2 = "facedir",
 	groups = { bookshelf = 1 }
 })
+
+minetest.register_node("books:bookshelf_empty", {
+	tiles = {
+		"books_bookshelf_side.png", -- top
+		"books_bookshelf_side.png", -- bottom
+		"books_bookshelf_side.png",
+		"books_bookshelf_side.png",
+		"books_bookshelf.png", -- front
+		"books_bookshelf.png" -- back
+	},
+	paramtype2 = "facedir",
+	groups = { bookshelf = 1 }
+})

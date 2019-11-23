@@ -93,7 +93,8 @@ if fixed_libraries ~= nil then
 	minetest.register_lbm({
 		label = "Randomize bookshelves",
 		name = "books:randomize",
-		nodenames = { "group:bookshelf" },
+		nodenames = { "books:bookshelf_white" },
+		run_at_every_load = true,
 		action = function(pos, node)
 			local areas = area_store:get_areas_for_pos(pos, false, true)
 			local nareas = 0
