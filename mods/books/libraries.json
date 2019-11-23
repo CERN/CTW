@@ -2,8 +2,19 @@
   "large_libraries": {
     "libraries": ["large_library_1", "large_library_2"],
     "types": [
-      { "data_formats": 0.1, "hf_freq": 0.1, "hf_freq2": 0.1, "program_objc": 0.1, "program_c": 0.1, "empty": 0.5 },
-      { "cable_crafting": 0.1, "design": 0.1, "notebook": 0.1, "network": 0.1, "layout": 0.1, "presentations": 0.1, "empty": 0.4 }
+      { "presentations": 0.1, "design": 0.1, "layout": 0.1, "program_objc": 0.1, "program_c": 0.1, "empty": 0.5 },
+      { "cable_crafting": 0.1, "hf_freq": 0.1, "hf_freq2": 0.1, "notebook": 0.1, "network": 0.1, "data_formats": 0.1, "empty": 0.4 }
+    ]
+  },
+  "small_libraries": {
+    "libraries": ["small_library_1", "small_library_2", "small_library_3", "small_library_4", "small_library_5", "small_library_6"],
+    "types": [
+      { "hf_freq": 0.25, "hf_freq2": 0.25, "empty": 0.5 },
+      { "program_c": 0.25, "program_objc": 0.25, "empty": 0.5 },
+      { "design": 0.25, "layout": 0.25, "empty": 0.5 },
+      { "cable_crafting": 0.25, "network": 0.25, "empty": 0.5 },
+      { "data_formats": 0.25, "presentations": 0.25, "empty": 0.5 },
+      { "notebook": 0.25, "empty": 0.75 }
     ]
   }
 }
