@@ -176,3 +176,35 @@ minetest.register_node("team_billboard:bb", {
 	after_place_node = after_place_node,
 	on_rightclick = on_rightclick,
 })
+
+local function sqdist(pos1, pos2)
+	local delta = vector.subtract(pos1, pos2)
+	return delta.x*delta.x + delta.y*delta.y + delta.z*delta.z
+end
+
+minetest.register_lbm({
+	label = "Assign team to billboard",
+	name = "team_billboard:teamise",
+	nodenames = { "team_billboard:bb" },
+	run_at_every_load = true,
+	action = function(pos, node)
+		local meta = minetest.get_meta(pos)
+		if meta:contains("team") then
+			return
+		end
+
+		local min_team = nil
+		local min_dist = 10000000
+
+		for tname, _ in pairs(teams.get_dict()) do
+			local pos2 = world.get_team_location(tname, "base")
+			local dist = sqdist(pos, pos2)
+			if dist < min_dist then
+				min_team = tname
+				min_dist = dist
+			end
+		end
+
+		meta:set_string("team", min_team)
+	end,
+})
