@@ -351,8 +351,9 @@ function ctw_resources.set_team_idea_state(idea_id, team, state, param)
 end
 
 -- compare_idea(team, "eq", "discovered")
-function ctw_resources.compare_idea(idea_id, team, cmp, value)
-	local idea_state = ctw_resources.get_team_idea_state(idea_id, team).state
+function ctw_resources.compare_idea(idea, team, cmp, value)
+	local idea_state = type(idea) == "table" and idea.state or
+		ctw_resources.get_team_idea_state(idea, team).state
 
 	if cmp == "eq" then
 		return idea_state == value
@@ -369,4 +370,30 @@ function ctw_resources.compare_idea(idea_id, team, cmp, value)
 		return index_1 > index_2
 	end
 	error("Invalid comparison: " .. cmp)
+end
+
+function ctw_resources.compare_all_ideas(team, cmp, value)
+	local index_2 = table_index(ctw_resources.idea_states, value)
+	assert(index_2, "Invalid idea state 2 '" .. tostring(value) .. "'")
+
+	local ideas = {}
+	local count = 0
+	for idea_id, istate in pairs(team._ctw_resources_idea_state or {}) do
+		local index_1 = table_index(ctw_resources.idea_states, istate.state)
+		local ok = false
+		if cmp == "eq" then
+			ok = index_1 == index_2
+		elseif cmp == "lt" then
+			ok = index_1 < index_2
+		elseif cmp == "gt" then
+			ok = index_2 > index_2
+		else
+			error("Invalid comparison: " .. cmp)
+		end
+		if ok then
+			ideas[idea_id] = istate
+			count = count + 1
+		end
+	end
+	return ideas, count
 end

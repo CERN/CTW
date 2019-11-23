@@ -59,6 +59,7 @@ IdeaDef = {
 	-- DP which must be gained to invent the technology
 	-- When starting invention, the current DP value is saved, technology will be finished when
 	-- the score goes over DP+invention_dp.
+	-- The actual required DPs will increase depending on the team progress difference
 
 	-- This field will be added automatically at registration based on the
 	-- 'TechDef' reqirements of those specified in 'technologies_gained'
@@ -126,12 +127,19 @@ ctw_resources.give_idea(idea_id, pname, inventory, invlist)
 	--     "no_space"               No free space in inventory
 	--     "no_team"                Player has no team
 
-ctw_resources.compare_idea(idea_id, team, cmp, value)
+ctw_resources.compare_idea(idea, team, cmp, value)
 	-- Compare an idea state with the given value
-	-- 'team': Team def'
+	-- 'idea': Idea ID or IdeaDef
+	-- 'team': 'Team def'
 	-- 'cmp': string, one of 'eq', 'lt' or 'gt'
 	-- 'value: string, 'state' from 'IdeaState'
 	-- Returns whether the comparison applies.
+
+ctw_resources.compare_all_ideas(team, cmp, value)
+	-- Compare all team idea states with the given value
+	-- Same params as 'compare_idea'
+	-- Returns list of `["idea_id"] = IdeaState` that match the condition
+	-- Returns count of results
 
 
 ## Idea Approving API
@@ -525,9 +533,12 @@ npc.get_event_by_id(id)
 
 	{
 		name = "string",
+		display_name = S("team orange"),
+		display_name_capitalized = S("Team Orange"),
+		-- ^ Human readable
 		color = "Color as a color spec string",
 	    color_hex = 0xFF0000,
-	    -- custom keys permitted
+	    -- ^ Custom keys permitted
 	}
 
 ## Public API

@@ -45,16 +45,16 @@ function ctw_resources.start_inventing(istack, team, pname, try)
 end
 
 -- Returns the state of all ideas a team is inventing, in this format:
--- [idea_id] = { progress = <in percent>, dp = <dp accumulated so far>, dp_total = <dp total required>}
+-- [idea_id] = { dp = <dp accumulated so far>, dp_total = <dp total required>}
 function ctw_resources.get_inventing_progress(team)
+	local ideas = ctw_resources.compare_all_ideas(team, "eq", "inventing")
 	local prog = {}
-	if team._ctw_resources_idea_state then
-		for idea_id, istate in pairs(team._ctw_resources_idea_state) do
-			local idea = ctw_resources.get_idea(idea_id)
-			if istate.state == "inventing" then
-				prog[idea_id] = {dp = istate.target, dp_total = idea.invention_dp}
-			end
-		end
+	for idea_id, istate in pairs(ideas) do
+		local idea = ctw_resources.get_idea(idea_id)
+		prog[idea_id] = {
+			dp = istate.target,
+			dp_total = idea.invention_dp
+		}
 	end
 	return prog
 end
@@ -74,12 +74,23 @@ function ctw_resources.register_on_inventing_complete(func)
 end
 
 local function advance_inv_progress(ideas, delta_dp, team)
-
 	if #ideas == 0 then
 		return
 	end
 
-	local dp_share = delta_dp / #ideas
+	-- Game balancing happens here
+	-- If other teams are left behind, research gets very hard
+	local _, progress = ctw_resources.compare_all_ideas(team, "lt", "inventing")
+	local penalty = 10 -- Less impact
+	for _, team2 in pairs(teams.get_all()) do
+		if team2.name ~= team.name then
+			local _, progress2 = ctw_resources.compare_all_ideas(
+				team2, "lt", "inventing")
+			-- More impact the further they are left behind
+			penalty = penalty + math.max(0, progress - progress2)
+		end
+	end
+	local dp_share = delta_dp * 10 / penalty
 
 	for _, idea_id in ipairs(ideas) do
 		local idea = ctw_resources.get_idea(idea_id)
@@ -89,7 +100,8 @@ local function advance_inv_progress(ideas, delta_dp, team)
 
 		if istate.target >= idea.invention_dp then
 			-- The technology is invented.
-			teams.chat_send_team(team.name, "Your scientists have successfully prototyped \""..idea.name.."\"!")
+			teams.chat_send_team(team.name, "Your scientists have successfully prototyped \""..
+				idea.name.."\"!")
 			for _, tech_id in ipairs(idea.technologies_gained) do
 				ctw_technologies.gain_technology(tech_id, team)
 			end
@@ -107,6 +119,7 @@ end
 
 local prev_dp_by_team = {}
 
+-- Regularly check for DP changes and update the invention status
 local timer = 3
 
 minetest.register_globalstep(function(dtime)
@@ -116,22 +129,17 @@ minetest.register_globalstep(function(dtime)
 	timer = 2
 
 	for _,team in ipairs(teams.get_all()) do
-		if not prev_dp_by_team[team.name] then
+		local dp_delta = team.points - (prev_dp_by_team[team.name] or 0)
+		if dp_delta > 0 then
 			prev_dp_by_team[team.name] = team.points
-		else
-			local dp_delta = team.points - prev_dp_by_team[team.name]
-			if dp_delta ~= 0 then
-				prev_dp_by_team[team.name] = team.points
-				local ideas_inventing = {}
-				if team._ctw_resources_idea_state then
-					for idea_id, istate in pairs(team._ctw_resources_idea_state) do
-						if istate.state == "inventing" then
-							table.insert(ideas_inventing, idea_id)
-						end
-					end
+			local ideas_inventing = {}
+			for idea_id, istate in pairs(team._ctw_resources_idea_state or {}) do
+				if istate.state == "inventing" then
+					table.insert(ideas_inventing, idea_id)
 				end
-				advance_inv_progress(ideas_inventing, dp_delta, team)
 			end
+			-- Update stepwise the progress
+			advance_inv_progress(ideas_inventing, dp_delta, team)
 		end
 	end
 end)

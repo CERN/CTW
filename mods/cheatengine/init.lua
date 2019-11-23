@@ -38,13 +38,13 @@ local cmd_defs = {
 --BEGIN COMMAND DEFINITIONS
 books = function(name, params)
 	local player = get_player_or_nil(name, params[1])
-	local idea_id = params[2]:lower()
+	local idea_id = (params[2] or "?nil"):lower()
 	if not player then
 		return false, "Unknown player: " .. params[1]
 	end
 	local idea = ctw_resources.get_idea_raw(idea_id)
 	if not idea then
-		return false, "Unknown idea: " .. (params[2] or "?nil")
+		return false, "Unknown idea: " .. idea_id
 	end
 
 	local inv = player:get_inventory()
@@ -281,6 +281,7 @@ year = function(name, params)
 			tech_def.year >= dst_year and "undiscovered" or "gained")
 		n_found = n_found + 1
 	end
+	year.set(dst_year, team.name)
 	return true, "Changed to year " .. dst_year .. ". Found " ..
 		n_found .. " ideas and techs."
 end,

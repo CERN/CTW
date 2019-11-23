@@ -90,10 +90,9 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 			local istate = ctw_resources.get_team_idea_state(idea_id, team)
 			table.insert(form, "button[2,"..(1.5 + index)..";4,1;idea_"..idea_id..";"..idea.name.."]")
 			if istate.state == "inventing" then
-				local total = idea.invention_dp
-				local have = istate.target
-				local percent = math.floor(100 * (have/total))
-				table.insert(form, "label[7,"..(1.5 + index)..";Prototyping "..percent.."% ("..have.."/"..total.." DP)]")
+				-- Researching speed may change
+				local percent = math.floor(100 * idea.have / idea.invention_dp)
+				table.insert(form, "label[7,"..(1.5 + index)..";Prototyping "..percent.."%]")
 			else
 				table.insert(form, "label[7,"..(1.5 + index)..";State: "..istate.state.."]")
 			end
