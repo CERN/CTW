@@ -8,6 +8,7 @@ if minetest.get_modpath("teams") then
 else
 	minetest.chat_send_all("** WORLD BUILDER MODE **")
 	dofile(minetest.get_modpath("world") .. "/builder.lua")
+	dofile(minetest.get_modpath("world") .. "/builder_nodes.lua")
 end
 
 function world.teleport_to_spawn(player)

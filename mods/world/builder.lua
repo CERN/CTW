@@ -7,80 +7,65 @@ end
 
 local mts_path = minetest.get_worldpath() .. "/world.mts"
 
+local function load_world(map_path, conf_path, callback)
+	assert(map_path)
+	assert(conf_path)
+	if not file_exists(map_path) then
+		return false, "Prebuilt world not found"
+	end
+
+	local conf = Settings(conf_path)
+	local pos1 = minetest.string_to_pos(conf:get("world_1"))
+	local pos2 = minetest.string_to_pos(conf:get("world_2"))
+	if not pos1 or not pos2 then
+		return false, "Unable to read world bounds"
+	end
+
+	local area = { from = pos1, to = pos2 }
+
+	world.emerge_with_callbacks(area.from, area.to, function()
+		minetest.place_schematic(area.from, map_path, "0")		
+		minetest.after(0.5, function()
+			minetest.fix_light(area.from, area.to)
+
+			if callback then
+				callback() 
+			end
+		end)
+	end)
+
+	return true
+end
+
+minetest.register_chatcommand("worldload", {
+	func = function(name, param)
+		local map_path = minetest.get_modpath("world") .. "/schematics/world.mts"
+		local conf_path = minetest.get_modpath("world") .. "/schematics/world.conf"
+		return load_world(map_path, conf_path)
+	end
+})
+
+local create_map_path = minetest.get_worldpath() .. "/load_world.mts"
+if file_exists(create_map_path) then
+	minetest.after(0, function()
+		local suc, msg = load_world(create_map_path, conf_path, function()
+			os.remove(create_map_path)
+		end)
+		if not suc then
+			error("Error placing map: " .. msg)
+		end	
+	end)
+end
+
+
+
+
 minetest.register_on_shutdown(function()
 	world.save_locations(conf_path)
 end)
 
-local teamnames = { "red", "blue", "green", "yellow" }
-for _, tname in pairs(teamnames) do
-	minetest.register_node(":palettes:palette_" .. tname, {
-		description = tname .. " palette",
-		drawtype = "nodebox",
-		paramtype = "light",
-		tiles = {
-			"default_wood.png^[colorize:" .. tname .. ":0.1",
-		},
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{-0.5, -0.5, -0.5, 0.5, -0.375, 0.5},
-			}
-		},
-		after_place_node = function(pos)
-			minetest.get_meta(pos):set_string("infotext", minetest.pos_to_string(pos))
-		end,
-	})
-end
 
-minetest.register_node(":team_billboard:bb", {
-	description = "Team Billboard",
-	drawtype = "signlike",
-	visual_scale = 2.0,
-	tiles = { "wool_black.png" },
-	inventory_image = "wool_black.png",
-	paramtype = "light",
-	paramtype2 = "wallmounted",
-	sunlight_propagates = true,
-	walkable = false,
-	light_source = 1, -- reflecting a bit of light might be expected
-	selection_box = { type = "wallmounted" },
-	groups = {attached_node=1},
-	legacy_wallmounted = true,
-})
 
-minetest.register_node(":computer:server", {
-	drawtype = "nodebox",
-	description = "Rack Server",
-	tiles = {
-		'computer_server_t.png',
-		'computer_server_bt.png',
-		'computer_server_l.png',
-		'computer_server_r.png',
-		'computer_server_bt.png',
-		'computer_server_f_off.png'
-	},
-	inventory_image = "computer_server_inv.png",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	groups = {snappy=3},
-	selection_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
-	},
-	node_box = {
-		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5+2/16, 0.5, 1.125, 0.5-3/16}
-	},
-	on_place = function(itemstack, placer, pointed_thing)
-		local pos = pointed_thing.above
-		if minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name ~= "air" then
-			minetest.chat_send_player( placer:get_player_name(),
-					"Not enough vertical space to place a server!")
-			return itemstack
-		end
-		return minetest.item_place(itemstack, placer, pointed_thing)
-	end
-})
 
 local function pos_to_string(pos)
 	return ("%d,%d,%d"):format(pos.x, pos.y, pos.z)
@@ -111,33 +96,6 @@ local function formatList(list)
 	end
 	return table.concat(list, ",")
 end
-
-minetest.register_chatcommand("worldload", {
-	func = function(name, param)
-		local map_path = minetest.get_modpath("world") .. "/schematics/world.mts"
-		local conf_path = minetest.get_modpath("world") .. "/schematics/world.conf"
-		if not file_exists(map_path) then
-			return false, "Prebuilt world not found"
-		end
-
-		local conf = Settings(conf_path)
-		local pos1 = minetest.string_to_pos(conf:get("world_1"))
-		local pos2 = minetest.string_to_pos(conf:get("world_2"))
-		if not pos1 or not pos2 then
-			return false, "Unable to read world bounds"
-		end
-		local area = { from = pos1, to = pos2 }
-
-		world.emerge_with_callbacks(area.from, area.to, function()
-			minetest.place_schematic(area.from, map_path, "0")
-
-			minetest.after(0.5, function()
-				minetest.fix_light(area.from, area.to)
-			end)
-		end)
-	end
-})
-
 
 sfinv.register_page("world:builder", {
 	title = "World Meta",
