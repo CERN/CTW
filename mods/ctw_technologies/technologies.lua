@@ -179,6 +179,9 @@ end
 
 -- Returns 'TechState' for the specified team
 function ctw_technologies.get_team_tech_state(id, team)
+	if not team then
+		return {state = "undiscovered"}
+	end
 	if not team._ctw_technologies_tech_state then
 		team._ctw_technologies_tech_state = {}
 	end
