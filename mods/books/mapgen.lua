@@ -1,4 +1,6 @@
 
+assert (minetest.get_modpath("world"))
+
 local function random_book_type(probabilities)
 	-- Return a random type of book, given the probabilities for each kind.
 	-- The probabilities should sum to 1.
@@ -43,13 +45,14 @@ end
 
 local worldpath = minetest.get_worldpath()
 -- See if libraries have been generated during a previous run
+
 local fixed_libraries = read_file(worldpath .. "/libraries_fixed.json")
 
 if fixed_libraries == "" then
 	-- No libraries generated yet. Try to open the file giving which libraries should go where
 	fixed_libraries = {}
 	local index = 1
-	local data = minetest.parse_json(read_file(worldpath .. "/libraries.json"))
+	local data = minetest.parse_json(read_file(minetest.get_modpath(minetest.get_current_modname()) .. "/libraries.json"))
 
 	if data ~= nil then
 		for group_type, group_data in pairs(data) do
@@ -59,16 +62,22 @@ if fixed_libraries == "" then
 			local n = #area_locations
 			assert (n == #area_types)
 			for i = n,1,-1 do
-				local library = area_locations[i]
-				local idx = math.random(1, i)
-				local types = area_types[idx]
-				area_types[idx] = area_types[i]
-				fixed_libraries[index] = { minp = library.minp, maxp = library.maxp, types = types }
-				index = index + 1
+				local library = world.get_area(area_locations[i])
+				if not library then
+					minetest.log("error", "Could not find library '" .. area_locations[i] .. "'")
+				else
+					local idx = math.random(1, i)
+					local types = area_types[idx]
+					area_types[idx] = area_types[i]
+					fixed_libraries[index] = { minp = library.from, maxp = library.to, types = types }
+					index = index + 1
+				end
 			end
 		end
 		-- Save the result for future loads
 		write_file(worldpath .. "/libraries_fixed.json", minetest.write_json(fixed_libraries))
+	else
+		minetest.log("error", "Cound not parse libraries file")
 	end
 else
 	fixed_libraries = minetest.parse_json(fixed_libraries)

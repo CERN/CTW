@@ -2,16 +2,12 @@
 	This flag should be set to false if you are building the world that will be preloaded.
 	However, in normal play, it should be set to true.
 ]]--
-local enable_bookshelf_randomization = false
 local debug = false
 local S = minetest.get_translator("books")
 
-if enable_bookshelf_randomization then
+if minetest.get_modpath("teams") then
+	assert (minetest.get_modpath("ctw_resources"))
 	dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/mapgen.lua")
-else
-	minetest.log("error",
-		"Bookshelf randomization disabled. Please make sure you are "..
-		"pre-building the world and not playing a game.")
 end
 
 
@@ -92,6 +88,11 @@ end
 
 local book_respawn_time_min = 10
 local book_respawn_time_max = 20
+
+if not minetest.get_modpath("teams") then
+	-- World building mode: add only "white" bookshelves
+	book_types = {}
+end
 
 for key, d in pairs(book_types) do
 	local description = d[1]
