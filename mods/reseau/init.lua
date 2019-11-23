@@ -9,6 +9,7 @@ dofile(minetest.get_modpath("reseau").."/transmit.lua")
 dofile(minetest.get_modpath("reseau").."/modstorage.lua")
 dofile(minetest.get_modpath("reseau").."/transmittermgmt.lua")
 dofile(minetest.get_modpath("reseau").."/throughput.lua")
+dofile(minetest.get_modpath("reseau").."/mapgen.lua")
 
 -- ######################
 -- #      Defines       #

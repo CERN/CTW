@@ -490,7 +490,7 @@ npc.get_event_by_id(id)
 ## pallets - Item deliveries
 
 * pallets.deliver(tname, stack) -> (bool, string)
-	* Attempts to add a stack to the palette.
+	* Attempts to add a stack to the pallet.
 	* Either all the stack will be added, or none.
 	* Returns `true, nil` on success, `false, err_msg` on failure.
 * pallets.register_on_deliver(func(tname, stack, pos))

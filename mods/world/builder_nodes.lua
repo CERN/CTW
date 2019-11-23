@@ -1,8 +1,8 @@
 
 local teamnames = { "red", "blue", "green", "yellow" }
 for _, tname in pairs(teamnames) do
-	minetest.register_node(":pallets:palette_" .. tname, {
-		description = tname .. " palette",
+	minetest.register_node(":pallets:pallet_" .. tname, {
+		description = tname .. " pallet",
 		drawtype = "nodebox",
 		paramtype = "light",
 		tiles = {
@@ -14,9 +14,29 @@ for _, tname in pairs(teamnames) do
 				{-0.5, -0.5, -0.5, 0.5, -0.375, 0.5},
 			}
 		},
+		groups = { snappy = 3 },
 		after_place_node = function(pos)
 			minetest.get_meta(pos):set_string("infotext", minetest.pos_to_string(pos))
+			world.set_team_location(tname, "pallet", pos)
 		end,
+	})
+
+	minetest.register_node(":reseau:receiver_" .. tname, {
+		description = tname .. " receiver",
+		tiles = {
+			
+		},
+		tiles = {
+			"baked_clay_white.png",
+			"baked_clay_white.png",
+			"baked_clay_white.png",
+			"baked_clay_white.png",
+			"baked_clay_" .. tname .. ".png",
+			"baked_clay_white.png",
+		},
+		paramtype2 = "facedir",
+		inventory_image = "baked_clay_" .. tname .. ".png",
+		groups = { snappy = 3 },
 	})
 end
 
@@ -32,7 +52,7 @@ minetest.register_node(":team_billboard:bb", {
 	walkable = false,
 	light_source = 1, -- reflecting a bit of light might be expected
 	selection_box = { type = "wallmounted" },
-	groups = {attached_node=1},
+	groups = {attached_node=1, snappy=1},
 	legacy_wallmounted = true,
 })
 

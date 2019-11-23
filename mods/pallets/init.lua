@@ -6,22 +6,22 @@ local function reg_extend(name, base, ext)
 end
 
 for tname, _ in pairs(teams.get_dict()) do
-	local empty_name = "pallets:palette_" .. tname
-	local full_name = "pallets:palette_full_" .. tname
+	local empty_name = "pallets:pallet_" .. tname
+	local full_name = "pallets:pallet_full_" .. tname
 
 	local base = {
-		description = tname .. " palette",
+		description = tname .. " pallet",
 		pallets_empty_name = empty_name,
 		pallets_full_name = full_name,
 		drawtype = "nodebox",
 		paramtype = "light",
 		after_place_node = function(pos)
-			if world.get_team_location(tname, "palette") then
+			if world.get_team_location(tname, "pallet") then
 				minetest.set_node(pos, { name = "air" })
 				return
 			end
 
-			world.set_team_location(tname, "palette", pos)
+			world.set_team_location(tname, "pallet", pos)
 			local suc, msg = pallets.deliver(tname, ItemStack("default:stone"))
 			if not suc then
 				minetest.chat_send_all(msg)
@@ -115,9 +115,9 @@ function pallets.register_on_deliver(func)
 end
 
 function pallets.deliver(tname, stack)
-	local pos = world.get_team_location(tname, "palette")
+	local pos = world.get_team_location(tname, "pallet")
 	if not pos then
-		return false, "Unable to find palette"
+		return false, "Unable to find pallet"
 	end
 
 	local inv = minetest.get_meta(pos):get_inventory()
