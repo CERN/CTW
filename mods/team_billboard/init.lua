@@ -117,7 +117,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local team = teams.get_by_player(pname)
 	if not team then return end
 	local tname = team.name
-	if not open_forms[tname] then
+	if not (open_forms[tname] and open_forms[tname][pname]) then
 		return -- when opening other team's billboards
 	end
 
