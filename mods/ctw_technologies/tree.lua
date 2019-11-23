@@ -329,7 +329,7 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	return table.concat(formt, "\n")
 end
 
-function ctw_technologies.show_tech_tree(pname, scrollpos)
+local function get_dtech_for_player(pname)
 	local team = teams.get_by_player(pname)
 	local dtech = {}
 	if team then
@@ -339,41 +339,49 @@ function ctw_technologies.show_tech_tree(pname, scrollpos)
 			end
 		end
 	end
+	return dtech
+end
+
+function ctw_technologies.show_tech_tree(pname, scrollpos)
 	local form = "size[17,12]real_coordinates[true]"
-			..ctw_technologies.render_tech_tree(0, 0, 17, 12, dtech, scrollpos, nil)
+			..ctw_technologies.render_tech_tree(0, 0, 17, 12, get_dtech_for_player(pname), scrollpos, nil)
 	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
+end
+
+local function handle_player_receive_fields(pname, fields, callback)
+	for techid, tech in pairs(technologies) do
+		-- look if field was clicked
+		if fields["goto_tech_"..techid] or fields["goto_techt_"..techid] then
+			if ctw_technologies.get_technology_raw(techid) then
+				ctw_technologies.show_technology_form(pname, techid)
+			end
+			return
+		end
+		if fields.mleft then
+			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+			if ev.type=="VAL" then
+				callback(pname, ev.value - 1000*(3/(render_info.max_levels)))
+			end
+		end
+		if fields.mright then
+			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+			if ev.type=="VAL" then
+				callback(pname, ev.value + 1000*(3/(render_info.max_levels)))
+			end
+		end
+		if not fields.quit and fields.scrollbar then
+			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
+			if ev.type=="CHG" then
+				callback(pname, ev.value)
+			end
+		end
+	end
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
 	if formname == "ctw_technologies:tech_tree" then
-		for techid, tech in pairs(technologies) do
-			-- look if field was clicked
-			if fields["goto_tech_"..techid] or fields["goto_techt_"..techid] then
-				if ctw_technologies.get_technology_raw(techid) then
-						ctw_technologies.show_technology_form(pname, techid)
-					end
-				return
-			end
-			if fields.mleft then
-				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-				if ev.type=="VAL" then
-					ctw_technologies.show_tech_tree(pname, ev.value - 1000*(3/(render_info.max_levels)), {}, nil)
-				end
-			end
-			if fields.mright then
-				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-				if ev.type=="VAL" then
-					ctw_technologies.show_tech_tree(pname, ev.value + 1000*(3/(render_info.max_levels)), {}, nil)
-				end
-			end
-			if not fields.quit and fields.scrollbar then
-				local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-				if ev.type=="CHG" then
-					ctw_technologies.show_tech_tree(pname, ev.value, {}, nil)
-				end
-			end
-		end
+		handle_player_receive_fields(pname, fields, ctw_technologies.show_tech_tree)
 	end
 
 end)
@@ -384,5 +392,34 @@ minetest.register_chatcommand("ctwtr", {
          privs = {},
          func = function(pname, params)
 				ctw_technologies.show_tech_tree(pname, tonumber(params) or 0)
-        end,
+         end,
 })
+
+function sfinv.get_homepage_name(player)
+	return "ctw_technologies:tree"
+end
+
+sfinv.register_page("ctw_technologies:tree", {
+	title = "Tech tree",
+	get = function(self, player, context)
+		local dtech = get_dtech_for_player(player:get_player_name())
+		local content = ctw_technologies.render_tech_tree(0, 0, 17, 12, dtech, context.ctw_technologies_tree_scroll or 0, nil)
+		return sfinv.make_formspec(player, context, content, false, "size[17,12]real_coordinates[true]")
+	end,
+	on_player_receive_fields = function(self, player, context, fields)
+		handle_player_receive_fields(player:get_player_name(), fields, function(pname, scrollbar)
+			context.ctw_technologies_tree_scroll = scrollbar
+			sfinv.set_player_inventory_formspec(player)
+		end)
+	end,
+})
+
+teams.register_on_team_changed(function(player, team_def)
+	sfinv.set_player_inventory_formspec(player)
+end)
+
+ctw_technologies.register_on_gain(function(tech_def, team)
+	for _, player in ipairs(teams.get_online_members(team)) do
+		sfinv.set_player_inventory_formspec(player)
+	end
+end)
