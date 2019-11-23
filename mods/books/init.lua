@@ -15,52 +15,63 @@ local book_types = {
 	-- white: Normal filled bookshelf
 	data_formats = {
 		S("Theory of Data Encoding"),
-		S("Various theoretical examples and ideas regarding byte order.")
+		S("Various theoretical examples and ideas regarding byte order."),
+		"#F12"
 	},
 	hf_freq = {
 		S("High Frequency Physics"),
-		S("Physics get a bit weird with high frequencies. This is how it works.")
+		S("Physics get a bit weird with high frequencies. This is how it works."),
+		"#2A3"
 	},
 	hf_freq2 = {
 		S("HF Physics Part 2"),
-		S("An advanced scientific report about electron physics at high frequencies.")
+		S("An advanced scientific report about electron physics at high frequencies."),
+		"#6F3"
 	},
 	program_objc = {
 		S("Objective-C How To Program"),
-		S("Programming explained easily.\nThere's how you write Objective-C programs.")
+		S("Programming explained easily.\nThere's how you write Objective-C programs."),
+		"#23A"
 	},
 	program_c = {
 		S("Program in C - The Handbook"),
-		S("Small and compact C programming handbook.\nDevelop applications with this book.")
+		S("Small and compact C programming handbook.\nDevelop applications with this book."),
+		"#2AF"
 	},
 	cable_crafting = {
 		S("The Art Of Crafting"),
-		S("Metal processing and compact wire designs are part of this book.")
+		S("Metal processing and compact wire designs are part of this book."),
+		"#EC2"
 	},
 	design = {
 		S("Design Like A Pro Course Book"),
-		S("Detailed design recommendations including DOs and DONTs.\nInterfaces also need a design.")
+		S("Detailed design recommendations including DOs and DONTs.\nInterfaces also need a design."),
+		"#A02"
 	},
 	notebook = {
 		S("Notebook for your ideas"),
-		S("Certain plans need long planning and re-considerations.\nContains free space to note stuff.")
+		S("Certain plans need long planning and re-considerations.\nContains free space to note stuff."),
+		"#63F",
 	},
 	network = {
 		S("Networking basics"),
 		S("On paper it looks easy to get a working data communication,\n"..
-			"but reality is different. Among latency problems, also have a look at this illustration...")
+			"but reality is different. Among latency problems, also have a look at this illustration..."),
+		"#F63",
 	},
 	layout = {
 		S("Application Layout Templates"),
 		S("Whatever you would like to design, avoid some of the common pitfalls.\n"..
-			"User friendly designs are the way to make people happy.")
+			"User friendly designs are the way to make people happy."),
+		"#623"
 	},
 	presentations = {
 		S("Presentations And How To Face Them"),
 		S("This book guides you from A-Z how to ease public presentations.\n"..
-			"'Do not be nervous' is said easily but here you can find helpful tips.")
+			"'Do not be nervous' is said easily but here you can find helpful tips."),
+		"#B6F"
 	},
-	-- add whatever you want here. colors are key-hash-based
+	-- add whatever you want here.
 }
 
 if debug then
@@ -73,19 +84,6 @@ if debug then
 	end)
 end
 
-local function string_to_color(str)
-	local color = minetest.sha1(str, true)
-	local R = color:byte( 1) % 0x10
-	local G = color:byte(10) % 0x10
-	local B = color:byte(20) % 0x10
-	if R + G + B > 24 then
-		R = 15 - R
-		G = 15 - G
-		B = 15 - B
-	end
-	return string.format("#%X%X%X", R, G, B)
-end
-
 local book_respawn_time_min = 10
 local book_respawn_time_max = 20
 
@@ -96,7 +94,8 @@ end
 
 for key, d in pairs(book_types) do
 	local description = d[1]
-	local color = string_to_color(key)
+	--local color = string_to_color(key)
+	local color = d[3]
 
 	-- Register craftitem and documentation entry
 	local overlay_book = "books_book_mask.png^[multiply:" .. color
