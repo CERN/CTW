@@ -161,6 +161,7 @@ for key, d in pairs(book_types) do
 end
 
 minetest.register_node("books:bookshelf_white", {
+	description = S("White Bookshelf (for world building)"),
 	tiles = {
 		"books_bookshelf_side.png", -- top
 		"books_bookshelf_side.png", -- bottom
