@@ -91,7 +91,7 @@ function team_billboard.show_billboard_form(pname, tname, pers_msg)
 			table.insert(form, "button[2,"..(1.5 + index)..";4,1;idea_"..idea_id..";"..idea.name.."]")
 			if istate.state == "inventing" then
 				-- Researching speed may change
-				local percent = math.floor(100 * idea.have / idea.invention_dp)
+				local percent = math.floor(100 * istate.target / idea.invention_dp)
 				table.insert(form, "label[7,"..(1.5 + index)..";Prototyping "..percent.."%]")
 			else
 				table.insert(form, "label[7,"..(1.5 + index)..";State: "..istate.state.."]")
