@@ -1,0 +1,636 @@
+# CTW Game API
+
+
+# books - Book placement
+
+The books mod adds various different books and bookshelves to the game.
+A bookshelf can only contain one type of book. If you take out a book from
+the shelf, it will be re-populated after a while.
+
+
+To auto-convert white bookshelves (`books:bookshelf_white`), create
+the JSON file described below.
+
+
+Example of `worldpath/libraries.json`:
+```
+{
+	"group1": {
+		"libraries": [
+			{"minp": {"x": 20, "y": 9, "z": 2}, "maxp": {"x": 20, "y": 12, "z": 8}}
+		],
+		"types": [
+			{ "data_formats": 0.4, "hf_freq": 0.3, "hf_freq2": 0.2, "program_c": 0.1 }
+		]
+	}
+}
+```
+
+
+
+# ctw_resources - ideas, inventing
+
+An idea is a special item a team gets from NPCs or by other means.
+When a player gets an idea, it is available for the whole team once
+he returned to the team space. An Idea is an "instruction" how to get
+to a certain technology.
+An "idea" is referenced by a unique identifier.
+
+
+## Idea Definition
+The provided data is used to generate the documentation.
+
+IdeaDef = {
+	name = "ASCII",
+	description = "It is necessary to create one unique standard for
+		character encoding that every device complies to. ",
+	technologies_gained = {
+		[tech_id],...
+		-- List of technologies (=awards) the team will gain when
+			getting permission for this idea.
+	}
+	references_required = {
+		[ItemStack],...
+		-- List of references (=books) required, as ItemStacks
+		-- Be sure not to include one item name multiple times, this will lead to incorrect behavior!
+	}
+	dp_required = 1000
+	-- Number of Discovery Points that are required to get this idea.
+	-- This is just an orientational value when NPCs should give out the idea
+	invention_dp = 1200
+	-- DP which must be gained to invent the technology
+	-- When starting invention, the current DP value is saved, technology will be finished when
+	-- the score goes over DP+invention_dp.
+
+	-- This field will be added automatically at registration based on the
+	-- 'TechDef' reqirements of those specified in 'technologies_gained'
+	technologies_required = {
+		[technology IDs],...
+	}
+}
+Documentation (doc mod) is automatically generated from ItemDef.
+
+IdeaState = {
+	state = string,
+	-- "undiscovered" Not discovered yet
+	-- "discovered"   Discovered by a team member but not on team billboard
+    -- "published"    Discovered and published on team billboard
+	-- "approved"     Idea is approved, but prototyping has not started yet
+	-- "inventing"    Idea is being prototyped
+	-- "invented"     Protoyping completed and technologies have been gained
+
+	last_action = 0,
+	-- Game timestamp (world), in seconds of the last idea interaction
+	-- Ideas and approval letters will only be given out in a certain interval
+
+	by = "playername",
+	-- 'string' triggering player name
+	-- Included in states "discovered", "approved" and "inventing"
+
+	target = 1234
+	-- 'number' of final DPs to complete prototyping (state = "inventing")
+}
+
+
+## Idea API
+
+ctw_resources.idea_states = {}
+	-- Table listing all idea state strings from 'IdeaState'
+
+ctw_resources.register_idea(idea_id, idea_def, itemdef_p)
+	-- Registers an idea and a craftitem for it
+	-- 'idea_id': string, unique identifier
+	-- 'idea_def': 'IdeaDef'
+	-- 'itemdef_p': (optional) 'ItemDef' for custom item definition fields
+
+ctw_resources.register_idea_from_tech(tech_id, idea_def, itemdef_p)
+	-- Registers an idea based on the technology ID.
+	-- 'tech_id': string, existing technology ID
+	-- 'itemdef_p': (optional)
+	-- Values are passed to 'ctw_resources.register_idea'
+
+ctw_resources.get_idea(idea_id)
+	-- Returns: 'IdeaDef'
+
+ctw_resources.get_idea_from_istack(itemstack)
+	-- 'itemstack': 'ItemStack' of an idea craftitem
+	-- Returns: 'IdeaDef' or nil
+
+ctw_resources.give_idea(idea_id, pname, inventory, invlist)
+	-- Give an idea to a player. The idea item will be issued into the
+	-- specified inventory
+	-- To be called from an NPC.
+	-- Return values:
+	--   true: success
+	--   false, error_reason: failure
+	--     "idea_present_in_player" Player already has this idea in inventory
+	--     "idea_present_in_team"   Idea is already posted on the team billboard
+	--     "no_space"               No free space in inventory
+	--     "no_team"                Player has no team
+
+ctw_resources.compare_idea(idea_id, team, cmp, value)
+	-- Compare an idea state with the given value
+	-- 'team': Team def'
+	-- 'cmp': string, one of 'eq', 'lt' or 'gt'
+	-- 'value: string, 'state' from 'IdeaState'
+	-- Returns whether the comparison applies.
+
+
+## Idea Approving API
+
+ctw_resources.is_idea_approved(idea_id, team, refs_inv, refs_invlist)
+	-- Checks whether the idea can be approved by the management
+	-- If so: Permission should be granted
+	-- 'team': 'Team def'
+	-- 'refs_inv': 'InvRef' of the player
+	-- 'refs_invlist': 'string', inventory list name
+	-- Return values:
+	--   true: technology is approved
+	--   false, technologies_missing, references_missing: cannot be approved
+	--     *_missing: string table of missing parts
+
+ctw_resources.approve_idea(idea_id, pname, inv, invlist, try)
+	-- Approves an idea for the given player's team
+	-- Get a permission letter for the passed idea, directed at the given team
+	-- 'pname': 'ObjectRef' player applying for permission
+	-- 'try': if 'true': will only perform a dry run (changes nothing)
+	-- Returns:
+	--   true: success
+	--   false, error_reason: failure
+	--     "already_approved"       Idea is already approved (approval letter already issued)
+	--     "no_team"                Player has no team
+	--     "insufficient_resources" Player has not brought enough resources
+	--     "insufficient_techs"     One or more required technologies are not discovered yet
+
+ctw_resources.publish_idea(idea_id, team, pname)
+	-- Publish the idea in the team
+	-- Return values:
+	--   true
+	--   false, error_reason
+	--     "already_published" Idea is published or in a later stage
+
+ctw_resources.get_team_idea_state(idea_id, team)
+	-- Get the state of a team idea
+	-- Return value: 'IdeaState'
+
+ctw_resources.set_team_idea_state(idea_id, team, state, param)
+	-- Set the state of a team idea
+	-- 'team': 'Team def'
+	-- 'state': 'state' from 'IdeaState'
+	-- 'param': 'string'/'number'/nil value to assign to 'by' or 'target'
+	--    See 'IdeaState' for the correct type
+
+ctw_resources.update_doc_reveals(team)
+	-- Updates the documentation page for the specified team
+	-- Is called automatically on state changes
+	-- 'team': 'Team def'
+
+
+## Inventing API
+
+ctw_resources.start_inventing(istack, team, pname)
+	-- Begins inventing an idea, based on the MetaData in 'istack'
+	-- Best called by billboard once the approval letter is posted on it.
+	-- 'istack': ItemStack("ctw_resources:approval")
+	-- 'team': 'Team def'
+	-- Return values:
+	--   true: success
+	--   false, error_reason: something went wrong
+	--     "no_approval_letter" Passed item is not an approval letter
+	--     "wrong_team"         Approval letter was issued for another team
+	--     "not_approved"       Idea was not approved, letter is faked, or technology is already being invented.
+
+ctw_resources.get_inventing_progress(team)
+	-- Returns the state of all ideas a team is inventing.
+	-- Format: Table indexed by 'team_id':
+	--   { progress = <in percent>, dp = <dp accumulated so far>, dp_total = <dp total required> }
+
+
+## References API
+
+ctw_resources.register_reference(idea_id, itemdef)
+	-- Registers a craftitem that opens its assigned idea documentation on punch.
+	-- 'itemdef': 'ItemDef' of the item to register
+
+
+
+# ctw_techologies - Technologies and benefits
+
+A technology is something you can invent. It brings the team some advantages,
+like new network equipment, a higher DP income or access to new areas
+A technology can be gained by getting a corresponding idea, collect necessary resources
+and then apply for permission at the General Office (which is represented by an NPC).
+Once permission is granted, a certain time elapses until the technology is successfully invented.
+
+There is a technology tree, which tells in which order technologies can be invented. For a technology to
+be invented, certain technologies need to be invented before.
+
+After all tech registrations are complete, some fields are auto-generated (such as children)
+
+
+## Technology Definition
+
+The provided data is used to generate the documentation.
+
+After all tech registrations are complete, some fields are auto-generated (such as children)
+TechDef = {
+	name = "World Wide Web",
+	description = "A network of interconnected devices where all kinds of information are easily accessible.",
+	requires = {
+		"html",
+		"lan",
+	} -- Technologies that need to be invented before
+
+	benefits = { BenefitDef, ... }
+	-- See 'BenefitDef'
+
+	year = <n>
+	-- The year of the technology. Determines where in the tree it is placed horizontally.
+
+	tree_level = <n>
+	-- On which level (column) in the tree to place the node.
+
+	tree_line = <n>
+	-- On which line (row) to place the node.
+
+	conn_info = {
+	-- Optional: Table to individually override certain properties of the connection line
+	-- between a required technology and this technology.
+	-- Definitions done here do only affect technology tree drawing, they do not influence other relations
+	-- in any way.
+	-- If the whole conn_info table or individual entries are missing, defaults are applied
+		lan = {
+		-- the ID of a required technology.
+			vertline_offset = 2,
+			-- how many Level units the vertical line is moved left, starting from the current node
+			-- Defaults to 0
+			color = "blue",
+			-- The line color as formspec color string
+			start_shift = -0.5
+			-- Shift the beginning of the line up/down by units of 2*line_width
+			end_shift = 1
+			-- Shift the end of the line up/down by units of 2*line_width
+			-- start_shift and end_shift are automatically determined by the entry indices in
+			-- tech.requires and tech.enables if not given this way, but may not be optimal.
+		}
+	}
+
+	-- Those fields are filled in after registration automatically:
+	enables = {
+		-- Technologies that are now possible
+	}
+}
+Documentation (doc mod) is automatically generated from TechDef.
+
+TechState = {
+	state = string,
+	-- "undiscovered" Technology is not invented
+	-- "gained"       Idea has been prototyped and technology has been gained.
+}
+
+BenefitDef = {
+	-- List of benefits that this technology gives the team.
+	-- The examples below contain a 'BenefitDef' each
+
+ 	type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180,
+	-- For palettes mod: Automatic spawning of items.
+	-- 'item': 'ItemStack' to spawn. "%t" is substituted by the team name
+	-- 'time_min': Minimal delay in seconds between spawning
+	-- 'time_max': Maximal delay between spawning
+
+	-- Integrated "multiplier" benefit types: (see reseau)
+	type = "cable_throughput_multiplier",       value = 2,
+	type = "receiver_throughput_multiplier",    value = 2,
+	type = "transmitter_throughput_multiplier", value = 2,
+
+	type="victory",
+	-- Win condition
+}
+
+BenefitCalc = {
+	accumulator = func(list)
+	-- 'list': 'BenefitDef[]', list of all technology-unlocked benefits
+	-- Return: The final output for all benefits ('number', 'string')
+	renderer = func(bene)
+	-- 'bene': 'BenefitDef', a bebefit to render (for docs)
+	-- Return: 'string', text for the formspec element
+}
+
+
+## Technology API
+
+ctw_technologies.get_technology(tech_id)
+	-- Returns 'TechDef' or nil
+
+ctw_technologies.is_tech_gained(tech_id, team)
+	-- Returns: 'true' when state is gained
+
+ctw_technologies.get_team_tech_state(tech_id, team)
+	-- Get the state of a team technology.
+	-- 'team': 'Team def'
+	-- Returns: 'TechState'
+
+ctw_technologies.set_team_tech_state(tech_id, team, state)
+	-- Set the state of a team technology.
+	-- 'team': 'Team def'
+	-- 'state': see 'state' in 'TechState'
+
+ctw_technologies.register_on_gain(func(tech_def, team))
+	-- func() return value is ignored.
+
+ctw_technologies.gain_technology(tech_id, team, try)
+	-- Make a team gain a technology. This notifies the team, reveals the
+	-- technology doc pages and applies the benefits.
+	-- 'team': 'Team def'
+	-- 'try': if 'true': will only perform a dry run (changes nothing)
+
+ctw_technologies.update_doc_reveals(team)
+	-- Updates the technology documentation pages
+	-- Is called automatically on state changes
+	-- 'team': 'Team def'
+
+
+## Benefits API
+
+Technologies can improve certain properties such as cable speed or capacity.
+
+ctw_technologies.register_benefit_type(type, def)
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'def': 'BenefitCalc'
+
+ctw_technologies.get_team_benefit(team, type, explicit_update)
+	-- 'team': 'Team def' (see "teams" documentation)
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'explicit_update': optional. If 'true': Updates the benefit cache
+	-- Returns: accumulated benefit by 'BenefitCalc.accumulator'
+
+ctw_technologies.update_team_benefits(team)
+	-- Manually updates the benefit cache
+	-- 'team': 'Team def'
+
+ctw_technologies.accumulate_benefits(type, list)
+	-- Manually updates a single benefit type's cache
+	-- 'type': 'string', 'BenefitDef.type'
+	-- 'list': 'BenefitDef[]', list of benefits to pass to the accumulator
+
+
+## Graphical Tree API
+
+ctw_technologies.build_tech_tree()
+	-- Prepares rendering the technology tree
+
+ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, scrollpos, discovered_techs, hilit)
+	-- Does some black magic things. No touchy
+
+ctw_technologies.show_tech_tree(pname, scrollpos)
+	-- Shows up the technology tree formspec
+	-- 'pname': Player name
+	-- 'scrollpos': Scrollbar position value '0' to '1000'
+
+ctw_technologies.render_benefit(bene)
+	-- Looks up the assigned benefit texture and description
+	-- 'bene': 'BenefitDef'
+	-- Returns:
+	--   texture     Texture name to display
+	--   description Text for the description
+
+
+
+# era
+
+Value for current (game time) era is based on year mod's `year.get()` and era definitions.
+
+* `era.get(year)` -> get era definition for any given year
+* `era.get_current()` -> get era definition for current (game time) year
+* `era.register(startyear, endyear, era_definition)` -> register a new era; should normally only be used internally
+
+
+
+# npc - NPC registrations
+
+	npc.registered_events[npc_name] = NPC_Event[] (array)
+
+	NPC_Event = {
+		id = ""/nil,
+		-- ^ Unique NPC_Event ID for linking answers
+		dialogue = "Hello $PLAYER. Good luck on your mission!",
+		-- ^ Text to say
+		formspec = "bgcolor[#F00]",
+		-- ^ Optional formspec elements to show
+		conditions = {
+			-- Examples:
+			{ func = function, item = "default:stick", weight = 2 },
+			{ idea_id = "bar", dp_min = 1000 },
+		}
+		-- ^ Per table entry: AND-connected conditions
+		-- Possible conditions: Each adds one weight point (except 'weight')
+		--   'func':    Function to check 'function(player)'
+		--     Return 'number' (weight) on success, nil on failure
+		--   'item':    'ItemStack' that must be present in the player's inventory
+		--   'dp_min':  minimal amount of Discovery Points
+		--   'idea':    Conditional idea checking
+		--     Example: '{ "idea_id", "<COMPARISON>", "<IdeaState>" }'
+		--     COMPARISON types: (see 'IdeaState' string states)
+		--       'eq': Equals
+		--       'lt': Less than
+		--       'gt': Greather than
+		--   'tech':    Conditional technology checking
+		--     Same as 'idea' above, see 'TechState' string state
+		--   'weight':  Overall additional weight for this condition
+		-- See also: 'npc.register_event_idea_approve'
+		--   and 'npc.register_event_idea_discover'
+		-- The dialogue with the highest weight will be displayed to the player
+
+		options = {
+			{ text = "", target = "id"/function },
+		}
+		-- ^ Table containing possible answer options (bottons)
+		-- 'text':   the displayed text
+		-- 'target': an NPC_Event ID or custom 'function(player, NPC_Event)'
+	}
+
+Special 'dialogue' fields:
+	* $PLAYER = Player name
+	* $TEAM = Team name
+
+
+## NPC API
+
+npc.register_npc(npc_name, def)
+	-- ^ Registers an NPC.
+	-- 'def': Regular entity scaling and texturing fields
+
+npc.register_event(npc_name, NPC_Event)
+	-- ^ 'dialogue' must be specified
+
+npc.register_event_idea_discover(npc_name, idea_id, def_e)
+	-- Gives the player a new idea
+	-- 'def_e': (optional) '{ discovery = string, dp_min = number }'
+
+npc.register_event_idea_approve(npc_name, idea_id, def_e)
+	-- Approves the specified idea
+	-- 'def_e': (optional) '{ discovery = string, dp_min = number }'
+
+npc.register_event_from_tech(npc_name, dialogue, tech_id)
+	-- Gives the team  technology if the requirements are met
+	-- 'dialogue': string/nil: Text to say
+	-- 'tech_id': From ctw_techologies (untested)
+
+npc.get_event_by_id(id)
+	-- ^ Searchs an unique NPC_Event by ID
+
+
+
+## palettes - Item deliveries
+
+* palettes.deliver(tname, stack) -> (bool, string)
+	* Attempts to add a stack to the palette.
+	* Either all the stack will be added, or none.
+	* Returns `true, nil` on success, `false, err_msg` on failure.
+* palettes.register_on_deliver(func(tname, stack, pos))
+	* func() return value is ignored.
+
+
+
+# progressbar - HUD progress bar
+
+## API
+
+* `ProgressBar:new()` -> ProgressBar constructor
+
+### Methods
+
+* `bar:set_values(values)`
+	* Updates data and HUD.
+	* Values is a dictionary from color to value.
+* `bar:update_hud()`
+	* Show hud to all players.
+* `bar:update_hud_for_player(values)`
+	* Show to player.
+* `bar:move_to(offset)`
+	* Move to offset.
+* `bar:move(offset)`
+	* Adds to offset.
+
+### Members
+
+* offset
+* min
+* max
+* width
+
+
+
+# teams - Player grouping
+
+## Team def
+
+	{
+		name = "string",
+		color = "Color as a color spec string",
+	    color_hex = 0xFF0000,
+	    -- custom keys permitted
+	}
+
+## Public API
+
+* teams.get(team_name) -> Team def
+  * Get team by name.
+* teams.get_all() -> array-like table of Team defs
+* teams.get_points(team_name) -> Integer
+* teams.add_points(team_name, pointers) -> Integer
+* teams.create(team_name, def) -> Team def
+  * Creates a team, stores it, and returns it.
+* teams.get_by_player(player) -> Team def
+  * May return nil.
+* teams.set_team(player, team_name)
+  * Returns bool to indicate success.
+* teams.get_members(team_name) -> List of player names
+* teams.get_online_members(team_name) -> List of online players
+* teams.chat_send_team(team_name, message)
+* teams.register_on_team_changed(func(player, team_def))
+  * func() return value is ignored.
+* teams.register_on_points_changed(func(team, points_added))
+  * func() return value is ignored.
+* teams.load()
+  * Loads from mod storage. Creates default teams if none exist.
+* teams.save()
+  * Saves to mod storage.
+
+
+# world - Schematic placement
+
+Places a schematic as the world. Use world.mts in schematics/
+
+## API
+
+area:
+
+	{
+	    from = { x=0, y=0, z=0 },
+	    to = { x=0, y=0, z=0 },
+	}
+
+* world.get_location(name) -> pos
+* world.get_all_locations() -> table
+* world.set_location(name, pos)
+* world.get_team_location(team_name, name) -> pos
+  * Team-dependent position on map.
+  * name:
+    * base
+* world.set_team_location(team_name, pos)
+* world.get_area(name) -> area
+* world.get_team_area(name) -> area
+* world.load_locations(conf_path)
+  * Load locations from configuration path.
+* world.place(map_def)
+  * Async
+  * map_def: Table
+    * pos1: pos table
+    * pos2: pos table, optional
+    * schematic: path, absolute
+
+## World schematics and configuration
+
+A world consists of 2 files:
+
+* world.mts
+* world.conf
+
+The world.conf file can contain a list of locations like so:
+
+	reception = 0,0,0
+	spawn = 2,2,2
+	red.base = 3,3,3
+	blue.base = -3,-3,-3
+
+and areas like so:
+
+	red.base_1 = 1,1,1
+	red.base_2 = 4,4,4
+
+## How to import schematics from Tinkercad
+
+Refer to tutorials:
+
+* https://forum.minetest.net/viewtopic.php?id=6007
+* https://wikifab.org/wiki/Minetest_and_3D_scanning/en
+* https://dev.minetest.net/minetest.place_schematic
+
+
+
+# year - Team year
+
+Maybe merge with the era mod?
+
+## API
+
+* year.get() -> current year (float)
+* year.get(tname_or_team) -> technological year team is in.
+* year.get_range() -> year range, tuple of (min, max)
+* year.register_on_change(func(year_val, leading_team))
+  * func() return value is ignored
+* year.bump(year, team)
+  * Team `team` has bumped the year to `year`.
+* year.set(year, team)
+  * Set year of team `team` to `year`. For debugging only.
