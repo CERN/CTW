@@ -24,6 +24,7 @@ function world.get_area(name)
 	local from = world.get_location(name .. "_1")
 	local to = world.get_location(name .. "_2")
 	if from and to then
+		from, to = vector.sort(from, to)
 		return { from = from, to = to }
 	else
 		return nil
