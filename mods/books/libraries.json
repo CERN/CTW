@@ -3,7 +3,7 @@
     "libraries": ["large_library_1", "large_library_2"],
     "types": [
       { "data_formats": 0.1, "hf_freq": 0.1, "hf_freq2": 0.1, "program_objc": 0.1, "program_c": 0.1, "empty": 0.5 },
-      { "cable_crafting": 0.1, "design": 0.1, "notebook": 0.1, "network": 0.1, "layout": 0.1, "presentation": 0.1, "empty": 0.4 }
+      { "cable_crafting": 0.1, "design": 0.1, "notebook": 0.1, "network": 0.1, "layout": 0.1, "presentations": 0.1, "empty": 0.4 }
     ]
   }
 }

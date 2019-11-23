@@ -98,12 +98,19 @@ if fixed_libraries ~= nil then
 		action = function(pos, node)
 			local areas = area_store:get_areas_for_pos(pos, false, true)
 			local nareas = 0
-			while areas[nareas] ~= nil do
+			local area_key = nil
+			for key, _ in pairs(areas) do
 				nareas = nareas + 1
+				area_key = key
 			end
-			assert (nareas <= 1)
-			if areas[0] ~= nil then
-				local key = random_book_type(fixed_libraries[tonumber(areas[0].data)].types)
+			if (nareas == 0) then
+				minetest.log("error", "Found bookshelf not in library at " .. minetest.pos_to_string(pos))
+			elseif (nareas > 1) then
+				minetest.log("error", "Found several libraries for bookshelf at " .. minetest.pos_to_string(pos))
+			end
+			
+			if area_key ~= nil then
+				local key = random_book_type(fixed_libraries[tonumber(areas[area_key].data)].types)
 				node.name = "books:bookshelf_" .. key
 				minetest.swap_node(pos, node)
 			end
