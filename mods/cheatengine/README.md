@@ -11,6 +11,12 @@ The command format is `// key arg arg ...`, whereas following keys exist.
 The full stop `.` is a special character which may stand for a team- or player
 name, depending on the context
 
+### books (For idea approval)
+
+	Player Idea_ID
+	.      e10base2   Get books for e10base2
+	dave   tcpip      Give books to dave
+
 ### dp (Modify DPs)
 
 	Team  Modifier&Number

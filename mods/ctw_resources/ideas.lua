@@ -27,6 +27,14 @@ local function logs(str)
 	minetest.log("action", "[ctw_resources] "..str)
 end
 
+minetest.after(0, function()
+	local count = 0
+	for k, v in pairs(ctw_resources._get_ideas()) do
+		count = count + 1
+	end
+	logs("Registered " .. count .. " ideas")
+end)
+
 -- Formspec information
 FORM = {}
 -- Width of formspec
@@ -182,7 +190,6 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	minetest.register_craftitem("ctw_resources:idea_"..id, itemdef)
 
 	ideas[id] = idea_def
-	logs("Registered Idea: "..id)
 end
 
 function ctw_resources.register_idea_from_tech(tech_id, idea_def, itemdef_p)

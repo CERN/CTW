@@ -36,6 +36,26 @@ local idea_levels = ctw_resources.idea_states
 
 local cmd_defs = {
 --BEGIN COMMAND DEFINITIONS
+books = function(name, params)
+	local player = get_player_or_nil(name, params[1])
+	local idea_id = params[2]:lower()
+	if not player then
+		return false, "Unknown player: " .. params[1]
+	end
+	local idea = ctw_resources.get_idea_raw(idea_id)
+	if not idea then
+		return false, "Unknown idea: " .. (params[2] or "?nil")
+	end
+
+	local inv = player:get_inventory()
+	for _, stack in ipairs(idea.references_required) do
+		if not inv:contains_item("main", stack) then
+			inv:add_item("main", stack)
+		end
+	end
+	return true, "Gave resources for idea " .. idea_id
+end,
+
 dp = function(name, params)
 	local team = get_team_or_nil(name, params[1])
 	local amount = tonumber(params[2])
