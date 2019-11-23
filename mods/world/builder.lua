@@ -112,6 +112,32 @@ local function formatList(list)
 	return table.concat(list, ",")
 end
 
+minetest.register_chatcommand("worldload", {
+	func = function(name, param)
+		local map_path = minetest.get_modpath("world") .. "/schematics/world.mts"
+		local conf_path = minetest.get_modpath("world") .. "/schematics/world.conf"
+		if not file_exists(map_path) then
+			return false, "Prebuilt world not found"
+		end
+
+		local conf = Settings(conf_path)
+		local pos1 = minetest.string_to_pos(conf:get("world_1"))
+		local pos2 = minetest.string_to_pos(conf:get("world_2"))
+		if not pos1 or not pos2 then
+			return false, "Unable to read world bounds"
+		end
+		local area = { from = pos1, to = pos2 }
+
+		world.emerge_with_callbacks(area.from, area.to, function()
+			minetest.place_schematic(area.from, map_path, "0")
+
+			minetest.after(0.5, function()
+				minetest.fix_light(area.from, area.to)
+			end)
+		end)
+	end
+})
+
 
 sfinv.register_page("world:builder", {
 	title = "World Meta",
