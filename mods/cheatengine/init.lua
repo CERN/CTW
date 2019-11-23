@@ -281,7 +281,7 @@ year = function(name, params)
 			tech_def.year >= dst_year and "undiscovered" or "gained")
 		n_found = n_found + 1
 	end
-	year.set(dst_year, team.name)
+	year.set(dst_year + 1, team.name)
 	return true, "Changed to year " .. dst_year .. ". Found " ..
 		n_found .. " ideas and techs."
 end,

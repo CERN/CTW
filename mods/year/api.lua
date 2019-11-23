@@ -25,6 +25,9 @@ end
 function year.set(v, tname)
 	_year = v
 
+	local team = teams.get(tname)
+	team.year = v
+
 	for i=1, #_registered_on_change do
 		_registered_on_change[i](v, tname)
 	end

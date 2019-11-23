@@ -45,8 +45,11 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 		text = "New discovery",
 		target = function(player, event)
 			-- Mark as 'discovered'
-			ctw_resources.give_idea(idea_id, player:get_player_name(),
-				player:get_inventory(), "main")
+			local status, message = ctw_resources.give_idea(idea_id,
+				player:get_player_name(), player:get_inventory(), "main")
+			if not status then
+				minetest.log("warning", "NPC discovery failed: " .. message)
+			end
 		end
 	}}
 	npc.register_event(npc_name, def)
@@ -79,7 +82,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 			local status, message = ctw_resources.approve_idea(idea_id,
 					player:get_player_name(), player:get_inventory(), "main")
 			if not status then
-				print("NPC: " .. message)
+				minetest.log("warning", "NPC approval failed: " .. message)
 			end
 		end
 	}}
@@ -89,7 +92,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 	def = table.copy(def) -- drop reference
 	def.dialogue = table.concat({"I see you'd like to research the following idea:\n",
 		idea_def.description,
-		"But you still need a few items. Please collect the required resources."}, "\n")
+		"But you might not have the required technologies or resources. Check the team board again."}, "\n")
 	def.formspec = "background[2,1;6,4.5;ctw_tech_missing_resources.png^\\[multiply:#AAA]"
 	def.conditions = {{
 		idea = {idea_id, "eq", "published"},

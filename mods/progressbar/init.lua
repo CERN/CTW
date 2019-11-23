@@ -29,8 +29,8 @@ function ProgressBar:new(obj)
 	obj.data = {}
 	obj.offset = { x = 0, y = 20 }
 	obj.width = 600
-	obj.min = 1983
-	obj.max = 1994
+	obj.min = 0
+	obj.max = 1000
 
 	return obj
 end
