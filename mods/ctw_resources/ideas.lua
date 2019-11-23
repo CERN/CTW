@@ -161,12 +161,14 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	init_default(idea_def, "technologies_gained", {})
 	init_default(idea_def, "references_required", {})
 
-	init_default(idea_def, "invention_dp", 120)
 
-	-- check required techs
+	-- Add parent technologies that are required in order to
+	-- research this technology
+	local idea_year = 0 -- approximated
 	local techreq = {}
 	for _, techid in ipairs(idea_def.technologies_gained) do
 		local tech = ctw_technologies.get_technology(techid)
+		idea_year = math.max(idea_year, tech.year)
 		for _, atechid in ipairs(tech.requires) do
 			if not table_index(techreq, atechid) then
 				table.insert(techreq, atechid)
@@ -174,6 +176,14 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 		end
 	end
 	idea_def.technologies_required = techreq
+
+	-- 49 * x² - 195 * x + 50 = DP
+	-- 1980: 50 DP
+	-- 1985: 300 DP
+	-- 1990: 3'000 DP
+	local delta = idea_year - 1980
+	init_default(idea_def, "invention_dp", math.max(50,
+		49 * delta^2 - 195 * delta + 50))
 
 	-- register idea item
 	local itemdef = itemdef_p or { inventory_image = "ctw_resources_idea_generic.png" }
