@@ -53,7 +53,7 @@ ctw_technologies.register_technology("fiber", {
 	year = 1960,
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 2,
+	tree_line = 3,
 })
 
 -- protocol
@@ -111,14 +111,14 @@ ctw_technologies.register_technology("e10base2", {
 		"crc"
 	},
 	conn_info = {
-		crc = {start_shift=0.5,end_shift=0},
+		crc = {start_shift=1,end_shift=0},
 	},
 	benefits = {
 		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
 	},
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 1.5,
+	tree_line = 2,
 })
 
 -- hardware
@@ -130,7 +130,7 @@ ctw_technologies.register_technology("ethernet", {
 		"crc"
 	},
 	conn_info = {
-		crc = {start_shift=-0.5,end_shift=-0.5},
+		crc = {start_shift=0,end_shift=0},
 	},
 	benefits = {
 		{ type = "supply", item="reseau:copper_cable" }
@@ -261,7 +261,7 @@ ctw_technologies.register_technology("fiberproduction", {
 	},
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 2,
+	tree_line = 3,
 })
 
 -- service
@@ -337,7 +337,8 @@ ctw_technologies.register_technology("twistethernet", {
 		"e10base2"
 	},
 	conn_info = {
-		ethernet = {start_shift=-0.5,end_shift=-0.5},
+		ethernet = {start_shift=0,end_shift=0},
+		e10base2 = {start_shift=0,end_shift=1,vertline_offset=3}
 	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 5 },
@@ -402,6 +403,10 @@ ctw_technologies.register_technology("dynroutingrip", {
 		"twistethernet",
 		"ipnet"
 	},
+	conn_info = {
+		ipnet = {end_shift=1},
+		twistethernet={start_shift=2}
+	},
 	kind = "protocol",
 	tree_level = tlev,
 	tree_line = 5,
@@ -456,6 +461,9 @@ ctw_technologies.register_technology("gpl", {
 	requires = {
 		"gnu",
 	},
+	conn_info = {
+		gnu = { start_shift = 1, end_shift = 1 }
+	},
 	kind = "software",
 	tree_level = tlev,
 	tree_line = 8,
@@ -471,7 +479,7 @@ ctw_technologies.register_technology("hypertextproposal", {
 		"hypertext"
 	},
 	conn_info = {
-		dns = {vertline_offset=1},
+		dns = {start_shift=1,vertline_offset=1},
 		hypertext = {start_shift=0.5,end_shift=0.5},
 	},
 	kind = "software",
@@ -495,6 +503,7 @@ ctw_technologies.register_technology("fibercommunications", {
 		"fiberproduction"
 	},
 	conn_info = {
+		twistethernet = {start_shift=1},
 		fiberproduction = {start_shift=0.5,end_shift=0.5},
 	},
 	benefits = {
@@ -502,7 +511,7 @@ ctw_technologies.register_technology("fibercommunications", {
 	},
 	kind = "hardware",
 	tree_level = tlev,
-	tree_line = 2,
+	tree_line = 3,
 })
 
 -- protocol
@@ -581,6 +590,9 @@ ctw_technologies.register_technology("cat5", {
 	requires = {
 		"twistethernet"
 	},
+	conn_info = {
+		twistethernet = {start_shift=0,end_shift=0},
+	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 4 }
 	},
@@ -596,6 +608,9 @@ ctw_technologies.register_technology("linux", {
 	year = 1991,
 	requires = {
 		"gnu"
+	},
+	conn_info = {
+		gnu = { start_shift = 0, end_shift = 0 }
 	},
 	kind = "software",
 	tree_level = tlev,
@@ -788,12 +803,13 @@ ctw_technologies.register_technology("url", {
 		"wwwpublic"
 	},
 	conn_info = {
-		gnn = {vertline_offset=0.1},
-		wwwpublic = {start_shift=-0.5},
+		dns = {start_shift=0,end_shift=0},
+		gnn = {start_shift=1, end_shift=1},
+		wwwpublic = {start_shift=-0.5,end_shift=2}
 	},
 	kind = "protocol",
 	tree_level = tlev,
-	tree_line = 8.5,
+	tree_line = 8,
 })
 
 -- software
@@ -806,12 +822,12 @@ ctw_technologies.register_technology("netscape", {
 		"mosaic",
 	},
 	conn_info = {
-		mosaic = {start_shift=0,end_shift=0},
-		wwwpublic = {start_shift=0.5,end_shift=-1},
+		mosaic = {start_shift=0.5,end_shift=1.5},
+		wwwpublic = {start_shift=0.5,end_shift=0.5},
 	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 10,
+	tree_line = 9,
 })
 
 -- ==========
@@ -845,14 +861,14 @@ ctw_technologies.register_technology("iexplore", {
 		"mosaic"
 	},
 	conn_info = {
-		mosaic = {vertline_offset=1.05, start_shift=1},
+		mosaic = {start_shift=1.5,end_shift=1.5},
 	},
 	benefits = {
 		{ type = "experiment_throughput_multiplier", value = 0.8 }
 	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 11,
+	tree_line = 10,
 })
 
 -- software
@@ -864,11 +880,11 @@ ctw_technologies.register_technology("png", {
 		"gnn"
 	},
 	conn_info = {
-		gnn = {start_shift=-0.5,end_shift=-0.5},
+		gnn = {start_shift=0,end_shift=0,vertline_offset=1.05},
 	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 8,
+	tree_line = 7,
 })
 
 -- software
@@ -880,9 +896,13 @@ ctw_technologies.register_technology("w3c", {
 		"url",
 		"netscape"
 	},
+	conn_info = {
+		url = {start_shift=0,end_shift=0},
+		netscape = {start_shift=1,end_shift=1}
+	},
 	kind = "software",
 	tree_level = tlev,
-	tree_line = 9.5,
+	tree_line = 9,
 })
 
 

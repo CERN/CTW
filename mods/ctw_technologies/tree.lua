@@ -181,28 +181,28 @@ local function clipy(y, fdata)
 end
 
 local function hline_as_box(psx, pex, py, fdata, color)
-	local sx = clipx(psx, fdata)
-	local ex = clipx(pex, fdata)
-	if sx>ex then
-		sx, ex = ex, sx
+	if psx>pex then
+		psx, pex = pex, psx
 	end
+	local sx = clipx(psx-0.025, fdata)
+	local ex = clipx(pex+0.025, fdata)
 	local y = py-fdata.offy
 	if y<=fdata.miny or y>=fdata.maxy or sx==ex then
 		return ""
 	end
-	return "box["..sx..","..y..";"..(ex-sx+0.05)..",0.05;"..color.."]"
+	return "box["..sx..","..(y-0.025)..";"..(ex-sx)..",0.05;"..color.."]"
 end
 local function vline_as_box(px, psy, pey, fdata, color)
-	local sy = clipy(psy, fdata)
-	local ey = clipy(pey, fdata)
-	if sy>ey then
-		sy, ey = ey, sy
+	if psy>pey then
+		psy, pey = pey, psy
 	end
+	local sy = clipy(psy-0.025, fdata)
+	local ey = clipy(pey+0.025, fdata)
 	local x = px-fdata.offx
 	if x<=fdata.minx or x>=fdata.maxx or sy==ey then
 		return ""
 	end
-	return "box["..x..","..sy..";0.05,"..(ey-sy+0.05)..";"..color.."]"
+	return "box["..(x-0.025)..","..sy..";0.05,"..(ey-sy)..";"..color.."]"
 end
 
 local function tech_entry(px, py, techid, disco, hithis, fdata)
@@ -219,7 +219,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		end
 
 		local tech = ctw_technologies.get_technology(techid)
-		local img = tech.image or "ctw_technologies_technology.png"
+		--local img = tech.image or "ctw_technologies_technology.png"
 		
 		local name = tech.name
 		local color = "blue"
@@ -228,13 +228,14 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		elseif disco then
 			color = "green"
 		end
+		local img = "ctw_technologies_tech_button_" .. color .. ".png"
 
-		local form = "image_button["
-						..(x)..","..(y)..";"..fwim..","..fhim..";"
-						..img..";"
-						.."goto_tech_"..techid..";"
-						.."]"
-		
+		--local form = "image_button["
+		--				..(x)..","..(y)..";"..fwim..","..fhim..";"
+		--				..img..";"
+		--				.."goto_tech_"..techid..";"
+		--				.."]"
+
 		local box_x = x
 		local box_width = fwbo
 		if box_x < fdata.minx then
@@ -245,12 +246,20 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 			box_width = fdata.maxx - box_x
 		end
 		
-		form = form .. "box["
-						..(box_x)..","..(y)..";"..box_width..","..fhbo..";"
-						..color.."]"
-		form = form .. "textarea["
-						..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
-						..";;"..name.."]"
+		local form = ""
+
+		--form = form .. "box["
+		--				..(box_x)..","..(y)..";"..box_width..","..fhbo..";"
+		--				..color.."]"
+		form = form .."image_button["
+						..(x)..","..(y)..";"..fwbo..","..fhim..";"
+						..img..";"
+						.."goto_tech_"..techid..";"
+						..name.."]"
+
+		--form = form .. "textarea["
+		--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
+		--				..";;"..name.."]"
 		
 		--form = form .. "label["
 		--				..(x+fwim)..","..(y)..";"..name.."]"
@@ -313,11 +322,11 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	for _, conn in pairs(render_info.conns) do
 		local color = conn.color
 		local vlinep = conn.clvl*lvl_space + conn_init_off -- + xdisp*conn_space
-		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + conn_linestart, vlinep,
+		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + conn_linestart + 0.025, vlinep,
 				conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor, fdata, color))
 		table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor,
 				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
-		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off,
+		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off - 0.025,
 				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
 	end
 
