@@ -171,7 +171,7 @@ minetest.register_node("books:bookshelf_white", {
 		"books_bookshelf.png" -- back
 	},
 	paramtype2 = "facedir",
-	groups = { bookshelf = 1 }
+	groups = { bookshelf = 1, oddly_breakable_by_hand = 3 }
 })
 
 minetest.register_node("books:bookshelf_empty", {
