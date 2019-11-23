@@ -4,7 +4,7 @@ local _next_dispatch = 100000000000
 
 -- Runs a job. Doesn't remove it from queue.
 local function dispatch(job)
-	local suc, msg = palettes.deliver(job.tname, job.item)
+	local suc, msg = pallets.deliver(job.tname, job.item)
 	if msg then
 		minetest.log(suc and "info" or "error", msg)
 	end

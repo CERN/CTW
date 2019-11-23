@@ -6,13 +6,13 @@ local function reg_extend(name, base, ext)
 end
 
 for tname, _ in pairs(teams.get_dict()) do
-	local empty_name = "palettes:palette_" .. tname
-	local full_name = "palettes:palette_full_" .. tname
+	local empty_name = "pallets:palette_" .. tname
+	local full_name = "pallets:palette_full_" .. tname
 
 	local base = {
 		description = tname .. " palette",
-		palettes_empty_name = empty_name,
-		palettes_full_name = full_name,
+		pallets_empty_name = empty_name,
+		pallets_full_name = full_name,
 		drawtype = "nodebox",
 		paramtype = "light",
 		after_place_node = function(pos)
@@ -22,7 +22,7 @@ for tname, _ in pairs(teams.get_dict()) do
 			end
 
 			world.set_team_location(tname, "palette", pos)
-			local suc, msg = palettes.deliver(tname, ItemStack("default:stone"))
+			local suc, msg = pallets.deliver(tname, ItemStack("default:stone"))
 			if not suc then
 				minetest.chat_send_all(msg)
 			end
@@ -43,7 +43,7 @@ for tname, _ in pairs(teams.get_dict()) do
 				"listring[]",
 			}
 
-			minetest.show_formspec(puncher:get_player_name(), "palettes:chest", table.concat(fs, ""))
+			minetest.show_formspec(puncher:get_player_name(), "pallets:chest", table.concat(fs, ""))
 		end,
 		allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 			return 0
@@ -73,10 +73,10 @@ for tname, _ in pairs(teams.get_dict()) do
 		tiles = {
 			"default_wood.png",
 			"default_wood.png",
-			"palettes_side.png",
-			"palettes_side.png",
-			"palettes_side.png",
-			"palettes_side.png"
+			"pallets_side.png",
+			"pallets_side.png",
+			"pallets_side.png",
+			"pallets_side.png"
 		},
 		node_box = {
 			type = "fixed",
@@ -88,12 +88,12 @@ for tname, _ in pairs(teams.get_dict()) do
 
 	reg_extend(full_name, base, {
 		tiles = {
-			"palettes_top.png",
-			"palettes_top.png",
-			"palettes_side.png",
-			"palettes_side.png",
-			"palettes_side.png",
-			"palettes_side.png"
+			"pallets_top.png",
+			"pallets_top.png",
+			"pallets_side.png",
+			"pallets_side.png",
+			"pallets_side.png",
+			"pallets_side.png"
 		},
 		node_box = {
 			type = "fixed",
@@ -106,15 +106,15 @@ for tname, _ in pairs(teams.get_dict()) do
 end
 
 
-palettes = {}
+pallets = {}
 
 local _on_deliver = {}
 
-function palettes.register_on_deliver(func)
+function pallets.register_on_deliver(func)
 	table.insert(_on_deliver, func)
 end
 
-function palettes.deliver(tname, stack)
+function pallets.deliver(tname, stack)
 	local pos = world.get_team_location(tname, "palette")
 	if not pos then
 		return false, "Unable to find palette"
@@ -129,7 +129,7 @@ function palettes.deliver(tname, stack)
 
 	local nodename = minetest.get_node(pos).name
 	local def = assert(minetest.registered_items[nodename])
-	minetest.swap_node(pos, { name = def.palettes_full_name })
+	minetest.swap_node(pos, { name = def.pallets_full_name })
 
 	for i=1, #_on_deliver do
 		_on_deliver(tname, stack, pos)

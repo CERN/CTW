@@ -299,7 +299,7 @@ BenefitDef = {
 	-- The examples below contain a 'BenefitDef' each
 
  	type = "supply", item="reseau:splitter_%t", time_min=80, time_max=180,
-	-- For palettes mod: Automatic spawning of items.
+	-- For pallets mod: Automatic spawning of items.
 	-- 'item': 'ItemStack' to spawn. "%t" is substituted by the team name
 	-- 'time_min': Minimal delay in seconds between spawning
 	-- 'time_max': Maximal delay between spawning
@@ -487,13 +487,13 @@ npc.get_event_by_id(id)
 
 
 
-## palettes - Item deliveries
+## pallets - Item deliveries
 
-* palettes.deliver(tname, stack) -> (bool, string)
+* pallets.deliver(tname, stack) -> (bool, string)
 	* Attempts to add a stack to the palette.
 	* Either all the stack will be added, or none.
 	* Returns `true, nil` on success, `false, err_msg` on failure.
-* palettes.register_on_deliver(func(tname, stack, pos))
+* pallets.register_on_deliver(func(tname, stack, pos))
 	* func() return value is ignored.
 
 

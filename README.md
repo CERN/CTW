@@ -38,7 +38,7 @@ After researching certain technologies it is possible to automate it:
 Books are resources that can be found in slowly automatic refilling bookshelves.
 Each book type has an unique color, and you might need the same book type twice.
 
-After researching technologies there will be automatic shipments of tech goods to one of your palettes.
+After researching technologies there will be automatic shipments of tech goods to one of your pallets.
 
 ### Team interaction
 If other teams fall behind, it will be difficult for yours to win.

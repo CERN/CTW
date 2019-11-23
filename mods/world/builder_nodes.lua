@@ -1,7 +1,7 @@
 
 local teamnames = { "red", "blue", "green", "yellow" }
 for _, tname in pairs(teamnames) do
-	minetest.register_node(":palettes:palette_" .. tname, {
+	minetest.register_node(":pallets:palette_" .. tname, {
 		description = tname .. " palette",
 		drawtype = "nodebox",
 		paramtype = "light",
