@@ -33,7 +33,7 @@ function npc.register_event_idea_discover(npc_name, idea_id, def_e)
 		idea = {idea_id, "eq", "undiscovered"},
 		dp_min = def_e.dp_min,
 		func = function(player)
-			local status, message = ctw_resources.give_idea(
+			local status, _ = ctw_resources.give_idea(
 				idea_id, player:get_player_name(),
 				player:get_inventory(), "main", true)
 			if status then

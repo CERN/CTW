@@ -72,7 +72,7 @@ function ctw_resources.show_idea_form(pname, id)
 	local form = ctw_technologies.get_detail_formspec({
 		bt1 = {
 			catlabel = "Technologies required:",
-			func = ctw_technologies.detail_formspec_bt_techfunc,
+			func = ctw_technologies.detail_formspec_bt_techfunc(team),
 			entries = idea.technologies_required,
 		},
 		bt2 = {
@@ -91,7 +91,7 @@ function ctw_resources.show_idea_form(pname, id)
 		},
 		bt3 = {
 			catlabel = "Technologies unlocked:",
-			func = ctw_technologies.detail_formspec_bt_techfunc,
+			func = ctw_technologies.detail_formspec_bt_techfunc(team),
 			entries = idea.technologies_gained,
 		},
 		vert_text = "I D E A",
