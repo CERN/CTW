@@ -4,9 +4,9 @@ teams = {}
 
 dofile(minetest.get_modpath("teams") .. "/api.lua")
 dofile(minetest.get_modpath("teams") .. "/chatcmd.lua")
-dofile(minetest.get_modpath("teams") .. "/hand.lua")
 
 teams.load()
+dofile(minetest.get_modpath("teams") .. "/hand.lua")
 
 local function safe_recursive()
 	teams.save()

@@ -1,7 +1,7 @@
 local function get_team_or_nil(name, param)
 	local team = teams.get_by_player(name)
 	if param ~= "." then
-		team = teams.get(param)
+		team = teams.get(param or "")
 	end
 	return team
 end
