@@ -47,7 +47,6 @@ local inv_callbacks = {
 						if idea_id then
 							-- You can always put ideas in. if they are already present,
 							-- this simply means that the additional item is removed.
-							player:get_inventory():add_item("main", stack:get_name())
 							return 1
 						end
 					end
@@ -88,40 +87,49 @@ local inv_callbacks = {
 				-- only allows putting in certain items into certain list
 				if listname == "ideas" then
 					-- only "idea" items are permitted
-					if minetest.get_item_group(stack:get_name(), "ctw_idea") > 0 then
-						local idef = minetest.registered_items[stack:get_name()]
-						local idea_id = idef._ctw_idea_id
-						if idea_id then
-							-- Idea is published in team!
-							local team = teams.get(tname)
-							local succ, err = ctw_resources.publish_idea(idea_id, team, pname)
-							local msg
-							if not succ then
-								msg = pub_msgs[err]
-							end
+					if minetest.get_item_group(stack:get_name(), "ctw_idea") == 0 then
+						return
+					end
+					local idef = minetest.registered_items[stack:get_name()]
+					local idea_id = idef._ctw_idea_id
+					if not idea_id then
+						return
+					end
+					-- Idea is published in team!
+					local team = teams.get(tname)
+					local succ, err = ctw_resources.publish_idea(idea_id, team, pname)
+					local msg
+					if not succ then
+						msg = pub_msgs[err]
+					end
 
-							minetest.after(0, function()
-								team_billboard.rebuild_billboard_inventory(team)
-								team_billboard.update_open_forms(tname, pname, msg)
-							end)
-						end
+					minetest.after(0, function()
+						team_billboard.rebuild_billboard_inventory(team)
+						team_billboard.update_open_forms(tname, pname, msg)
+					end)
+
+  					-- Re-add idea to player's inventory
+					local pinv = player:get_inventory()
+					if not pinv:contains_item("main", stack:get_name()) then
+						pinv:add_item("main", stack:get_name())
 					end
 				elseif listname == "approvals" then
 					-- only "approval" items are permitted
-					if minetest.get_item_group(stack:get_name(), "ctw_approval") > 0 then
-						-- Idea is approved and in team space, let the fun begin!
-						local team = teams.get(tname)
-						local succ, err = ctw_resources.start_inventing(stack, team, pname)
-						local msg
-						if not succ then
-							msg = inv_msgs[err]
-						end
-
-						minetest.after(0, function()
-							team_billboard.rebuild_billboard_inventory(team)
-							team_billboard.update_open_forms(tname, pname, msg)
-						end)
+					if minetest.get_item_group(stack:get_name(), "ctw_approval") == 0 then
+						return
 					end
+					-- Idea is approved and in team space, let the fun begin!
+					local team = teams.get(tname)
+					local succ, err = ctw_resources.start_inventing(stack, team, pname)
+					local msg
+					if not succ then
+						msg = inv_msgs[err]
+					end
+
+					minetest.after(0, function()
+						team_billboard.rebuild_billboard_inventory(team)
+						team_billboard.update_open_forms(tname, pname, msg)
+					end)
 				end
 			end,
 			-- Called after the actual action has happened, according to what was

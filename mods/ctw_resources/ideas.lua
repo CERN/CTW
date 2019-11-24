@@ -186,17 +186,19 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 		49 * delta^2 - 195 * delta + 50))
 
 	-- register idea item
-	local itemdef = itemdef_p or { inventory_image = "ctw_resources_idea_generic.png" }
-	if not itemdef.description then
-		itemdef.description = idea_def.name
-	end
-	if not itemdef.groups then
-		itemdef.groups = {}
+	local itemdef = {
+		description = idea_def.name,
+		inventory_image = "ctw_resources_idea_generic.png",
+		groups = {},
+		stack_max = 1,
+		on_use = idea_info,
+		_ctw_idea_id = id,
+		_usage_hint = "Left-click to show information",
+	}
+	for k, v in pairs(itemdef_p or {}) do
+		itemdef[k] = v
 	end
 	itemdef.groups.ctw_idea = 1
-	itemdef._ctw_idea_id = id
-	itemdef.on_use = idea_info
-	itemdef._usage_hint = "Left-click to show information"
 	minetest.register_craftitem("ctw_resources:idea_"..id, itemdef)
 
 	ideas[id] = idea_def
