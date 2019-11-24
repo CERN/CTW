@@ -7,14 +7,14 @@ end
 
 local mts_path = minetest.get_worldpath() .. "/world.mts"
 
-local function load_world(map_path, conf_path, callback)
-	assert(map_path)
-	assert(conf_path)
-	if not file_exists(map_path) then
+local function load_world(load_map_path, load_conf_path, callback)
+	assert(load_map_path)
+	assert(load_conf_path)
+	if not file_exists(load_map_path) then
 		return false, "Prebuilt world not found"
 	end
 
-	local conf = Settings(conf_path)
+	local conf = Settings(load_conf_path)
 	local pos1 = minetest.string_to_pos(conf:get("world_1"))
 	local pos2 = minetest.string_to_pos(conf:get("world_2"))
 	if not pos1 or not pos2 then
@@ -24,12 +24,12 @@ local function load_world(map_path, conf_path, callback)
 	local area = { from = pos1, to = pos2 }
 
 	world.emerge_with_callbacks(area.from, area.to, function()
-		minetest.place_schematic(area.from, map_path, "0")		
+		minetest.place_schematic(area.from, load_map_path, "0")
 		minetest.after(0.5, function()
 			minetest.fix_light(area.from, area.to)
 
 			if callback then
-				callback() 
+				callback()
 			end
 		end)
 	end)
@@ -39,9 +39,9 @@ end
 
 minetest.register_chatcommand("worldload", {
 	func = function(name, param)
-		local map_path = minetest.get_modpath("world") .. "/schematics/world.mts"
-		local conf_path = minetest.get_modpath("world") .. "/schematics/world.conf"
-		return load_world(map_path, conf_path)
+		local load_map_path = minetest.get_modpath("world") .. "/schematics/world.mts"
+		local load_conf_path = minetest.get_modpath("world") .. "/schematics/world.conf"
+		return load_world(load_map_path, load_conf_path)
 	end
 })
 
@@ -53,7 +53,7 @@ if file_exists(create_map_path) then
 		end)
 		if not suc then
 			error("Error placing map: " .. msg)
-		end	
+		end
 	end)
 end
 
@@ -197,9 +197,9 @@ sfinv.register_page("world:builder", {
 
 				world.emerge_with_callbacks(area.from, area.to, function()
 					minetest.create_schematic(area.from, area.to, nil, mts_path, nil)
-					local player = minetest.get_player_by_name(pname)
-					if player then
-						sfinv.set_player_inventory_formspec(player, context)
+					local player2 = minetest.get_player_by_name(pname)
+					if player2 then
+						sfinv.set_player_inventory_formspec(player2, context)
 					end
 					minetest.chat_send_all("Export done!")
 				end)

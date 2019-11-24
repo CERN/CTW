@@ -24,9 +24,6 @@ for _, tname in pairs(teamnames) do
 	minetest.register_node(":reseau:receiver_" .. tname, {
 		description = tname .. " receiver",
 		tiles = {
-			
-		},
-		tiles = {
 			"baked_clay_white.png",
 			"baked_clay_white.png",
 			"baked_clay_white.png",
