@@ -87,7 +87,6 @@ npc.register_npc("programmer", {
 
 register_both("programmer", "sgml")
 register_both("programmer", "enquire")
-register_both("programmer", "cerndoc")
 register_both("programmer", "tangle")
 register_both("programmer", "grif")
 register_both("programmer", "enquire2")

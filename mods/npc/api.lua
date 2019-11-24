@@ -70,6 +70,7 @@ function npc.register_event_idea_approve(npc_name, idea_id, def_e)
 			local status, _ = ctw_resources.approve_idea(
 					idea_id, player:get_player_name(),
 					player:get_inventory(), "main", true)
+
 			if status then -- success
 				return #idea_def.references_required + 1
 			end
@@ -181,6 +182,8 @@ local function check_conditions(player, def)
 		local weight = check_condition(player, condition)
 		if weight then
 			weight_max = math.max(weight_max, weight)
+		else
+			print(dump(condition))
 		end
 	end
 

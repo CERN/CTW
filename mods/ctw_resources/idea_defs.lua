@@ -80,15 +80,6 @@ ctw_resources.register_idea_from_tech("tokenring", {
 })
 
 -- service
-ctw_resources.register_idea_from_tech("cerndoc", {
-	references_required = {
-		"books:book_program_c 1",
-		"books:book_design 1",
-		"books:book_notebook 1",
-	},
-})
-
--- service
 ctw_resources.register_idea_from_tech("tangle", {
 	references_required = {
 		"books:book_design 1",

@@ -76,16 +76,6 @@ ctw_technologies.register_technology("unix", {
 	tree_line = 7,
 })
 
--- ??
-ctw_technologies.register_technology("report", {
-	name = S("??"),
-	description = S("??"),
-	year = 1977,
-	kind = "??",
-	tree_level = tlev,
-	tree_line = 8,
-})
-
 -- protocol
 ctw_technologies.register_technology("ascii", {
 	name = S("ASCII"),
@@ -100,7 +90,7 @@ ctw_technologies.register_technology("ascii", {
 -- 1980 - 1983
 -- ===========
 tlev = tlev + 1
-ctw_technologies.year_captions[tlev] = "1980 - 1983"
+ctw_technologies.year_captions[tlev] = "1980 - 1982"
 
 -- hardware
 ctw_technologies.register_technology("e10base2", {
@@ -121,25 +111,6 @@ ctw_technologies.register_technology("e10base2", {
 	tree_line = 2,
 })
 
--- hardware
-ctw_technologies.register_technology("ethernet", {
-	name = S("Ethernet Standard"),
-	description = S("Standardized cables and data transfer"),
-	year = 1983,
-	requires = {
-		"crc"
-	},
-	conn_info = {
-		crc = {start_shift=0,end_shift=0},
-	},
-	benefits = {
-		{ type = "supply", item="reseau:copper_cable" }
-	},
-	kind = "hardware",
-	tree_level = tlev,
-	tree_line = 1,
-})
-
 -- protocol
 ctw_technologies.register_technology("tcpip", {
 	name = S("TCP/IP v4"),
@@ -154,19 +125,6 @@ ctw_technologies.register_technology("tcpip", {
 	kind = "protocol",
 	tree_level = tlev,
 	tree_line = 6,
-})
-
--- software
-ctw_technologies.register_technology("gnu", {
-	name = S("GNU"),
-	description = S("The first steps towards a free Operating System."),
-	year = 1983,
-	requires = {
-		"unix"
-	},
-	kind = "software",
-	tree_level = tlev,
-	tree_line = 7,
 })
 
 -- software
@@ -197,11 +155,43 @@ ctw_technologies.register_technology("enquire", {
 	tree_line = 10,
 })
 
--- ==========
--- -- 1984 --
--- ==========
+-- ==============
+-- 1983 - 1984 --
+-- ==============
 tlev = tlev + 1
-ctw_technologies.year_captions[tlev] = "1984"
+ctw_technologies.year_captions[tlev] = "1983 - 1984"
+
+-- hardware
+ctw_technologies.register_technology("ethernet", {
+	name = S("Ethernet Standard"),
+	description = S("Standardized cables and data transfer"),
+	year = 1983,
+	requires = {
+		"crc"
+	},
+	conn_info = {
+		crc = {start_shift=0,end_shift=0},
+	},
+	benefits = {
+		{ type = "supply", item="reseau:copper_cable" }
+	},
+	kind = "hardware",
+	tree_level = tlev,
+	tree_line = 1,
+})
+
+-- software
+ctw_technologies.register_technology("gnu", {
+	name = S("GNU"),
+	description = S("The first steps towards a free Operating System."),
+	year = 1983,
+	requires = {
+		"unix"
+	},
+	kind = "software",
+	tree_level = tlev,
+	tree_line = 7,
+})
 
 -- hardware
 ctw_technologies.register_technology("tokenring", {
@@ -217,19 +207,6 @@ ctw_technologies.register_technology("tokenring", {
 	kind = "hardware",
 	tree_level = tlev,
 	tree_line = 4,
-})
-
--- service
-ctw_technologies.register_technology("cerndoc", {
-	name = S("CERNDOC"),
-	description = S("An interactive manuals database by CERN."),
-	year = 1984,
-	requires = {
-		"report"
-	},
-	kind = "service",
-	tree_level = tlev,
-	tree_line = 8,
 })
 
 -- service
@@ -286,7 +263,6 @@ ctw_technologies.register_technology("grif", {
 	description = S("Tech savy people will love to create and edit SGML documents so easily."),
 	year = 1985,
 	requires = {
-		"cerndoc",
 		"sgml"
 	},
 	conn_info = {
