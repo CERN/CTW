@@ -23,3 +23,18 @@ minetest.register_globalstep(function(dtime)
 	era.db.last_era = current_era.name
 	era.db_commit()
 end)
+
+-- Check whether all teams reached the "w3c" tech
+ctw_technologies.register_on_gain(function(tech)
+	if tech.name ~= "w3c" then
+		return
+	end
+
+	for _, team in pairs(teams.get_all()) do
+		if not ctw_technologies.is_tech_gained("w3c", team) then
+			return
+		end
+	end
+	minetest.chat_send_all("****************************************")
+	minetest.chat_send_all("Congratulations! You completed the game!")
+end)

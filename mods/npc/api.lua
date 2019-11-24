@@ -182,8 +182,6 @@ local function check_conditions(player, def)
 		local weight = check_condition(player, condition)
 		if weight then
 			weight_max = math.max(weight_max, weight)
-		else
-			print(dump(condition))
 		end
 	end
 
