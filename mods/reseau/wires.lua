@@ -230,6 +230,8 @@ nid_inc = function(nid)
 end
 
 local function register_wires(name, technologyspec)
+	minetest.register_alias("reseau:"..name.."_wire", "reseau:"..name.."_wire_00000000")
+
 	local nid = {[0] = 0, 0, 0, 0, 0, 0, 0, 0}
 	while true do
 		-- Create group specifiction and nodeid string (see note above for details)

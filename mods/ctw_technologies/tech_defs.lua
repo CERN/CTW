@@ -104,7 +104,7 @@ ctw_technologies.register_technology("e10base2", {
 		crc = {start_shift=1,end_shift=0},
 	},
 	benefits = {
-		{ type = "supply", item="reseau:copper_%t_00000000 99", time_min=60, time_max=120 },
+		{ type = "supply", item="reseau:copper_%t_wire 99", time_min=60, time_max=120 },
 	},
 	kind = "hardware",
 	tree_level = tlev,
@@ -176,7 +176,7 @@ ctw_technologies.register_technology("ethernet", {
 		crc = {start_shift=0,end_shift=0},
 	},
 	benefits = {
-		{ type = "supply", item="reseau:copper_cable" }
+		{ type = "supply", item="reseau:copper_%t_wire_00000000" }
 	},
 	kind = "hardware",
 	tree_level = tlev,
