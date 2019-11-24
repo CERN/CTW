@@ -589,10 +589,11 @@ ctw_technologies.register_technology("linux", {
 	description = S("To complete the GNU software, Linus Torvalds writes the first Linux kernel version."),
 	year = 1991,
 	requires = {
-		"gnu"
+		"gnu", "gpl"
 	},
 	conn_info = {
-		gnu = { start_shift = 0, end_shift = 0 }
+		gnu = { start_shift = 0, end_shift = 0 },
+		gpl = { start_shift = 0, end_shift = 1, vertline_offset = 1 }
 	},
 	kind = "software",
 	tree_level = tlev,
