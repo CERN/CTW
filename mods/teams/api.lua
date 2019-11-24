@@ -6,6 +6,7 @@ local _registered_on_team_changed = {}
 local _registered_on_points_changed = {}
 
 function teams.get(tname)
+	assert(type(tname) == "string", "Expected team name but got " .. dump(tname))
 	return _team_by_name[tname]
 end
 

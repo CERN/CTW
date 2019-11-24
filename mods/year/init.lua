@@ -20,7 +20,7 @@ year.register_on_change(set_values)
 
 ctw_technologies.register_on_gain(function(tech, team)
 	if tech.year then
-		year.bump(tech.year, team)
+		year.bump(tech.year, team.name)
 	end
 end)
 

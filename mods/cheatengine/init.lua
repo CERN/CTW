@@ -141,8 +141,13 @@ tech = function(name, params)
 		if not ctw_technologies.get_technology_raw(tech_id) then
 			return
 		end
-		ctw_technologies.set_team_tech_state(tech_id, team,
-			sign == "-" and "undiscovered" or "gained")
+
+		if sign == "-" then
+			-- No tech tree triggers available!
+			ctw_technologies.set_team_tech_state(tech_id, team, "undiscovered")
+		else
+			ctw_technologies.gain_technology(tech_id, team)
+		end
 		return params[i]
 	end
 

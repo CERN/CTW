@@ -35,6 +35,16 @@ ctw_technologies.register_on_gain(function(tech)
 			return
 		end
 	end
+	for _, player in ipairs(minetest.get_connected_players()) do
+		local id = player:hud_add({
+			hud_elem_type = "image",
+			position  = { x = 0.5, y = 0.5 },
+			text      = "era_trophy.png",
+			offset    = { x = 0, y = 0 },
+			scale     = { x = 1, y = 0.8 },
+			alignment = { x = 2, y = 0.5 },
+		})
+	end
 	minetest.chat_send_all("****************************************")
 	minetest.chat_send_all("Congratulations! You completed the game!")
 end)

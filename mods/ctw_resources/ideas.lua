@@ -286,6 +286,7 @@ function ctw_resources.give_idea(idea_id, pname, inv, invlist, try)
 	if #idea.technologies_required - n_gained > 1 then
 		return false, "not_enough_gained"
 	end
+
 	-- TODO: implement eras
 	if idea_year > year.get(team) then
 		return false, "era_not_reached"
