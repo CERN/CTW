@@ -43,7 +43,11 @@ minetest.register_chatcommand("join", {
 
 		local player = minetest.get_player_by_name(name)
 		if not player then
-			return false, "You must be online to change teams!"
+			return false, S("You must be online to change teams!")
+		end
+
+		if teams.get_by_player(player) then
+			return false, S("You are already in a team!")
 		end
 
 		if teams.set_team(player, tname) then
