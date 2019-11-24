@@ -38,6 +38,36 @@ for _, tname in pairs(teamnames) do
 		inventory_image = "baked_clay_" .. tname .. ".png",
 		groups = { snappy = 3 },
 	})
+
+	local experiment_name = "reseau:experiment_" .. tname
+	minetest.register_node(":" .. experiment_name, {
+		description = "Experiment for " .. tname,
+		groups = { snappy = 3 },
+		team_name = tname,
+		light_source = 10,
+		paramtype = "light",
+		paramtype2 = "facedir",
+		tiles = {
+			"default_gold_block.png^[colorize:" .. tname .. ":0.1",
+		},
+		drawtype = "nodebox",
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-6/16, -.5, -6/16, 6/16, -.5+8/16, 6/16},
+				{-4/16, -.5, -4/16, 4/16, -.5+10/16, 4/16},
+				{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}
+			}
+		},
+		selection_box = {
+			type = "fixed",
+			fixed = {
+				{-6/16, -.5, -6/16, 6/16, -.5+8/16, 6/16},
+				{-4/16, -.5, -4/16, 4/16, -.5+10/16, 4/16},
+				{1/16, -.5, -2/16, 8/16, -.5+2/16, 2/16}
+			}
+		},
+	})
 end
 
 minetest.register_node(":team_billboard:bb", {

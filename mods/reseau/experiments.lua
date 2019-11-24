@@ -42,7 +42,7 @@ for _, team in ipairs(teams.get_all()) do
 	local experiment_name = "reseau:experiment_" .. team.name
 	minetest.register_node(experiment_name, {
 		description = S("Experiment"),
-		groups = { ["protection_" .. team.name] = 1 },
+		groups = { ["protection_" .. team.name] = 1, experiment = 1 },
 		team_name = team.name,
 		light_source = 10,
 		paramtype = "light",
@@ -165,4 +165,3 @@ for _, team in ipairs(teams.get_all()) do
 		}
 	})
 end
-

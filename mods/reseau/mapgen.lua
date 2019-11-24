@@ -14,7 +14,7 @@ local function set_team(pos, tname)
 end
 
 minetest.register_lbm({
-	label = "Assign teams to things",
+	label = "Assign teams to receivers",
 	name = "reseau:teamise",
 	nodenames = { "group:placeholder_receiver" },
 	run_at_every_load = true,
@@ -29,5 +29,21 @@ minetest.register_lbm({
 		node.name = "reseau:receiverscreen"
 		minetest.set_node(pos, node)
 		set_team(pos, tname)
+	end,
+})
+
+minetest.register_lbm({
+	label = "Assign teams to experiments",
+	name = "reseau:teamise2",
+	nodenames = { "group:experiment" },
+	run_at_every_load = true,
+	action = function(pos, node)
+		local meta = minetest.get_meta(pos)
+		if meta:contains("formspec") then
+			return
+		end
+
+		minetest.registered_nodes[node.name].on_construct(pos)
+		reseau.try_launch_autotransmitter(pos, node)
 	end,
 })
