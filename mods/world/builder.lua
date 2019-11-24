@@ -97,8 +97,18 @@ local function formatList(list)
 	return table.concat(list, ",")
 end
 
+minetest.register_privilege("builder", {
+	give_to_singleplayer = false,
+})
+
 sfinv.register_page("world:builder", {
 	title = "World Meta",
+
+	is_in_nav = function(self, player, context)
+		local privs = minetest.get_player_privs(player:get_player_name())
+		return privs.server or privs.builder
+	end,
+
 	get = function(self, player, context)
 		local area = world.get_area("world") or { from = vector.new(), to = vector.new() }
 		context.location_name = context.location_name or "world_1"
@@ -145,6 +155,10 @@ sfinv.register_page("world:builder", {
 	end,
 
 	on_player_receive_fields = function(self, player, context, fields)
+		if not self:is_in_nav(player, context) then
+			return
+		end
+
 		if fields.from then
 			local pos = minetest.string_to_pos(fields.from)
 			world.set_location("world_1", pos)
