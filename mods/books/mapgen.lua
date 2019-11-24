@@ -1,4 +1,3 @@
-
 assert (minetest.get_modpath("world"))
 
 local function random_book_type(probabilities)
@@ -108,7 +107,7 @@ if fixed_libraries ~= nil then
 			elseif (nareas > 1) then
 				minetest.log("error", "Found several libraries for bookshelf at " .. minetest.pos_to_string(pos))
 			end
-			
+
 			if area_key ~= nil then
 				local key = random_book_type(fixed_libraries[tonumber(areas[area_key].data)].types)
 				node.name = "books:bookshelf_" .. key

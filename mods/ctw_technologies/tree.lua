@@ -23,12 +23,12 @@ render_info = {
 		{ slvl,  Level(horizontal) where conn starts
 		sline,   Line (vertical) where conn starts
 		soff,    Vertical offset of line start
-		elvl, 
+		elvl,
 		eline,   same for end
-		eoff, 
+		eoff,
 		clvl,    level of vertical line
 		color    line color
-		}    
+		}
 	}
 	max_levels = <maximum number of levels>
 }
@@ -58,8 +58,7 @@ function ctw_technologies.build_tech_tree()
 		logs(i.."\t-> '"..ctw_technologies.year_captions[i].."'")
 		i=i+1
 	end
-	
-	
+
 	logs("Building the technology tree...")
 	for techid, tech in pairs(technologies) do
 		-- scan through technologies and find which techs have this as requirement
@@ -72,7 +71,7 @@ function ctw_technologies.build_tech_tree()
 	render_info.max_levels = #ctw_technologies.year_captions
 	render_info.levels = {}
 	render_info.conns = {}
-	
+
 	-- Find dependencies between technologies and add connections
 	local c_queue = {}
 	-- find roots
@@ -88,7 +87,7 @@ function ctw_technologies.build_tech_tree()
 		local techid = c_queue[1]
 		table.remove(c_queue, 1)
 		local tech = technologies[techid]
-		
+
 		local dep_is_at = {}
 		for depno, atechid in ipairs(tech.requires) do
 			local atech = technologies[atechid]
@@ -103,7 +102,7 @@ function ctw_technologies.build_tech_tree()
 					soff = sindex
 				end
 			end
-			
+
 			dep_is_at[depno]={
 				sline = atech.tree_line,
 				slvl = atech.tree_level,
@@ -133,16 +132,16 @@ function ctw_technologies.build_tech_tree()
 			local color = conn_info.color or colors[math.random(1,#colors)] -- select random color
 			local conns_lvl = lvl - (conn_info.vertline_offset or 0)
 			local conn = {
-				sline=e.sline, 
+				sline=e.sline,
 				slvl=e.slvl,
 				soff= conn_info.start_shift or e.soff,
-				eline=my_line, 
+				eline=my_line,
 				elvl=lvl,
 				eoff= conn_info.end_shift or calc_offset(eindex,#dep_is_at),
-				clvl=conns_lvl, 
+				clvl=conns_lvl,
 				color=color
 			}
-			
+
 			table.insert(render_info.conns, conn)
 			logs("\t\tDrawing connection:"
 				..conn.slvl..":"..conn.sline.."o"..conn.soff.." -| "
@@ -221,7 +220,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		local fwbo = 3.7
 		local fwte = 3.0
 		local fhim = 0.7
-		local fhbo = 0.55
+		--local fhbo = 0.55
 		local fhte = 2
 		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
 			return ""
@@ -229,7 +228,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 
 		local tech = ctw_technologies.get_technology(techid)
 		--local img = tech.image or "ctw_technologies_technology.png"
-		
+
 		local name = tech.name
 		local color = "blue"
 		if hithis then
@@ -245,16 +244,16 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		--				.."goto_tech_"..techid..";"
 		--				.."]"
 
-		local box_x = x
-		local box_width = fwbo
-		if box_x < fdata.minx then
-			box_width = box_width - (fdata.minx-box_x)
-			box_x = fdata.minx
-		end
-		if box_x + box_width > fdata.maxx then
-			box_width = fdata.maxx - box_x
-		end
-		
+		--local box_x = x
+		--local box_width = fwbo
+		--if box_x < fdata.minx then
+		--	box_width = box_width - (fdata.minx-box_x)
+		--	box_x = fdata.minx
+		--end
+		--if box_x + box_width > fdata.maxx then
+		--	box_width = fdata.maxx - box_x
+		--end
+
 		local form = ""
 
 		--form = form .. "box["
@@ -269,7 +268,7 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 		--form = form .. "textarea["
 		--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
 		--				..";;"..name.."]"
-		
+
 		--form = form .. "label["
 		--				..(x+fwim)..","..(y)..";"..name.."]"
 		return form
@@ -282,7 +281,7 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	local lvl_init_off  = -3.5
 	local lvl_space     =  5.0
 	local conn_init_off = -4.0
-	local conn_space    =  0.1
+	--local conn_space    =  0.1
 	local conn_linestart=  3.7
 	local line_init_off = -0.5
 	local line_space    =  0.9
@@ -303,7 +302,7 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	}
 
 	local formt = {}
-	
+
 	-- render years and eras
 	for lvl, capt in ipairs(ctw_technologies.year_captions) do
 		if capt~="" then

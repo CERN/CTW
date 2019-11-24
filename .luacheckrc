@@ -4,6 +4,7 @@ allow_defined_top = true
 globals = {
 	"teams",
 	"ctw_resources",
+	"sfinv",
 }
 
 read_globals = {

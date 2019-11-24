@@ -205,7 +205,7 @@ ctw_technologies.register_technology("tokenring", {
 		"ipnet"
 	},
 	conn_info = {
-		ipnet = {start_shift = 0}	
+		ipnet = {start_shift = 0}
 	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 2 }

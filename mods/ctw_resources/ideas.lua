@@ -126,7 +126,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 			local ref_id = string.match(field, "^goto_ref_(.+)$");
 			if ref_id then
-				ctw_technologies.form_returnstack_push(pname, function(pname)
+				ctw_technologies.form_returnstack_push(pname, function(pname2)
 					ctw_resources.show_idea_form(pname2, id)
 				end)
 				ctw_resources.show_reference_form(pname, ref_id)
@@ -393,7 +393,7 @@ function ctw_resources.compare_all_ideas(team, cmp, value)
 	local index_2 = table_index(ctw_resources.idea_states, value)
 	assert(index_2, "Invalid idea state 2 '" .. tostring(value) .. "'")
 
-	local ideas = {}
+	local new_ideas = {}
 	local count = 0
 	for idea_id, istate in pairs(team._ctw_resources_idea_state or {}) do
 		local index_1 = table_index(ctw_resources.idea_states, istate.state)
@@ -408,9 +408,9 @@ function ctw_resources.compare_all_ideas(team, cmp, value)
 			error("Invalid comparison: " .. cmp)
 		end
 		if ok then
-			ideas[idea_id] = istate
+			new_ideas[idea_id] = istate
 			count = count + 1
 		end
 	end
-	return ideas, count
+	return new_ideas, count
 end

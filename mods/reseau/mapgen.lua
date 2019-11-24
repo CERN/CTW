@@ -1,4 +1,4 @@
-for tname, _ in pairs(teams.get_dict()) do	
+for tname, _ in pairs(teams.get_dict()) do
 	minetest.register_node("reseau:receiver_" .. tname, {
 		description = tname .. " receiver",
 		tiles = {
@@ -18,7 +18,7 @@ minetest.register_lbm({
 	name = "reseau:teamise",
 	nodenames = { "group:placeholder_receiver" },
 	run_at_every_load = true,
-	action = function(pos, node)	
+	action = function(pos, node)
 		local tname = node.name:match("_([a-z]+)$")
 
 		node.name = "reseau:receiverbase"

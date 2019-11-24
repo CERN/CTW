@@ -49,13 +49,13 @@ function ctw_technologies.show_technology_form(pname, techid)
 	if not tech then
 		return false
 	end
-	
+
 	local team = teams.get_by_player(pname)
 	local is_gained = false
 	if team and ctw_technologies.is_tech_gained(techid, team) then
 		is_gained = true
 	end
-	
+
 	local form = ctw_technologies.get_detail_formspec({
 		bt1 = {
 			catlabel = "Technologies required:",
@@ -81,7 +81,7 @@ function ctw_technologies.show_technology_form(pname, techid)
 		title = tech.name,
 		text = is_gained and tech.description,
 		labeltext = "This technology is not yet discovered by your team.",
-		
+
 		add_btn_name = "tech_tree", -- optional, additional extra button
 		add_btn_label = "Technology tree",
 	}, pname)
@@ -106,7 +106,7 @@ end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
-	
+
 	local techid = string.match(formname, "^ctw_technologies:technology_(.+)$");
 	if techid then
 		local tech = technologies[techid]
@@ -117,7 +117,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		for field,_ in pairs(fields) do
 			local tech_id = string.match(field, "^goto_tech_(.+)$");
 			if technologies[tech_id] then
-				ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
+				ctw_technologies.form_returnstack_push(pname, function(pname2)
+					ctw_technologies.show_technology_form(pname2, techid) end)
 				ctw_technologies.show_technology_form(pname, tech_id)
 				return
 			end
@@ -128,14 +129,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 		if fields.tech_tree then
-			ctw_technologies.form_returnstack_push(pname, function(pname) ctw_technologies.show_technology_form(pname, techid) end)
+			ctw_technologies.form_returnstack_push(pname, function(pname2)
+				ctw_technologies.show_technology_form(pname2, techid) end)
 			ctw_technologies.show_tech_tree(pname, 0)
 		end
-		
+
 		if fields.goto_back then
 			ctw_technologies.form_returnstack_pop(pname)
 		end
-		
+
 		if fields.quit then
 			ctw_technologies.form_returnstack_clear(pname)
 		end

@@ -108,7 +108,7 @@ local inv_callbacks = {
 						team_billboard.update_open_forms(tname, pname, msg)
 					end)
 
-  					-- Re-add idea to player's inventory
+					-- Re-add idea to player's inventory
 					local pinv = player:get_inventory()
 					if not pinv:contains_item("main", stack:get_name()) then
 						pinv:add_item("main", stack:get_name())
