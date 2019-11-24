@@ -119,6 +119,9 @@ ctw_technologies.register_technology("tcpip", {
 	requires = {
 		"ipnet"
 	},
+	conn_info = {
+		ipnet = {start_shift=2}
+	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 2 },
 	},
@@ -200,6 +203,9 @@ ctw_technologies.register_technology("tokenring", {
 	year = 1984,
 	requires = {
 		"ipnet"
+	},
+	conn_info = {
+		ipnet = {start_shift = 0}	
 	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 2 }
@@ -314,7 +320,7 @@ ctw_technologies.register_technology("twistethernet", {
 	},
 	conn_info = {
 		ethernet = {start_shift=0,end_shift=0},
-		e10base2 = {start_shift=0,end_shift=1,vertline_offset=3}
+		e10base2 = {start_shift=0,end_shift=1,vertline_offset=2}
 	},
 	benefits = {
 		{ type = "wire_throughput_multiplier", value = 5 },
@@ -380,8 +386,8 @@ ctw_technologies.register_technology("dynroutingrip", {
 		"ipnet"
 	},
 	conn_info = {
-		ipnet = {end_shift=1},
-		twistethernet={start_shift=2}
+		ipnet = {start_shift=1,end_shift=1},
+		twistethernet={start_shift=2,end_shift=0}
 	},
 	kind = "protocol",
 	tree_level = tlev,
