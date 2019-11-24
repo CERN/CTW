@@ -82,6 +82,7 @@ function ctw_technologies.build_tech_tree()
 			table.insert(c_queue, techid)
 		end
 	end
+	local handled_techs = {}
 	-- for every queue item, add its descendants and add current level
 	while #c_queue > 0 do
 		local techid = c_queue[1]
@@ -151,8 +152,9 @@ function ctw_technologies.build_tech_tree()
 
 		-- add enables to the queue
 		for _, atechid in ipairs(tech.enables) do
-			if not contains(c_queue, atechid) then
+			if not handled_techs[atechid] then
 				logs("\tenables "..atechid)
+				handled_techs[atechid] = true
 				table.insert(c_queue, atechid)
 			end
 		end
@@ -180,29 +182,36 @@ local function clipy(y, fdata)
 	return rng(y-fdata.offy, fdata.miny, fdata.maxy)
 end
 
+local function round3(x)
+	return math.floor(1000*x)/1000
+end
+
+local line_width = 2*round3(0.025)
 local function hline_as_box(psx, pex, py, fdata, color)
+	psx, pex, py = round3(psx), round3(pex), round3(py)
 	if psx>pex then
 		psx, pex = pex, psx
 	end
-	local sx = clipx(psx-0.025, fdata)
-	local ex = clipx(pex+0.025, fdata)
+	local sx = clipx(psx-line_width/2, fdata)
+	local ex = clipx(pex+line_width/2, fdata)
 	local y = py-fdata.offy
-	if y<=fdata.miny or y>=fdata.maxy or sx==ex then
+	if y<=fdata.miny or y>=fdata.maxy or sx>=ex then
 		return ""
 	end
-	return "box["..sx..","..(y-0.025)..";"..(ex-sx)..",0.05;"..color.."]"
+	return "box["..sx..","..(y-line_width/2)..";"..(ex-sx)..","..line_width..";"..color.."]"
 end
 local function vline_as_box(px, psy, pey, fdata, color)
+	psy, pey, px = round3(psy), round3(pey), round3(px)
 	if psy>pey then
 		psy, pey = pey, psy
 	end
-	local sy = clipy(psy-0.025, fdata)
-	local ey = clipy(pey+0.025, fdata)
+	local sy = clipy(psy-line_width/2, fdata)
+	local ey = clipy(pey+line_width/2, fdata)
 	local x = px-fdata.offx
-	if x<=fdata.minx or x>=fdata.maxx or sy==ey then
+	if x<=fdata.minx or x>=fdata.maxx or sy>=ey then
 		return ""
 	end
-	return "box["..(x-0.025)..","..sy..";0.05,"..(ey-sy)..";"..color.."]"
+	return "box["..(x-line_width/2)..","..sy..";"..line_width..","..(ey-sy)..";"..color.."]"
 end
 
 local function tech_entry(px, py, techid, disco, hithis, fdata)
@@ -270,7 +279,6 @@ local function tech_entry(px, py, techid, disco, hithis, fdata)
 -- Renders the technology tree onto a given formspec area
 --
 function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discovered_techs, scrollpos, hilit)
-
 	local lvl_init_off  = -3.5
 	local lvl_space     =  5.0
 	local conn_init_off = -4.0
@@ -290,7 +298,7 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 		maxx = minpx+wwidth,
 		maxy = minpy+wheight,
 
-		offx = math.max( (scroll_w - wwidth) * (scrollpos / 1000) , 0),
+		offx = round3(math.max( (scroll_w - wwidth) * (scrollpos / 1000) , 0)),
 		offy = 0,
 	}
 
@@ -308,7 +316,6 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 		table.insert(formt, "label["..(era.s*lvl_space + lvl_init_off - 0.2 - fdata.offx)..",10.3;|]")
 		table.insert(formt, "label["..(lvl  *lvl_space + lvl_init_off + 1   - fdata.offx)..",10.3;"..era.n.."]")
 	end
-
 	-- render technology elements
 	for lvl, lines in pairs(render_info.levels) do
 		for line, techid in pairs(lines) do
@@ -321,13 +328,14 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	-- render conns
 	for _, conn in pairs(render_info.conns) do
 		local color = conn.color
-		local vlinep = conn.clvl*lvl_space + conn_init_off -- + xdisp*conn_space
-		table.insert(formt, hline_as_box(conn.slvl*lvl_space + lvl_init_off + conn_linestart + 0.025, vlinep,
-				conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor, fdata, color))
-		table.insert(formt, vline_as_box(vlinep, conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor,
-				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
-		table.insert(formt, hline_as_box(vlinep, conn.elvl*lvl_space + lvl_init_off - 0.025,
-				conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor, fdata, color))
+		local startx = conn.slvl*lvl_space + lvl_init_off + conn_linestart + line_width/2
+		local vlinex = conn.clvl*lvl_space + conn_init_off -- + xdisp*conn_space
+		local endx = conn.elvl*lvl_space + lvl_init_off - line_width/2
+		local starty = conn.sline*line_space + line_init_off + conn_ydown + conn.soff*conn_offset_factor
+		local endy = conn.eline*line_space + line_init_off + conn_ydown + conn.eoff*conn_offset_factor
+		table.insert(formt, hline_as_box(startx, vlinex, starty, fdata, color))
+		table.insert(formt, vline_as_box(vlinex, starty, endy, fdata, color))
+		table.insert(formt, hline_as_box(vlinex, endx, endy, fdata, color))
 	end
 
 	table.insert(formt, "button_exit["..(minpx+wwidth/2-1.5)..","..(minpy+wheight-1.5)..";4,1;quit;Close]")
