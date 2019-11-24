@@ -21,7 +21,7 @@ world.load_locations(conf_path)
 minetest.register_on_generated(function(minp, maxp, blockseed)
 	local vm = minetest.get_mapgen_object("voxelmanip")
 	local origin = world.get_location("world_1")
-	minetest.place_schematic_on_vmanip(vm, origin, map_path)
+	minetest.place_schematic_on_vmanip(vm, origin, map_path, nil, nil, false)
 	vm:write_to_map()
 end)
 
