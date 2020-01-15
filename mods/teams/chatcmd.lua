@@ -61,7 +61,19 @@ minetest.register_chatcommand("join", {
 minetest.register_chatcommand("t", {
 	func = function(name, param)
 		local team = teams.get_by_player(name)
-		local message = ("<%s> %s"):format(name, param)
+		local message = ("%s <%s> %s"):format(
+			minetest.colorize(team.color, "[Team only]"), name, param)
 		teams.chat_send_team(team.name, message)
 	end
 })
+
+
+local old_format = minetest.format_chat_message
+minetest.format_chat_message = function(name, message)
+	local team = teams.get_by_player(name)
+	if not team then
+		return old_format(name, message)
+	end
+
+	return minetest.colorize(team.color, "<" .. name .. ">") .. " " .. message
+end
