@@ -29,29 +29,23 @@ end
 local reference_entries = {}
 
 
-function ctw_resources.show_reference_form(pname, id)
+function ctw_resources.show_reference_form(pname, id, from_nativation)
 	local ref = reference_entries[id]
 	if not ref then
 		return false
 	end
 
+	-- Back/forth buttons
+	if not from_nativation then
+		ctw_technologies.form_returnstack_push(pname, function()
+			ctw_resources.show_reference_form(pname, id, true)
+		end)
+	end
+
 	local form = ctw_technologies.get_detail_formspec({
-		bt1 = {
-			catlabel = "",
-			entries = {},
-		},
-		bt2 = {
-			catlabel = "",
-			entries = {},
-		},
-		bt3 = {
-			catlabel = "",
-			entries = {},
-		},
 		vert_text = "R E F E R E N C E",
 		title = ref.name,
 		text = ref.description,
-
 	}, pname)
 
 	-- show it

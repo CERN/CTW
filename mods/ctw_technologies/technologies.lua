@@ -18,133 +18,133 @@ local _register_on_gain = {}
 local function init_default(tab, field, def)
 	tab[field] = tab[field] or def
 end
-local function contains(tab, value) --luacheck: ignore
-	for _,v in ipairs(tab) do
-		if v==value then return true end
+local function table_index(tab, value)
+	for k, v in ipairs(tab) do
+		if v == value then
+			return k
+		end
 	end
-	return false
 end
 
 local function logs(str)
 	minetest.log("action", "[ctw_technologies] "..str)
 end
 
--- Formspec information
-FORM = {}
--- Width of formspec
-FORM.WIDTH = 15
-FORM.HEIGHT = 10.5
+function ctw_technologies.show_technology_form(pname, id, from_nativation)
+	local tech = ctw_technologies.get_technology(id)
+	local idea = ctw_resources.get_idea(id)
+	if not idea or not tech then
+		return true
+	end
 
---[[ Recommended bounding box coordinates for widgets to be placed in entry pages. Make sure
-all entry widgets are completely inside these coordinates to avoid overlapping. ]]
-FORM.ENTRY_START_X = 1
-FORM.ENTRY_START_Y = 0.5
-FORM.ENTRY_END_X = FORM.WIDTH
-FORM.ENTRY_END_Y = FORM.HEIGHT - 0.5
-FORM.ENTRY_WIDTH = FORM.ENTRY_END_X - FORM.ENTRY_START_X
-FORM.ENTRY_HEIGHT = FORM.ENTRY_END_Y - FORM.ENTRY_START_Y
-
-function ctw_technologies.show_technology_form(pname, techid)
-	local tech = technologies[techid]
-	if not tech then
-		return false
+	-- Back/forth buttons
+	if not from_nativation then
+		ctw_technologies.form_returnstack_push(pname, function()
+			ctw_technologies.show_technology_form(pname, id, true)
+		end)
 	end
 
 	local team = teams.get_by_player(pname)
-	local is_gained = false
-	if team and ctw_technologies.is_tech_gained(techid, team) then
-		is_gained = true
+	local is_visible = false
+	local state_str = ctw_resources.idea_states[1]
+	local progress = 0
+
+	if team then
+		local istate = ctw_resources.get_team_idea_state(id, team)
+		state_str = istate.state
+		if state_str == "discovered" then
+			is_visible = istate.by == pname
+		elseif state_str ~= "undiscovered" then
+			is_visible = true
+		end
+		progress = table_index(ctw_resources.idea_states, state_str) or 1
+		progress = (progress - 1) / (#ctw_resources.idea_states - 1)
 	end
 
 	local form = ctw_technologies.get_detail_formspec({
+		progress = {
+			text = state_str,
+			value = progress
+		},
 		bt1 = {
+			type = "technology",
 			catlabel = "Technologies required:",
-			func = ctw_technologies.detail_formspec_bt_techfunc(team),
-			entries = tech.requires,
+			prefix = "goto_tech_",
+			entries = idea.technologies_required,
 		},
 		bt2 = {
-			catlabel = "Technologies unlocked:",
-			func = ctw_technologies.detail_formspec_bt_techfunc(team),
-			entries = tech.enables,
+			type = "reference",
+			catlabel = "References required:",
+			prefix = "goto_ref_",
+			entries = idea.references_required,
 		},
 		bt3 = {
+			type = "benefit",
 			catlabel = "Benefits:",
-			func = function(bene, idx)
-				local image, iname = ctw_technologies.render_benefit(bene)
-				return "goto_bf_"..idx,
-					iname,
-					image
-			end,
+			prefix = "goto_bf_",
 			entries = tech.benefits,
 		},
 		vert_text = "T E C H N O L O G Y",
-		title = tech.name,
-		text = is_gained and tech.description,
-		labeltext = "This technology is not yet discovered by your team.",
+		title = idea.name,
+		text = is_visible and idea.description or
+			"This idea is not yet discovered by your team.",
 
 		add_btn_name = "tech_tree", -- optional, additional extra button
 		add_btn_label = "Technology tree",
 	}, pname)
-
 	-- show it
-	minetest.show_formspec(pname, "ctw_technologies:technology_"..techid, form)
+	minetest.show_formspec(pname, "ctw_technologies:technology_"..id, form)
 	return true
-end
-
-function ctw_technologies.detail_formspec_bt_techfunc(team)
-	return function(tech_id)
-		local tech = ctw_technologies.get_technology(tech_id)
-		local state = ctw_technologies.get_team_tech_state(tech_id, team)
-		local texture = "ctw_technologies_technology.png"
-		if state.state == "gained" then
-			texture = texture .. "^ctw_technologies_gained.png"
-		end
-		return "goto_tech_"..tech_id,
-				tech.name, texture
-	end
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
 
-	local techid = string.match(formname, "^ctw_technologies:technology_(.+)$");
-	if techid then
-		local tech = technologies[techid]
-		if not tech then
-			return
-		end
-		-- search links
-		for field,_ in pairs(fields) do
-			local tech_id = string.match(field, "^goto_tech_(.+)$");
-			if technologies[tech_id] then
-				ctw_technologies.form_returnstack_push(pname, function(pname2)
-					ctw_technologies.show_technology_form(pname2, techid) end)
-				ctw_technologies.show_technology_form(pname, tech_id)
-				return
-			end
-		end
-		for rn, ref in ipairs(tech.benefits) do
-			if fields["goto_bf_"..rn] then
-				-- nothing happens
-			end
-		end
-		if fields.tech_tree then
-			ctw_technologies.form_returnstack_push(pname, function(pname2)
-				ctw_technologies.show_technology_form(pname2, techid) end)
-			ctw_technologies.show_tech_tree(pname, 0)
-		end
-
-		if fields.goto_back then
-			ctw_technologies.form_returnstack_pop(pname)
-		end
-
-		if fields.quit then
-			ctw_technologies.form_returnstack_clear(pname)
-		end
+	local techid = string.match(formname, "^ctw_technologies:technology_(.+)$")
+	local tech = technologies[techid]
+	if not tech then
+		return
 	end
 
-end)
+	if fields.quit then
+		ctw_technologies.form_returnstack_clear(pname)
+		return
+	end
 
+	-- search links
+	for field,_ in pairs(fields) do
+		local tech_id = string.match(field, "^goto_tech_(.+)$");
+		if tech_id then
+			ctw_technologies.show_technology_form(pname, tech_id)
+			return
+		end
+
+		local ref_id = string.match(field, "^goto_ref_(.+)$");
+		if ref_id then
+			ctw_resources.show_reference_form(pname, ref_id)
+			return
+		end
+	end
+	for rn, ref in ipairs(tech.benefits) do
+		if fields["goto_bf_"..rn] then
+			-- nothing happens
+		end
+	end
+	if fields.tech_tree then
+		ctw_technologies.show_tech_tree(pname, 0)
+		return
+	end
+
+	if fields.goto_back then
+		ctw_technologies.form_returnstack_move(pname, -1)
+		return
+	end
+
+	if fields.goto_forth then
+		ctw_technologies.form_returnstack_move(pname, 1)
+		return
+	end
+end)
 
 
 function ctw_technologies.register_technology(id, tech_def)
