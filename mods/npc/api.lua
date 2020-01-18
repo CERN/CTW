@@ -343,6 +343,7 @@ function npc.register_npc(npc_name, def)
 		liquids_pointable = true,
 		groups = { npc_spawner = 1 },
 		on_construct = function(pos)
+			minetest.set_node(pos, { name = "air" })
 			spawn_entity(pos, npc_name)
 		end
 	})
