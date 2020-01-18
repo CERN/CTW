@@ -6,7 +6,6 @@ npc = {}
 dofile(modpath .. "/api.lua")
 dofile(modpath .. "/dialogue_tree.lua")
 dofile(modpath .. "/sanity_check.lua")
-dofile(modpath .. "/mapgen.lua")
 
 
 minetest.register_entity("npc:npc_generic", {

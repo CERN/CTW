@@ -343,11 +343,24 @@ function npc.register_npc(npc_name, def)
 		liquids_pointable = true,
 		groups = { npc_spawner = 1 },
 		on_construct = function(pos)
-			minetest.set_node(pos, { name = "air" })
 			spawn_entity(pos, npc_name)
 		end
 	})
 end
+
+minetest.register_lbm({
+	label = "Spawn NPCs",
+	name = "npc:spawn_npcs",
+	nodenames = {"group:npc_spawner"},
+	run_at_every_load = true,
+	action = function(pos, node)
+		local npc_name = node.name:match("npc:npc_(.*)")
+		if not npc_name then
+			return
+		end
+		spawn_entity(pos, npc_name)
+	end
+})
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "npc:interaction" then
