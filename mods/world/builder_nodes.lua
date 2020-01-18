@@ -116,3 +116,27 @@ minetest.register_node(":computer:server", {
 		return minetest.item_place(itemstack, placer, pointed_thing)
 	end
 })
+
+local npcs = {
+	"network_guru",
+	"engineer",
+	"programmer",
+}
+
+for i=1, #npcs do
+	minetest.register_node(":npc:npc_" .. npcs[i], {
+		description = npcs[i],
+		drawtype = "nodebox",
+		paramtype = "light",
+		tiles = {
+			"default_steel_block.png",
+		},
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5, 0.5, -0.375, 0.5},
+			}
+		},
+		groups = { snappy = 3 },
+	})
+end
