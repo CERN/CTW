@@ -33,7 +33,21 @@ ctw_technologies.register_benefit_type("supply", {
 		end
 
 		return image, desc
-	end
+	end,
+	validate = function(self, bene)
+		if not bene.item then
+			minetest.log("error",  ("Benefit %s needs an item field "):format(self.name))
+		end
+
+		local stack = ItemStack(bene.item)
+		for tname, _ in pairs(teams.get_dict()) do
+			local name = stack:get_name():gsub("%%t", tname)
+			if not minetest.registered_items[stack:get_name()] then
+				minetest.log("error", ("Benefit %s references non-existant item: %s"):format(self.name, name))
+				return
+			end
+		end
+	end,
 })
 
 ctw_technologies.register_benefit_type("victory", tpl.bool("ctw_texture_missing.png", "Victory"))

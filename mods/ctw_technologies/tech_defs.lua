@@ -176,7 +176,7 @@ ctw_technologies.register_technology("ethernet", {
 		crc = {start_shift=0,end_shift=0},
 	},
 	benefits = {
-		{ type = "supply", item="reseau:copper_%t_wire_00000000" }
+		{ type = "supply", item="reseau:copper_%t_wire" }
 	},
 	kind = "hardware",
 	tree_level = tlev,
@@ -489,7 +489,7 @@ ctw_technologies.register_technology("fibercommunications", {
 		fiberproduction = {start_shift=0.5,end_shift=0.5},
 	},
 	benefits = {
-		{ type = "supply", item="reseau:fiber_%t_00000000 50", time_min=60, time_max=120 },
+		{ type = "supply", item="reseau:fiber_%t_wire 50", time_min=60, time_max=120 },
 	},
 	kind = "hardware",
 	tree_level = tlev,

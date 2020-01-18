@@ -34,6 +34,7 @@ team_benefits_acc = {}
 }
 ]]--
 function ctw_technologies.register_benefit_type(typename, def)
+	def.name = typename
 	benefit_types[typename] = def
 end
 
@@ -78,6 +79,20 @@ function ctw_technologies.accumulate_benefits(t, benelist)
 		return nil
 	end
 	return benefit_types[t].accumulator(benelist)
+end
+
+function ctw_technologies.check_benefits(benefits)
+	for i=1, #benefits do
+		local benefit = benefits[i]
+		local type    = benefit_types[benefit.type]
+		if not type then
+			minetest.log("error", "Benefit type does not exist: " .. (type or "nil"))
+		end
+
+		if type.validate then
+			type:validate(benefit)
+		end
+	end
 end
 
 
