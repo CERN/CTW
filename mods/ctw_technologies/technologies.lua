@@ -26,10 +26,6 @@ local function table_index(tab, value)
 	end
 end
 
-local function logs(str)
-	minetest.log("action", "[ctw_technologies] "..str)
-end
-
 function ctw_technologies.show_technology_form(pname, id, from_nativation)
 	local tech = ctw_technologies.get_technology(id)
 	local idea = ctw_resources.get_idea(id)
@@ -154,15 +150,14 @@ function ctw_technologies.register_technology(id, tech_def)
 
 	assert(type(tech_def.year) == "number", "Year value missing.")
 	init_default(tech_def, "name", id)
-	init_default(tech_def, "description", "No description")
+	assert(tech_def.description, "Missing description")
 	init_default(tech_def, "requires", {})
-	init_default(tech_def, "enables", {})
 	init_default(tech_def, "benefits", {})
+	tech_def.enables = {} -- Used by the technology tree
 
 	minetest.after(0.5, ctw_technologies.check_benefits, tech_def.benefits)
 
 	technologies[id] = tech_def
-	logs("Registered Technology: "..id)
 end
 
 function ctw_technologies.get_technology_raw(id)

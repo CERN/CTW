@@ -12,6 +12,7 @@ dofile(mp.."detail_form.lua")
 dofile(mp.."benefit_defs.lua")
 dofile(mp.."tech_defs.lua")
 dofile(mp.."delivery.lua")
+dofile(mp.."sanity_check.lua")
 
 -- construct tree
 ctw_technologies.build_tech_tree()

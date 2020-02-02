@@ -144,7 +144,7 @@ ctw_resources.register_idea_from_tech("twistethernet", {
 ctw_resources.register_idea_from_tech("gif", {
 	references_required = {
 		"books:book_notebook 1",
-		"books:data_formats 1"
+		"books:book_data_formats 1"
 	},
 })
 
@@ -153,7 +153,7 @@ ctw_resources.register_idea_from_tech("hypertext", {
 	references_required = {
 		"books:book_notebook 1",
 		"books:book_design 1",
-		"books:data_layout 2"
+		"books:book_layout 2"
 	},
 })
 

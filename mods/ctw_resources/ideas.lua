@@ -1,6 +1,8 @@
 -- Craft The Web
 -- ideas.lua: API for "idea" resources.
 
+local S = minetest.get_translator("ctw_resources")
+
 local ideas = {}
 
 ctw_resources.idea_states = {
@@ -23,18 +25,6 @@ local function table_index(tab, value)
 	end
 end
 
-local function logs(str)
-	minetest.log("action", "[ctw_resources] "..str)
-end
-
-minetest.after(0, function()
-	local count = 0
-	for k, v in pairs(ctw_resources._get_ideas()) do
-		count = count + 1
-	end
-	logs("Registered " .. count .. " ideas")
-end)
-
 function ctw_resources.show_idea_form(pname, id)
 	return ctw_technologies.show_technology_form(pname, id)
 end
@@ -54,8 +44,8 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 	end
 
 	init_default(idea_def, "name", id)
-	init_default(idea_def, "description", "No description")
-	init_default(idea_def, "technologies_gained", {})
+	assert(type(idea_def.description) == "string", "Missing description")
+	assert(#(idea_def.technologies_gained or {}) > 0, "Missing technologies")
 	init_default(idea_def, "references_required", {})
 
 
@@ -90,7 +80,7 @@ function ctw_resources.register_idea(id, idea_def, itemdef_p)
 		stack_max = 1,
 		on_use = idea_info,
 		_ctw_idea_id = id,
-		_usage_hint = "Left-click to show information",
+		_usage_hint = S("Left-click to show information"),
 	}
 	for k, v in pairs(itemdef_p or {}) do
 		itemdef[k] = v
@@ -192,8 +182,9 @@ function ctw_resources.give_idea(idea_id, pname, inv, invlist, try)
 
 	if try then return true end
 
-	minetest.chat_send_player(pname, "You got an idea: "..idea.name..
-			"! Proceed to your team space and share it on the team billboard!")
+	minetest.chat_send_player(pname,
+		S("You got an idea: @1! Proceed to your team space and share it on the team billboard!",
+		idea.name))
 
 	local leftover = inv:add_item(invlist, item)
 	if not leftover:is_empty() then
@@ -223,8 +214,9 @@ function ctw_resources.publish_idea(idea_id, team, pname, try)
 		return true
 	end
 
-	teams.chat_send_team(team.name, pname.." got an idea: \""..idea.name..
-			"\". Go collect resources for it. You find the idea on the team billboard!")
+	teams.chat_send_team(team.name,
+		S("@1 got an idea: \"@2\". Go collect resources for it. You find the idea on the team billboard!",
+		pname, idea.name))
 	ctw_resources.set_team_idea_state(idea_id, team, "published")
 
 	return true

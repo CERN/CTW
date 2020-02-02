@@ -16,6 +16,7 @@ dofile(mp.."permission.lua")
 dofile(mp.."inventing.lua")
 
 dofile(mp.."idea_defs.lua")
+dofile(mp.."sanity_check.lua")
 
 minetest.register_chatcommand("ctwi", {
          param = "idea",
