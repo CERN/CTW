@@ -24,7 +24,6 @@ read_globals = {
 	"player_api",
 	"doc",
 	"worldedit",
-	"file_exists",
 	"Settings",
 	"default",
 }

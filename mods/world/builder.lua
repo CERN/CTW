@@ -1,3 +1,14 @@
+local function file_exists(path)
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		return true
+	end
+
+	return false
+end
+
+
 local conf_path = minetest.get_worldpath() .. "/world.conf"
 if file_exists(conf_path) then
 	world.load_locations(conf_path)

@@ -1,3 +1,13 @@
+local function file_exists(path)
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		return true
+	end
+
+	return false
+end
+
 if minetest.get_mapgen_setting("mg_name") ~= "singlenode" then
 	minetest.log("error", "Prebuilt map is disabled when not running singlenode!")
 	return
