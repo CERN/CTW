@@ -39,11 +39,10 @@ ctw_technologies.register_benefit_type("supply", {
 			minetest.log("error",  ("Benefit %s needs an item field "):format(self.name))
 		end
 
-		local stack = ItemStack(bene.item)
 		for tname, _ in pairs(teams.get_dict()) do
-			local name = stack:get_name():gsub("%%t", tname)
-			if not minetest.registered_items[stack:get_name()] then
-				minetest.log("error", ("Benefit %s references non-existant item: %s"):format(self.name, name))
+			local stack = ItemStack(bene.item:gsub("%%t", tname))
+			if not stack:is_known() then
+				minetest.log("error", ("Benefit %s references non-existant item: %s"):format(self.name, stack:get_name()))
 				return
 			end
 		end

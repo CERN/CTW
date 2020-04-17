@@ -10,7 +10,6 @@ team_hand.tool_capabilities.groupcaps = {}
 -- Add admin group caps
 for _, team_def in ipairs(teams.get_all()) do
 	admin_caps.groupcaps["protection_" .. team_def.name] = dig_cap
-	print(dump(admin_caps))
 end
 
 -- Make default hand useless (cannot modify groupcaps)

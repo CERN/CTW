@@ -155,8 +155,6 @@ function ctw_technologies.register_technology(id, tech_def)
 	init_default(tech_def, "benefits", {})
 	tech_def.enables = {} -- Used by the technology tree
 
-	minetest.after(0.5, ctw_technologies.check_benefits, tech_def.benefits)
-
 	technologies[id] = tech_def
 end
 
