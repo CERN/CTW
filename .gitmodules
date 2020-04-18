@@ -10,3 +10,6 @@
 [submodule "mods/libs/lib_chatcmdbuilder"]
 	path = mods/libs/lib_chatcmdbuilder
 	url = https://github.com/rubenwardy/ChatCmdBuilder
+[submodule "mods/classroom"]
+	path = mods/classroom
+	url = https://gitlab.com/rubenwardy/classroom
