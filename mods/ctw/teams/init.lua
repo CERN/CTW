@@ -8,11 +8,11 @@ dofile(minetest.get_modpath("teams") .. "/chatcmd.lua")
 teams.load()
 dofile(minetest.get_modpath("teams") .. "/hand.lua")
 
-local function safe_recursive()
+local function save_recursive()
 	teams.save()
-	minetest.after(20, safe_recursive)
+	minetest.after(20, save_recursive)
 end
-minetest.after(20, safe_recursive)
+minetest.after(20, save_recursive)
 
 minetest.register_on_shutdown(teams.save)
 
@@ -116,6 +116,26 @@ end
 
 minetest.register_on_joinplayer(function(player)
 	local team = teams.get_by_player(player)
+	if not team then
+		local min = nil
+		local min_value = 1000000
+		for tname, _ in pairs(teams.get_dict()) do
+			local members = teams.get_online_members(tname)
+			if not min or #members < min_value then
+				min = tname
+				min_value = #members
+
+				if min_value == 0 then
+					break
+				end
+			end
+		end
+
+		if min then
+			teams.set_team(player, min)
+		end
+	end
+
 	on_team_change(player, team)
 	pb:update_hud_for_player(player)
 end)
