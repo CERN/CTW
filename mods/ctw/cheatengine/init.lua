@@ -23,6 +23,11 @@ local function table_index(t, what)
 end
 
 local function get_idea_year_approx(idea_def)
+	if not minetest.global_exists("ctw_technologies") then
+		minetest.log("warning", "[cheatengine] Returning fake year due to missing ctw_technologies")
+		return 1980
+	end
+
 	local idea_year = 0
 	for i, tech_id in ipairs(idea_def.technologies_gained) do
 		local tech_def = ctw_technologies.get_technology(tech_id)
@@ -32,7 +37,7 @@ local function get_idea_year_approx(idea_def)
 end
 
 -- Import possible states from ctw_resources
-local idea_levels = ctw_resources.idea_states
+local idea_levels = ctw_resources and ctw_resources.idea_states
 
 local cmd_defs = {
 --BEGIN COMMAND DEFINITIONS

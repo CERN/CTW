@@ -5,6 +5,14 @@ reseau.throughput = {}
 -- Receiver throughput can depend on: Era
 -- Router throughput can depend on: Era, tech developments
 
+local function get_team_benefit(team, benefit)
+	if minetest.global_exists("ctw_technologies") then
+		return ctw_technologies.get_team_benefit(team, "wire_throughput_multiplier")
+	else
+		return 1
+	end
+end
+
 reseau.throughput.get_wire_throughput = function(wirename)
 	-- Wire may belong to a team or belong to no team (e.g. receiver base, which has infinite throughput)
 	local nodespec = minetest.registered_nodes[wirename]
@@ -15,7 +23,7 @@ reseau.throughput.get_wire_throughput = function(wirename)
 
 	-- This should never fail: All conductors that don't have a team associated to it should be infinite_speed
 	assert(nodespec.team_name)
-	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "wire_throughput_multiplier")
+	local multiplier = get_team_benefit(teams.get(nodespec.team_name), "wire_throughput_multiplier")
 	local technology = reseau.technologies.get_any_node_technology(wirename)
 	return reseau.technologies.get_technology_throughput(technology) * multiplier
 end
@@ -23,7 +31,7 @@ end
 reseau.throughput.get_experiment_throughput = function(nodename)
 	local nodespec = minetest.registered_nodes[nodename]
 	assert(nodespec.team_name)
-	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "experiment_throughput_multiplier")
+	local multiplier = get_team_benefit(teams.get(nodespec.team_name), "experiment_throughput_multiplier")
 
 	return era.get_current().experiment_throughput_limit * multiplier
 end
@@ -35,7 +43,7 @@ end
 reseau.throughput.get_router_throughput_limit = function(nodename)
 	local nodespec = minetest.registered_nodes[nodename]
 	assert(nodespec.team_name)
-	local multiplier = ctw_technologies.get_team_benefit(teams.get(nodespec.team_name), "router_throughput_multiplier")
+	local multiplier = get_team_benefit(teams.get(nodespec.team_name), "router_throughput_multiplier")
 
 	return era.get_current().router_throughput_limit * multiplier
 end

@@ -1,6 +1,10 @@
 -- Craft The Web
 -- Technologies - technology tree and information
 
+if not minetest.settings:get_bool("ctw.enable_tech", true) then
+	return
+end
+
 ctw_technologies = {}
 
 local mp = minetest.get_modpath(minetest.get_current_modname()) .. DIR_DELIM

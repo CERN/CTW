@@ -99,12 +99,15 @@ for key, d in pairs(book_types) do
 
 	-- Register craftitem and documentation entry
 	local overlay_book = "books_book_mask.png^[multiply:" .. color
-	ctw_resources.register_reference("books:book_" .. key, {
-		description = description,
-		_ctw_longdesc = d[2],
-		inventory_image = "books_book.png^(" .. overlay_book .. ")",
-		stack_max = 1,
-	})
+
+	if minetest.global_exists("ctw_technologies") then
+		ctw_resources.register_reference("books:book_" .. key, {
+			description = description,
+			_ctw_longdesc = d[2],
+			inventory_image = "books_book.png^(" .. overlay_book .. ")",
+			stack_max = 1,
+		})
+	end
 
 	local r = math.random(6) -- according to count of "books_bookshelf_*.png"
 

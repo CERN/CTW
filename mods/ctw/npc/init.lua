@@ -1,3 +1,8 @@
+if not minetest.global_exists("ctw_technologies") then
+	minetest.log("warning", "[npc] Disabled due to missing ctw_technologies")
+	return
+end
+
 -- Basic setup
 
 local modpath = minetest.get_modpath("npc")

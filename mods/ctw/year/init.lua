@@ -18,11 +18,13 @@ end
 
 year.register_on_change(set_values)
 
-ctw_technologies.register_on_gain(function(tech, team)
-	if tech.year then
-		year.bump(tech.year, team.name)
-	end
-end)
+if minetest.global_exists("ctw_technologies") then
+	ctw_technologies.register_on_gain(function(tech, team)
+		if tech.year then
+			year.bump(tech.year, team.name)
+		end
+	end)
+end
 
 minetest.register_on_joinplayer(function(player)
 	pb:update_hud_for_player(player)

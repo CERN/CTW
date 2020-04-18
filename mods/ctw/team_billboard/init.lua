@@ -1,6 +1,11 @@
 -- Craft The Web
 -- Team Billboard: Central place where team members publish ideas and put approvals
 
+if not minetest.global_exists("ctw_technologies") then
+	minetest.log("warning", "[team_billboard] Disabled due to missing ctw_technologies")
+	return
+end
+
 team_billboard = {}
 
 local mp = minetest.get_modpath(minetest.get_current_modname()) .. DIR_DELIM

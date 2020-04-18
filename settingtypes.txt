@@ -6,3 +6,7 @@
 #    Some of the functionality is only available if this setting is present
 #    at startup.
 creative_mode (Creative mode) bool false
+
+
+#    Whether to enable the CTW tech tree
+ctw.enable_tech (Enable tech tree) bool true

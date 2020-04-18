@@ -24,27 +24,29 @@ minetest.register_globalstep(function(dtime)
 	era.db_commit()
 end)
 
--- Check whether all teams reached the "w3c" tech
-ctw_technologies.register_on_gain(function(tech)
-	if tech.name ~= "w3c" then
-		return
-	end
-
-	for _, team in pairs(teams.get_all()) do
-		if not ctw_technologies.is_tech_gained("w3c", team) then
+if minetest.global_exists("ctw_technologies") then
+	-- Check whether all teams reached the "w3c" tech
+	ctw_technologies.register_on_gain(function(tech)
+		if tech.name ~= "w3c" then
 			return
 		end
-	end
-	for _, player in ipairs(minetest.get_connected_players()) do
-		player:hud_add({
-			hud_elem_type = "image",
-			position  = { x = 0.5, y = 0.5 },
-			text      = "era_trophy.png",
-			offset    = { x = 0, y = 0 },
-			scale     = { x = 1, y = 0.8 },
-			alignment = { x = 2, y = 0.5 },
-		})
-	end
-	minetest.chat_send_all("****************************************")
-	minetest.chat_send_all("Congratulations! You completed the game!")
-end)
+
+		for _, team in pairs(teams.get_all()) do
+			if not ctw_technologies.is_tech_gained("w3c", team) then
+				return
+			end
+		end
+		for _, player in ipairs(minetest.get_connected_players()) do
+			player:hud_add({
+				hud_elem_type = "image",
+				position  = { x = 0.5, y = 0.5 },
+				text      = "era_trophy.png",
+				offset    = { x = 0, y = 0 },
+				scale     = { x = 1, y = 0.8 },
+				alignment = { x = 2, y = 0.5 },
+			})
+		end
+		minetest.chat_send_all("****************************************")
+		minetest.chat_send_all("Congratulations! You completed the game!")
+	end)
+end

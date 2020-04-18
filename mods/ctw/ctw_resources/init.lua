@@ -4,6 +4,11 @@
 -- - References
 -- - Permission
 
+if not minetest.global_exists("ctw_technologies") then
+	minetest.log("warning", "[ctw_resources] Disabled due to missing ctw_technologies")
+	return
+end
+
 
 ctw_resources = {}
 ctw_resources.LAST_ACTION_COOLDOWN = 60 -- 1 minute

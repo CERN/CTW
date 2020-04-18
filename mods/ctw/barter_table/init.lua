@@ -1,3 +1,8 @@
+if not minetest.global_exists("ctw_technologies") then
+	minetest.log("warning", "[barter_table] Disabled due to missing ctw_technologies")
+	return
+end
+
 barter_table = {}
 barter_table.positions = {}
 dofile(minetest.get_modpath("barter_table") .. "/formspec_actions.lua")
