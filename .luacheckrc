@@ -34,4 +34,5 @@ exclude_files = {
 	"mods/libs",
 	"mods/homedecor",
 	"mods/bakedclay",
+	"mods/classroom",
 }
