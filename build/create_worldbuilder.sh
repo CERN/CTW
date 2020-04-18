@@ -34,12 +34,12 @@ mkdir worldmods
 pushd worldmods
 
 addmod() {
-	ln -s ../../../games/CTW/mods/$1 $1
+	ln -s ../../../games/CTW/$2/$1 $1
 }
 
-addmod world
-addmod homedecor
-addmod books
+addmod mods/ctw world
+addmod mods/ctw books
+addmod mods homedecor
 addmod furnishings
 addmod bakedclay
 
