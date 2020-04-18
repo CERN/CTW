@@ -5,6 +5,7 @@ globals = {
 	"teams",
 	"ctw_resources",
 	"sfinv",
+	minetest = { fields = { "format_chat_message" } },
 }
 
 read_globals = {

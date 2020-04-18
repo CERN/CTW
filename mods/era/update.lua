@@ -36,7 +36,7 @@ ctw_technologies.register_on_gain(function(tech)
 		end
 	end
 	for _, player in ipairs(minetest.get_connected_players()) do
-		local id = player:hud_add({
+		player:hud_add({
 			hud_elem_type = "image",
 			position  = { x = 0.5, y = 0.5 },
 			text      = "era_trophy.png",

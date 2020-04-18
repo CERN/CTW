@@ -121,11 +121,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			return
 		end
 	end
-	for rn, ref in ipairs(tech.benefits) do
-		if fields["goto_bf_"..rn] then
-			-- nothing happens
-		end
-	end
+	-- for rn, ref in ipairs(tech.benefits) do
+	-- 	if fields["goto_bf_"..rn] then
+	-- 		-- TODO: nothing happens
+	-- 	end
+	-- end
 	if fields.tech_tree then
 		ctw_technologies.show_tech_tree(pname, 0)
 		return
