@@ -114,15 +114,15 @@ end
 	bt3 = ...,
 	vert_text = "T E X T",
 	title = "World Wide Web",
-	text = "bla bla", --( if nil, uses a label with labeltext )
-	labeltext = "Undiscovered Technology",
+	text = "bla bla", -- Main text area
 
-	add_btn_name = "my_button", -- optional, additional extra button
+	-- Optional. Extra button name to place in between the navigation buttons:
+	add_btn_name = "my_button",
 	add_btn_label = "My Extra Button",
-
 } ]]--
 function ctw_technologies.get_detail_formspec(formdef, pname)
-	local team = teams.get(pname)
+	local team = teams.get_by_player(pname)
+	assert(team)
 	local inv = minetest.get_player_by_name(pname)
 	inv = inv and inv:get_inventory()
 
