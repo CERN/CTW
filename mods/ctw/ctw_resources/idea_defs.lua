@@ -14,6 +14,17 @@ They have prepending comments to indicate what kind of idea it is:
 
 
 -- ===========
+-- ???? - 1979
+-- ===========
+
+local no_refs = {references_required = {}}
+ctw_resources.register_idea_from_tech("crc", no_refs)
+ctw_resources.register_idea_from_tech("fiber", no_refs)
+ctw_resources.register_idea_from_tech("ipnet", no_refs)
+ctw_resources.register_idea_from_tech("unix", no_refs)
+ctw_resources.register_idea_from_tech("ascii", no_refs)
+
+-- ===========
 -- 1980 - 1983
 -- ===========
 

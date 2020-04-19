@@ -93,6 +93,7 @@ local function form_render_entries(team, inv, bt, width)
 
 	if #bt.entries == 0 then
 		fs[#fs + 1] = ("label[0,%f;%s]"):format(y, "(none)")
+		y = 0
 	end
 	return table.concat(fs), y
 end
@@ -181,6 +182,10 @@ function ctw_technologies.get_detail_formspec(formdef, pname)
 		local fs2, y = form_render_entries(team, inv, bt, 4)
 		button_cols[i] = fs2
 		button_maxheight = math.max(button_maxheight, y)
+	end
+	if button_maxheight == 0 then
+		-- Nothing to show. Hide all "none" labels
+		button_cols = {}
 	end
 
 	local container_width = (FORM.WIDTH - 1) / #button_cols
