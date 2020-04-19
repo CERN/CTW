@@ -58,16 +58,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	local id = string.match(formname, "^ctw_resources:ref_(.+)$");
 	if id then
-		if fields.goto_back then
-			ctw_technologies.form_returnstack_pop(pname)
-		end
-
-		if fields.quit then
-			ctw_technologies.form_returnstack_clear(pname)
-		end
-
+		ctw_technologies.form_returnstack_input(pname, fields)
 	end
-
 end)
 
 function ctw_resources.register_reference(id, itemdef)

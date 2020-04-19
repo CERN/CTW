@@ -20,7 +20,7 @@ push a function that re-opens the form that is currently open at the player, lik
 Additionally, it is in the responsibility of the using formspec implementations to call the back button action
 and clear the stack on form quit, as follows:
 		if fields.goto_back then
-			ctw_technologies.form_returnstack_pop(pname)
+			ctw_technologies.form_returnstack_move(pname, -1)
 		end
 
 		if fields.quit then
@@ -218,13 +218,16 @@ function ctw_technologies.form_returnstack_move(pname, offset)
 
 	stack.index = index
 	returnstack[pname] = stack
-	print("move:", dump(stack))
 	return stack[index]()
 end
 
 function ctw_technologies.form_returnstack_push(pname, form_open_func)
 	local stack = returnstack[pname] or {}
 	local index = (stack.index or 0) + 1
+
+	if stack[stack.index or 1] == form_open_func then
+		return -- Cancal out duplicates (if possibe)
+	end
 
 	stack.index = index
 	stack[index] = form_open_func
@@ -238,7 +241,6 @@ function ctw_technologies.form_returnstack_push(pname, form_open_func)
 	end
 
 	returnstack[pname] = stack
-	print("push:", dump(stack))
 end
 
 -- On form quit, clear the return stack
@@ -246,8 +248,17 @@ function ctw_technologies.form_returnstack_clear(pname)
 	returnstack[pname] = nil
 end
 
-
-
-
-
-
+function ctw_technologies.form_returnstack_input(pname, fields)
+	if fields.quit then
+		ctw_technologies.form_returnstack_clear(pname)
+		return true
+	end
+	if fields.goto_back then
+		ctw_technologies.form_returnstack_move(pname, -1)
+		return true
+	end
+	if fields.goto_forth then
+		ctw_technologies.form_returnstack_move(pname, 1)
+		return true
+	end
+end

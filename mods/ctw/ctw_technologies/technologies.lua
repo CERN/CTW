@@ -102,8 +102,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		return
 	end
 
-	if fields.quit then
-		ctw_technologies.form_returnstack_clear(pname)
+	if ctw_technologies.form_returnstack_input(pname, fields) then
 		return
 	end
 
@@ -128,16 +127,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	-- end
 	if fields.tech_tree then
 		ctw_technologies.show_tech_tree(pname, 0)
-		return
-	end
-
-	if fields.goto_back then
-		ctw_technologies.form_returnstack_move(pname, -1)
-		return
-	end
-
-	if fields.goto_forth then
-		ctw_technologies.form_returnstack_move(pname, 1)
 		return
 	end
 end)
