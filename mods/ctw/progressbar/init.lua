@@ -127,12 +127,12 @@ function ProgressBar:update_hud_for_player(player)
 			position      = {x = 0.5, y = 0},
 			scale         = { x = 100, y = 100},
 			offset        = offset,
-			text          = math.floor(leader_pos),
+			text          = tostring(math.floor(leader_pos)),
 			number        = 0xFFFFFF,
 			alignment     = {x = 0, y = 0},
 		})
 	else
 		hud:change(player, "year:year", "offset", offset)
-		hud:change(player, "year:year", "text", math.floor(leader_pos))
+		hud:change(player, "year:year", "text", tostring(math.floor(leader_pos)))
 	end
 end
