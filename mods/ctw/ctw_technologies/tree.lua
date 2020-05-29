@@ -168,111 +168,96 @@ function ctw_technologies.build_tech_tree()
 	end
 end
 
--- form renderer
-
-
-local function rng(x, mi, ma)
+local function clamp(x, mi, ma)
 	return math.max(math.min(x, ma), mi)
 end
-local function clipx(x, fdata)
-	return rng(x-fdata.offx, fdata.minx, fdata.maxx)
-end
-local function clipy(y, fdata)
-	return rng(y-fdata.offy, fdata.miny, fdata.maxy)
-end
 
+-- form renderer
 local function round3(x)
 	return math.floor(1000*x)/1000
 end
 
 local line_width = 2*round3(0.025)
-local function hline_as_box(psx, pex, py, fdata, color)
-	psx, pex, py = round3(psx), round3(pex), round3(py)
+local function hline_as_box(psx, pex, y, fdata, color)
+	psx, pex, y = round3(psx), round3(pex), round3(y)
 	if psx>pex then
 		psx, pex = pex, psx
 	end
-	local sx = clipx(psx-line_width/2, fdata)
-	local ex = clipx(pex+line_width/2, fdata)
-	local y = py-fdata.offy
-	if y<=fdata.miny or y>=fdata.maxy or sx>=ex then
-		return ""
-	end
+	local sx = psx-line_width/2
+	local ex = pex+line_width/2
+	-- if y<=fdata.miny or y>=fdata.maxy or sx>=ex then
+	-- 	return ""
+	-- end
 	return "box["..sx..","..(y-line_width/2)..";"..(ex-sx)..","..line_width..";"..color.."]"
 end
-local function vline_as_box(px, psy, pey, fdata, color)
-	psy, pey, px = round3(psy), round3(pey), round3(px)
+local function vline_as_box(x, psy, pey, fdata, color)
+	psy, pey, x = round3(psy), round3(pey), round3(x)
 	if psy>pey then
 		psy, pey = pey, psy
 	end
-	local sy = clipy(psy-line_width/2, fdata)
-	local ey = clipy(pey+line_width/2, fdata)
-	local x = px-fdata.offx
-	if x<=fdata.minx or x>=fdata.maxx or sy>=ey then
-		return ""
-	end
+	local sy = psy-line_width/2
+	local ey = pey+line_width/2
 	return "box["..(x-line_width/2)..","..sy..";"..line_width..","..(ey-sy)..";"..color.."]"
 end
 
-local function tech_entry(px, py, techid, disco, hithis, fdata)
-		local x = px-fdata.offx
-		local y = py-fdata.offy
-		local fwim = 1
-		local fwbo = 3.7
-		local fwte = 3.0
-		local fhim = 0.7
-		--local fhbo = 0.55
-		local fhte = 2
-		if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
-			return ""
-		end
+local function tech_entry(x, y, techid, disco, hithis, fdata)
+	local fwim = 1
+	local fwbo = 3.7
+	local fwte = 3.0
+	local fhim = 0.7
+	--local fhbo = 0.55
+	local fhte = 2
+	-- if (x+fwim+fwte)<fdata.minx or y<fdata.miny or x>fdata.maxx or (y+fhte)>fdata.maxy then
+	-- 	return ""
+	-- end
 
-		local tech = ctw_technologies.get_technology(techid)
-		--local img = tech.image or "ctw_technologies_technology.png"
+	local tech = ctw_technologies.get_technology(techid)
+	--local img = tech.image or "ctw_technologies_technology.png"
 
-		local name = tech.name
-		local color = "blue"
-		if hithis then
-			color = "red"
-		elseif disco then
-			color = "green"
-		end
-		local img = "ctw_technologies_tech_button_" .. color .. ".png"
-
-		--local form = "image_button["
-		--				..(x)..","..(y)..";"..fwim..","..fhim..";"
-		--				..img..";"
-		--				.."goto_tech_"..techid..";"
-		--				.."]"
-
-		--local box_x = x
-		--local box_width = fwbo
-		--if box_x < fdata.minx then
-		--	box_width = box_width - (fdata.minx-box_x)
-		--	box_x = fdata.minx
-		--end
-		--if box_x + box_width > fdata.maxx then
-		--	box_width = fdata.maxx - box_x
-		--end
-
-		local form = ""
-
-		--form = form .. "box["
-		--				..(box_x)..","..(y)..";"..box_width..","..fhbo..";"
-		--				..color.."]"
-		form = form .."image_button["
-						..(x)..","..(y)..";"..fwbo..","..fhim..";"
-						..img..";"
-						.."goto_tech_"..techid..";"
-						..name.."]"
-
-		--form = form .. "textarea["
-		--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
-		--				..";;"..name.."]"
-
-		--form = form .. "label["
-		--				..(x+fwim)..","..(y)..";"..name.."]"
-		return form
+	local name = tech.name
+	local color = "blue"
+	if hithis then
+		color = "red"
+	elseif disco then
+		color = "green"
 	end
+	local img = "ctw_technologies_tech_button_" .. color .. ".png"
+
+	--local form = "image_button["
+	--				..(x)..","..(y)..";"..fwim..","..fhim..";"
+	--				..img..";"
+	--				.."goto_tech_"..techid..";"
+	--				.."]"
+
+	--local box_x = x
+	--local box_width = fwbo
+	--if box_x < fdata.minx then
+	--	box_width = box_width - (fdata.minx-box_x)
+	--	box_x = fdata.minx
+	--end
+	--if box_x + box_width > fdata.maxx then
+	--	box_width = fdata.maxx - box_x
+	--end
+
+	local form = ""
+
+	--form = form .. "box["
+	--				..(box_x)..","..(y)..";"..box_width..","..fhbo..";"
+	--				..color.."]"
+	form = form .."image_button["
+					..(x)..","..(y)..";"..fwbo..","..fhim..";"
+					..img..";"
+					.."goto_tech_"..techid..";"
+					..name.."]"
+
+	--form = form .. "textarea["
+	--				..(x+fwim+0.1)..","..(y)..";"..fwte..","..fhte..";"
+	--				..";;"..name.."]"
+
+	--form = form .. "label["
+	--				..(x+fwim)..","..(y)..";"..name.."]"
+	return form
+end
 
 
 -- Renders the technology tree onto a given formspec area
@@ -281,39 +266,37 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 	local lvl_init_off  = -3.5
 	local lvl_space     =  5.0
 	local conn_init_off = -4.0
-	--local conn_space    =  0.1
 	local conn_linestart=  3.7
 	local line_init_off = -0.5
 	local line_space    =  0.9
 	local conn_ydown    =  0.2
 	local conn_offset_factor = 0.1
-	local scroll_w = (render_info.max_levels+1)*lvl_space
 
-	scrollpos = rng(scrollpos, 0, 1000)
+	scrollpos = clamp(scrollpos, 0, 1000)
 
 	local fdata = {
 		minx = minpx,
 		miny = minpy,
 		maxx = minpx+wwidth,
 		maxy = minpy+wheight,
-
-		offx = round3(math.max( (scroll_w - wwidth) * (scrollpos / 1000) , 0)),
-		offy = 0,
 	}
 
-	local formt = {}
+	local formt = {
+		"style_type[box;noclip=false]",
+		"scroll_container[0,0;", wwidth, ",", wheight, ";scrollbar;horizontal;0.2]"
+	}
 
 	-- render years and eras
 	for lvl, capt in ipairs(ctw_technologies.year_captions) do
 		if capt~="" then
-			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off - 0.2 - fdata.offx)..",10;|]")
-			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off + 1   - fdata.offx)..",10;"..capt.."]")
+			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off - 0.2)..",10;|]")
+			table.insert(formt, "label["..(lvl*lvl_space + lvl_init_off + 1  )..",10;"..capt.."]")
 		end
 	end
 	for _, era in ipairs(ctw_technologies.eras) do
 		local lvl = (era.s+era.e)/2
-		table.insert(formt, "label["..(era.s*lvl_space + lvl_init_off - 0.2 - fdata.offx)..",10.3;|]")
-		table.insert(formt, "label["..(lvl  *lvl_space + lvl_init_off + 1   - fdata.offx)..",10.3;"..era.n.."]")
+		table.insert(formt, "label["..(era.s*lvl_space + lvl_init_off - 0.2)..",10.3;|]")
+		table.insert(formt, "label["..(lvl  *lvl_space + lvl_init_off + 1  )..",10.3;"..era.n.."]")
 	end
 	-- render technology elements
 	for lvl, lines in pairs(render_info.levels) do
@@ -337,11 +320,9 @@ function ctw_technologies.render_tech_tree(minpx, minpy, wwidth, wheight, discov
 		table.insert(formt, hline_as_box(vlinex, endx, endy, fdata, color))
 	end
 
-	table.insert(formt, "button_exit["..(minpx+wwidth/2-1.5)..","..(minpy+wheight-1.5)..";4,1;quit;Close]")
-	table.insert(formt, "button["..minpx..","..(minpy+wheight-1.5)..";1,1;mleft;<<]")
-	table.insert(formt, "button["..(minpx+wwidth-1)..","..(minpy+wheight-1.5)..";1,1;mright;>>]")
-	table.insert(formt, "scrollbar["..minpx..","..(minpy+wheight-0.5)..";"..wwidth..",0.5;horizontal;scrollbar;"..
-			scrollpos.."]")
+	formt[#formt + 1] = "scroll_container_end[]"
+	formt[#formt + 1] = ("button_exit[%f,%f;4,1;quit;Close]"):format(minpx+wwidth/2-1.5, minpy+wheight-1.5)
+	formt[#formt + 1] = ("scrollbar[%f,%f;%f,0.5;horizontal;scrollbar;%f]"):format(minpx, minpy+wheight-0.5, wwidth, scrollpos)
 	return table.concat(formt, "\n")
 end
 
@@ -359,7 +340,7 @@ local function get_dtech_for_player(pname)
 end
 
 function ctw_technologies.show_tech_tree(pname, scrollpos)
-	local form = "size[17,12]real_coordinates[true]"
+	local form = "formspec_version[3]size[17,12]"
 			..ctw_technologies.render_tech_tree(0, 0, 17, 12, get_dtech_for_player(pname), scrollpos, nil)
 	minetest.show_formspec(pname, "ctw_technologies:tech_tree", form)
 end
@@ -373,24 +354,6 @@ local function handle_player_receive_fields(pname, fields, callback)
 			end
 			return
 		end
-		if fields.mleft then
-			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-			if ev.type=="VAL" then
-				callback(pname, ev.value - 1000*(3/(render_info.max_levels)))
-			end
-		end
-		if fields.mright then
-			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-			if ev.type=="VAL" then
-				callback(pname, ev.value + 1000*(3/(render_info.max_levels)))
-			end
-		end
-		if not fields.quit and fields.scrollbar then
-			local ev = minetest.explode_scrollbar_event(fields.scrollbar)
-			if ev.type=="CHG" then
-				callback(pname, ev.value)
-			end
-		end
 	end
 end
 
@@ -399,7 +362,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname == "ctw_technologies:tech_tree" then
 		handle_player_receive_fields(pname, fields, ctw_technologies.show_tech_tree)
 	end
-
 end)
 
 minetest.register_chatcommand("ctwtr", {
