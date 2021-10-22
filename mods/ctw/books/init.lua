@@ -16,60 +16,60 @@ local book_types = {
 	data_formats = {
 		S("Theory of Data Encoding"),
 		S("Various theoretical examples and ideas regarding byte order."),
-		"#F12"
+		"#F12", 1958
 	},
 	hf_freq = {
 		S("High Frequency Physics"),
 		S("Physics get a bit weird with high frequencies. This is how it works."),
-		"#2A3"
+		"#2A3", 1977
 	},
 	hf_freq2 = {
 		S("HF Physics Part 2"),
 		S("An advanced scientific report about electron physics at high frequencies."),
-		"#6F3"
+		"#6F3", 1982
 	},
 	program_objc = {
 		S("Objective-C How To Program"),
 		S("Programming explained easily.\nThere's how you write Objective-C programs."),
-		"#23A"
+		"#23A", 1985
 	},
 	program_c = {
 		S("Program in C - The Handbook"),
 		S("Small and compact C programming handbook.\nDevelop applications with this book."),
-		"#2AF"
+		"#2AF", 1978
 	},
 	cable_crafting = {
 		S("The Art Of Crafting"),
 		S("Metal processing and compact wire designs are part of this book."),
-		"#EC2"
+		"#EC2", 1966
 	},
 	design = {
 		S("Design Like A Pro Course Book"),
 		S("Detailed design recommendations including DOs and DONTs.\nInterfaces also need a design."),
-		"#A02"
+		"#A02", 1979
 	},
 	notebook = {
 		S("Notebook for your ideas"),
 		S("Certain plans need long planning and re-considerations.\nContains free space to note stuff."),
-		"#63F",
+		"#63F", 0
 	},
 	network = {
 		S("Networking basics"),
 		S("On paper it looks easy to get a working data communication,\n"..
 			"but reality is different. Among latency problems, also have a look at this illustration..."),
-		"#F63",
+		"#F63", 1955
 	},
 	layout = {
 		S("Application Layout Templates"),
 		S("Whatever you would like to design, avoid some of the common pitfalls.\n"..
 			"User friendly designs are the way to make people happy."),
-		"#623"
+		"#623", 1980
 	},
 	presentations = {
 		S("Presentations And How To Face Them"),
 		S("This book guides you from A-Z how to ease public presentations.\n"..
 			"'Do not be nervous' is said easily but here you can find helpful tips."),
-		"#B6F"
+		"#B6F", 1982
 	},
 	-- add whatever you want here.
 }
@@ -96,12 +96,14 @@ for key, d in pairs(book_types) do
 	local description = d[1]
 	--local color = string_to_color(key)
 	local color = d[3]
+	assert(type(d[4]) == "number")
 
 	-- Register craftitem and documentation entry
 	local overlay_book = "books_book_mask.png^[multiply:" .. color
 	ctw_resources.register_reference("books:book_" .. key, {
 		description = description,
 		_ctw_longdesc = d[2],
+		_ctw_year = d[4],
 		inventory_image = "books_book.png^(" .. overlay_book .. ")",
 		stack_max = 1,
 	})
@@ -125,6 +127,13 @@ for key, d in pairs(book_types) do
 			if not puncher then
 				return
 			end
+			local team = teams.get_by_player(puncher)
+			if d[4] > year.get(team) then
+				minetest.chat_send_player(puncher:get_player_name(),
+					"This book is yet not released. Release year: " .. d[4])
+				return
+			end
+
 			local inv = puncher:get_inventory()
 			if not inv:room_for_item("main", "books:book_" .. key) then
 				minetest.chat_send_player(puncher:get_player_name(),
