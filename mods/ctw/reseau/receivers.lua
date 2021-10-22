@@ -1,5 +1,6 @@
 local S = minetest.get_translator("reseau")
 local TX_INTERVAL = reseau.TX_INTERVAL
+local VISUAL = minetest.features.use_texture_alpha_string_modes and "clip" or false
 
 -- ######################
 -- #     Receivers      #
@@ -29,6 +30,7 @@ minetest.register_node("reseau:receiverscreen", {
 		"reseau_receiverscreen_back.png",
 		"reseau_receiverscreen_front.png"
 	},
+	use_texture_alpha = VISUAL,
 	groups = {},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -121,6 +123,7 @@ minetest.register_node("reseau:receiverbase", {
 		"reseau_receiverbase_back.png",
 		"reseau_receiverbase_front.png"
 	},
+	use_texture_alpha = VISUAL,
 	inventory_image = "reseau_receiverbase_inv.png",
 	paramtype = "light",
 	paramtype2 = "facedir",

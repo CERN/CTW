@@ -1,6 +1,7 @@
 local S = minetest.get_translator("reseau")
 local TX_INTERVAL = reseau.TX_INTERVAL
 local MAX_HOP_COUNT = reseau.MAX_HOP_COUNT
+local VISUAL = minetest.features.use_texture_alpha_string_modes and "clip" or false
 
 -- ######################
 -- #      Routers       #
@@ -24,6 +25,7 @@ for _, team in ipairs(teams.get_all()) do
 			"reseau_router_side_connection.png",
 			"reseau_router_side_noconnection.png"
 		},
+		use_texture_alpha = VISUAL,
 		drawtype = "nodebox",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -128,6 +130,7 @@ for _, team in ipairs(teams.get_all()) do
 			"reseau_splitter_side_noconnection.png",
 			"reseau_splitter_side_connection.png"
 		},
+		use_texture_alpha = VISUAL,
 		drawtype = "nodebox",
 		paramtype = "light",
 		paramtype2 = "facedir",

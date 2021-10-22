@@ -1,4 +1,5 @@
 computer = {}
+local VISUAL = minetest.features.use_texture_alpha_string_modes and "clip" or false
 
 -- Functions
 
@@ -24,6 +25,7 @@ computer.register = function (name, def)
 			TEXPFX.."bk.png",
 			TEXPFX.."ft.png"
 		},
+		use_texture_alpha = VISUAL,
 		node_box = cdef.node_box,
 		selection_box = cdef.node_box,
 		on_rightclick = function (pos, node, clicker, itemstack)
@@ -49,6 +51,7 @@ computer.register = function (name, def)
 			(TEXPFX.."bk"..(cdef.tiles_off.back   and "_off" or "")..".png"),
 			(TEXPFX.."ft"..(cdef.tiles_off.front  and "_off" or "")..".png")
 		},
+		use_texture_alpha = VISUAL,
 		node_box = cdef.node_box_off or cdef.node_box,
 		selection_box = cdef.node_box_off or cdef.node_box,
 		on_rightclick = function (pos, node, clicker, itemstack)
@@ -128,6 +131,7 @@ minetest.register_node("computer:router", {
 		{name="computer_router_f_animated.png",
 				animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=1.0}},
 	},
+	use_texture_alpha = VISUAL,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	walkable = false,
@@ -157,6 +161,7 @@ minetest.register_node("computer:server", {
 		'computer_server_bt.png',
 		'computer_server_f_off.png'
 	},
+	use_texture_alpha = VISUAL,
 	inventory_image = "computer_server_inv.png",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -196,6 +201,7 @@ local function register_server(team)
 			'computer_server_bt.png^[resize:32x32^' .. maskb,
 			'computer_server_f_on.png',
 		},
+		use_texture_alpha = VISUAL,
 		inventory_image = "computer_server_inv.png",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -225,6 +231,7 @@ minetest.register_node("computer:printer", {
 	inventory_image = "computer_printer_inv.png",
 	tiles = {"computer_printer_t.png","computer_printer_bt.png","computer_printer_l.png",
 			"computer_printer_r.png","computer_printer_b.png","computer_printer_f.png"},
+	use_texture_alpha = VISUAL,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	walkable = true,

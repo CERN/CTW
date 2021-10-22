@@ -1,5 +1,6 @@
 local S = minetest.get_translator("reseau")
 local TX_INTERVAL = reseau.TX_INTERVAL
+local VISUAL = minetest.features.use_texture_alpha_string_modes and "clip" or false
 
 -- ######################
 -- #    Experiments     #
@@ -56,6 +57,7 @@ for _, team in ipairs(teams.get_all()) do
 			reseau.with_overlay("reseau_experiment_right.png", team.color, "reseau_experiment_side_overlay.png"),
 			reseau.with_overlay("reseau_experiment_left.png", team.color, "reseau_experiment_side_overlay.png")
 		},
+		use_texture_alpha = VISUAL,
 		drawtype = "nodebox",
 		node_box = {
 			type = "fixed",
