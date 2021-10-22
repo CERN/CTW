@@ -1,7 +1,12 @@
+-- beds/beds.lua
+
+-- support for MT game translation.
+local S = beds.get_translator
+
 -- Fancy shaped bed
 
 beds.register_bed("beds:fancy_bed", {
-	description = "Fancy Bed",
+	description = S("Fancy Bed"),
 	inventory_image = "beds_bed_fancy.png",
 	wield_image = "beds_bed_fancy.png",
 	tiles = {
@@ -52,7 +57,7 @@ beds.register_bed("beds:fancy_bed", {
 -- Simple shaped bed
 
 beds.register_bed("beds:bed", {
-	description = "Simple Bed",
+	description = S("Simple Bed"),
 	inventory_image = "beds_bed.png",
 	wield_image = "beds_bed.png",
 	tiles = {
@@ -74,10 +79,10 @@ beds.register_bed("beds:bed", {
 		}
 	},
 	nodebox = {
-		bottom = {-0.5, -0.5, -0.5, 0.5, 0.06, 0.5},
-		top = {-0.5, -0.5, -0.5, 0.5, 0.06, 0.5},
+		bottom = {-0.5, -0.5, -0.5, 0.5, 0.0625, 0.5},
+		top = {-0.5, -0.5, -0.5, 0.5, 0.0625, 0.5},
 	},
-	selectionbox = {-0.5, -0.5, -0.5, 0.5, 0.06, 1.5},
+	selectionbox = {-0.5, -0.5, -0.5, 0.5, 0.0625, 1.5},
 	recipe = {
 		{"wool:white", "wool:white", "wool:white"},
 		{"group:wood", "group:wood", "group:wood"}

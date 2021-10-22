@@ -1,5 +1,8 @@
 default.chest = {}
 
+-- support for MT game translation.
+local S = default.get_translator
+
 function default.chest.get_chest_formspec(pos)
 	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
 	local formspec =
@@ -41,9 +44,10 @@ function default.chest.chest_lid_close(pn)
 	end
 
 	local node = minetest.get_node(pos)
-	minetest.after(0.2, minetest.swap_node, pos, { name = "default:" .. swap,
+	minetest.after(0.2, minetest.swap_node, pos, { name = swap,
 			param2 = node.param2 })
-	minetest.sound_play(sound, {gain = 0.3, pos = pos, max_hear_distance = 10})
+	minetest.sound_play(sound, {gain = 0.3, pos = pos,
+		max_hear_distance = 10}, true)
 end
 
 default.chest.open_chests = {}
@@ -72,7 +76,8 @@ minetest.register_on_leaveplayer(function(player)
 	end
 end)
 
-function default.chest.register_chest(name, d)
+function default.chest.register_chest(prefixed_name, d)
+	local name = prefixed_name:sub(1,1) == ':' and prefixed_name:sub(2,-1) or prefixed_name
 	local def = table.copy(d)
 	def.drawtype = "mesh"
 	def.visual = "mesh"
@@ -84,7 +89,7 @@ function default.chest.register_chest(name, d)
 	if def.protected then
 		def.on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
-			meta:set_string("infotext", "Locked Chest")
+			meta:set_string("infotext", S("Locked Chest"))
 			meta:set_string("owner", "")
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*4)
@@ -92,8 +97,7 @@ function default.chest.register_chest(name, d)
 		def.after_place_node = function(pos, placer)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("owner", placer:get_player_name() or "")
-			meta:set_string("infotext", "Locked Chest (owned by " ..
-					meta:get_string("owner") .. ")")
+			meta:set_string("infotext", S("Locked Chest (owned by @1)", meta:get_string("owner")))
 		end
 		def.can_dig = function(pos,player)
 			local meta = minetest.get_meta(pos);
@@ -126,10 +130,10 @@ function default.chest.register_chest(name, d)
 			end
 
 			minetest.sound_play(def.sound_open, {gain = 0.3,
-					pos = pos, max_hear_distance = 10})
+					pos = pos, max_hear_distance = 10}, true)
 			if not default.chest.chest_lid_obstructed(pos) then
 				minetest.swap_node(pos,
-						{ name = "default:" .. name .. "_open",
+						{ name = name .. "_open",
 						param2 = node.param2 })
 			end
 			minetest.after(0.2, minetest.show_formspec,
@@ -171,7 +175,7 @@ function default.chest.register_chest(name, d)
 			-- verify placer is owner of lockable chest
 			if owner ~= pn then
 				minetest.record_protection_violation(pos, pn)
-				minetest.chat_send_player(pn, "You do not own this chest.")
+				minetest.chat_send_player(pn, S("You do not own this chest."))
 				return nil
 			end
 
@@ -181,12 +185,12 @@ function default.chest.register_chest(name, d)
 				meta:set_string("key_lock_secret", secret)
 			end
 
-			return secret, "a locked chest", owner
+			return secret, S("a locked chest"), owner
 		end
 	else
 		def.on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
-			meta:set_string("infotext", "Chest")
+			meta:set_string("infotext", S("Chest"))
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*4)
 		end
@@ -197,10 +201,10 @@ function default.chest.register_chest(name, d)
 		end
 		def.on_rightclick = function(pos, node, clicker)
 			minetest.sound_play(def.sound_open, {gain = 0.3, pos = pos,
-					max_hear_distance = 10})
+					max_hear_distance = 10}, true)
 			if not default.chest.chest_lid_obstructed(pos) then
 				minetest.swap_node(pos, {
-						name = "default:" .. name .. "_open",
+						name = name .. "_open",
 						param2 = node.param2 })
 			end
 			minetest.after(0.2, minetest.show_formspec,
@@ -212,7 +216,7 @@ function default.chest.register_chest(name, d)
 		def.on_blast = function(pos)
 			local drops = {}
 			default.get_inventory_drops(pos, "main", drops)
-			drops[#drops+1] = "default:" .. name
+			drops[#drops+1] = name
 			minetest.remove_node(pos)
 			return drops
 		end
@@ -245,7 +249,7 @@ function default.chest.register_chest(name, d)
 			def_opened.tiles[i].backface_culling = true
 		end
 	end
-	def_opened.drop = "default:" .. name
+	def_opened.drop = name
 	def_opened.groups.not_in_creative_inventory = 1
 	def_opened.selection_box = {
 		type = "fixed",
@@ -262,30 +266,32 @@ function default.chest.register_chest(name, d)
 	def_closed.tiles[5] = def.tiles[3] -- drawtype to make them match the mesh
 	def_closed.tiles[3] = def.tiles[3].."^[transformFX"
 
-	minetest.register_node("default:" .. name, def_closed)
-	minetest.register_node("default:" .. name .. "_open", def_opened)
+	minetest.register_node(prefixed_name, def_closed)
+	minetest.register_node(prefixed_name .. "_open", def_opened)
 
 	-- convert old chests to this new variant
-	minetest.register_lbm({
-		label = "update chests to opening chests",
-		name = "default:upgrade_" .. name .. "_v2",
-		nodenames = {"default:" .. name},
-		action = function(pos, node)
-			local meta = minetest.get_meta(pos)
-			meta:set_string("formspec", nil)
-			local inv = meta:get_inventory()
-			local list = inv:get_list("default:chest")
-			if list then
-				inv:set_size("main", 8*4)
-				inv:set_list("main", list)
-				inv:set_list("default:chest", nil)
+	if name == "default:chest" or name == "default:chest_locked" then
+		minetest.register_lbm({
+			label = "update chests to opening chests",
+			name = "default:upgrade_" .. name:sub(9,-1) .. "_v2",
+			nodenames = {name},
+			action = function(pos, node)
+				local meta = minetest.get_meta(pos)
+				meta:set_string("formspec", nil)
+				local inv = meta:get_inventory()
+				local list = inv:get_list("default:chest")
+				if list then
+					inv:set_size("main", 8*4)
+					inv:set_list("main", list)
+					inv:set_list("default:chest", nil)
+				end
 			end
-		end
-	})
+		})
+	end
 end
 
-default.chest.register_chest("chest", {
-	description = "Chest",
+default.chest.register_chest("default:chest", {
+	description = S("Chest"),
 	tiles = {
 		"default_chest_top.png",
 		"default_chest_top.png",
@@ -300,8 +306,8 @@ default.chest.register_chest("chest", {
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 })
 
-default.chest.register_chest("chest_locked", {
-	description = "Locked Chest",
+default.chest.register_chest("default:chest_locked", {
+	description = S("Locked Chest"),
 	tiles = {
 		"default_chest_top.png",
 		"default_chest_top.png",
@@ -315,4 +321,40 @@ default.chest.register_chest("chest_locked", {
 	sound_close = "default_chest_close",
 	groups = {choppy = 2, oddly_breakable_by_hand = 2},
 	protected = true,
+})
+
+minetest.register_craft({
+	output = "default:chest",
+	recipe = {
+		{"group:wood", "group:wood", "group:wood"},
+		{"group:wood", "", "group:wood"},
+		{"group:wood", "group:wood", "group:wood"},
+	}
+})
+
+minetest.register_craft({
+	output = "default:chest_locked",
+	recipe = {
+		{"group:wood", "group:wood", "group:wood"},
+		{"group:wood", "default:steel_ingot", "group:wood"},
+		{"group:wood", "group:wood", "group:wood"},
+	}
+})
+
+minetest.register_craft( {
+	type = "shapeless",
+	output = "default:chest_locked",
+	recipe = {"default:chest", "default:steel_ingot"},
+})
+
+minetest.register_craft({
+	type = "fuel",
+	recipe = "default:chest",
+	burntime = 30,
+})
+
+minetest.register_craft({
+	type = "fuel",
+	recipe = "default:chest_locked",
+	burntime = 30,
 })

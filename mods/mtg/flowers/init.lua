@@ -1,3 +1,5 @@
+-- flowers/init.lua
+
 -- Minetest 0.4 mod: default
 -- See README.txt for licensing and other information.
 
@@ -5,6 +7,9 @@
 -- Namespace for functions
 
 flowers = {}
+
+-- Load support for MT game translation.
+local S = minetest.get_translator("flowers")
 
 
 -- Map Generation
@@ -58,49 +63,49 @@ end
 flowers.datas = {
 	{
 		"rose",
-		"Red Rose",
+		S("Red Rose"),
 		{-2 / 16, -0.5, -2 / 16, 2 / 16, 5 / 16, 2 / 16},
 		{color_red = 1, flammable = 1}
 	},
 	{
 		"tulip",
-		"Orange Tulip",
+		S("Orange Tulip"),
 		{-2 / 16, -0.5, -2 / 16, 2 / 16, 3 / 16, 2 / 16},
 		{color_orange = 1, flammable = 1}
 	},
 	{
 		"dandelion_yellow",
-		"Yellow Dandelion",
+		S("Yellow Dandelion"),
 		{-4 / 16, -0.5, -4 / 16, 4 / 16, -2 / 16, 4 / 16},
 		{color_yellow = 1, flammable = 1}
 	},
 	{
 		"chrysanthemum_green",
-		"Green Chrysanthemum",
+		S("Green Chrysanthemum"),
 		{-4 / 16, -0.5, -4 / 16, 4 / 16, -1 / 16, 4 / 16},
 		{color_green = 1, flammable = 1}
 	},
 	{
 		"geranium",
-		"Blue Geranium",
+		S("Blue Geranium"),
 		{-2 / 16, -0.5, -2 / 16, 2 / 16, 2 / 16, 2 / 16},
 		{color_blue = 1, flammable = 1}
 	},
 	{
 		"viola",
-		"Viola",
+		S("Viola"),
 		{-5 / 16, -0.5, -5 / 16, 5 / 16, -1 / 16, 5 / 16},
 		{color_violet = 1, flammable = 1}
 	},
 	{
 		"dandelion_white",
-		"White Dandelion",
+		S("White Dandelion"),
 		{-5 / 16, -0.5, -5 / 16, 5 / 16, -2 / 16, 5 / 16},
 		{color_white = 1, flammable = 1}
 	},
 	{
 		"tulip_black",
-		"Black Tulip",
+		S("Black Tulip"),
 		{-2 / 16, -0.5, -2 / 16, 2 / 16, 3 / 16, 2 / 16},
 		{color_black = 1, flammable = 1}
 	},
@@ -180,7 +185,7 @@ minetest.register_abm({
 --
 
 minetest.register_node("flowers:mushroom_red", {
-	description = "Red Mushroom",
+	description = S("Red Mushroom"),
 	tiles = {"flowers_mushroom_red.png"},
 	inventory_image = "flowers_mushroom_red.png",
 	wield_image = "flowers_mushroom_red.png",
@@ -199,7 +204,7 @@ minetest.register_node("flowers:mushroom_red", {
 })
 
 minetest.register_node("flowers:mushroom_brown", {
-	description = "Brown Mushroom",
+	description = S("Brown Mushroom"),
 	tiles = {"flowers_mushroom_brown.png"},
 	inventory_image = "flowers_mushroom_brown.png",
 	wield_image = "flowers_mushroom_brown.png",
@@ -243,7 +248,7 @@ end
 
 minetest.register_abm({
 	label = "Mushroom spread",
-	nodenames = {"flowers:mushroom_brown", "flowers:mushroom_red"},
+	nodenames = {"group:mushroom"},
 	interval = 11,
 	chance = 150,
 	action = function(...)
@@ -267,13 +272,14 @@ minetest.register_alias("mushroom:red_natural", "flowers:mushroom_red")
 --
 
 local waterlily_def = {
-	description = "Waterlily",
+	description = S("Waterlily"),
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	tiles = {"flowers_waterlily.png", "flowers_waterlily_bottom.png"},
 	inventory_image = "flowers_waterlily.png",
 	wield_image = "flowers_waterlily.png",
+	use_texture_alpha = "clip",
 	liquids_pointable = true,
 	walkable = false,
 	buildable_to = true,
@@ -307,8 +313,7 @@ local waterlily_def = {
 				minetest.set_node(pos, {name = "flowers:waterlily" ..
 					(def.waving == 3 and "_waving" or ""),
 					param2 = math.random(0, 3)})
-				if not (creative and creative.is_enabled_for
-						and creative.is_enabled_for(player_name)) then
+				if not minetest.is_creative_enabled(player_name) then
 					itemstack:take_item()
 				end
 			else
